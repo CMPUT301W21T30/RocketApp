@@ -1,0 +1,8 @@
+Feb 15, 2020
+    - Discussed the use of software for the storyboard
+    - Discussed the plan for this week
+    - Meeting with the TA on Thursday
+    - Finish Product Backlog and potentially User Interface Mockups and Storyboard Sequences before the Meeting with TA
+    - Project Backlog -> User Interface Mockups and Storyboard Sequences -> Object-Oriented Analysis -> Tool use
+    - All: Read the Project Problem Description and start thinking about implementation of the Project Backlog
+    - Mike: upload a workable application to github repo
