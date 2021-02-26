@@ -1,0 +1,9 @@
+Part 1 -Rocket App Tools:
+ - Lucid charts
+ - Github (projects, issues, actions and code repository)
+ - Slack
+ - Google Chat
+ - Zoom
+ - Notability (iPad)
+
+
