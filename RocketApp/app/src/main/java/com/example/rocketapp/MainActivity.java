@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
                         DataManager.push(new Trial("This is a new trial", user), experiment, null);
                         DataManager.push(new Question("This is a new question", user),  experiment, null);
 
+                        // This makes the datamanager update all data for this experiment, need to subscribe when opening an experiment to
+                        // get updated trials and questions
                         DataManager.subscribe(experiment);
                     });
         });
