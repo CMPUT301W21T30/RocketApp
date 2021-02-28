@@ -34,6 +34,16 @@ public class DataManager {
 
     /** Experiments **/
 
+    // Get experiment by id. Should send Id through intent when creating a new ExperimentActivity,
+    // then get the experiment with this.
+    public static Experiment getExperiment(String experimentId) {
+        for (Experiment experiment : experimentArrayList)
+            if (experiment.getId().equals(experimentId))
+                return experiment;
+        Log.e(TAG, "getExperiment() Experiment not found");
+        return new Experiment();
+    }
+
     public interface PushExperimentCallback {
         void callBack(Experiment experiment);
     }
@@ -69,6 +79,27 @@ public class DataManager {
             updateExperiments(task.getResult());
             if (onComplete != null) onComplete.callBack(experimentArrayList);
         });
+    }
+
+    // Call when opening an experiment. This will load its questions and trials from FireStore.
+    public static void subscribe(Experiment experiment) {
+        if (experiment.getId() == null){
+            Log.e(TAG, "Cannot subscribe to an experiment without an id.");
+            return;
+        }
+
+        CollectionReference trialsRef = experimentsRef.document(experiment.getId()).collection("Trials");
+        trialsRef.addSnapshotListener((snapshots, e) -> {
+                    setTrials(experiment, snapshots);
+                    Log.d(TAG, "Updating Trials" + snapshots.size());
+                });
+
+
+        CollectionReference questionsRef = experimentsRef.document(experiment.getId()).collection("Questions");
+        questionsRef.addSnapshotListener((snapshots, e) -> {
+                    setQuestions(experiment, snapshots);
+                    Log.d(TAG, "Updating Questions (" + snapshots.size() + ") " + DataManager.getExperimentArrayList());
+                });
     }
 
 
@@ -195,6 +226,7 @@ public class DataManager {
         return experimentArrayList;
     }
 
+    // Gets the current user
     public static User getUser() {
         return user;
     }
@@ -202,6 +234,9 @@ public class DataManager {
     public static void endExperiment(User owner, Experiment experiment) { }
 
     public static void addQuestion(User owner, Experiment experiment, String question) {}
+
+
+
 
 
     private static void initializeExperiments() {
