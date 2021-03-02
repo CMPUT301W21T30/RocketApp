@@ -24,7 +24,7 @@ public class BinomialTrial extends Trial {
         return successNum;
     }
 
-    public  int getFailure(){
+    public int getFailure(){
         return failureNum;
     }
 }
