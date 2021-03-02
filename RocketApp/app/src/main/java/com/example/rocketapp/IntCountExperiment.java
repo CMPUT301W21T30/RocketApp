@@ -12,7 +12,7 @@ public class IntCountExperiment extends Experiment {
     }
 
     public float getMedian(){
-        float length = trials.size();
+        int length = trials.size();
         float median;
         if (length%2==1){
             median = trials.get((length/2)+1).floatValue();
