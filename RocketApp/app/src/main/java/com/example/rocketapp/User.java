@@ -1,10 +1,12 @@
 package com.example.rocketapp;
 import com.google.firebase.firestore.Exclude;
 
-public class User {
+import java.util.ArrayList;
+
+public class User extends FirestoreObject {
 
     private String name;
-    private String id;
+    // TODO add contact info
 
     public User(){}
 
@@ -21,32 +23,21 @@ public class User {
     }
 
     @Exclude
-    public String getId() {
-        return id;
+    public DataManager.ID getOwner() {
+        return super.getOwner();
     }
 
-    @Exclude  // Should only be called in DataManager
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void update(User user, DataManager.PushUserCallback onComplete) {
-        if (this.id != user.id) return;
-
-        this.name = user.name;
-
-        DataManager.push(this, onComplete);
+    public boolean equals(User user) {
+        return user.getId().equals(getId());
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", id='" + id + '\'' +
+                ", id='" + getId() + '\'' +
                 '}';
     }
 
-    public boolean equals(User user) {
-        return user.id.equals(id);
-    }
+
 }

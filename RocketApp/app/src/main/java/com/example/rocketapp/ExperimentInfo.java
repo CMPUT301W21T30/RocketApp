@@ -2,23 +2,19 @@ package com.example.rocketapp;
 
 import android.util.Log;
 
-import com.google.firebase.firestore.PropertyName;
-
 import static android.content.ContentValues.TAG;
 
-public class ExperimentInfo {
-    private String ownerId;
+class ExperimentInfo {
+    private DataManager.ID ownerId;
     private String name;
     private String description;
     private String region;
     private int minTrials;
     private boolean geoLocationEnabled;
 
-    public ExperimentInfo() {
-    }
+    public ExperimentInfo() { }
 
-    public ExperimentInfo(String ownerId, String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
-        this.ownerId = ownerId;
+    public ExperimentInfo(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
         this.name = name;
         this.description = description;
         this.region = region;
@@ -26,9 +22,7 @@ public class ExperimentInfo {
         this.geoLocationEnabled = geoLocationEnabled;
     }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
+    public DataManager.ID getOwner() { return ownerId; }
 
     public String getName() {
         return name;
@@ -50,29 +44,28 @@ public class ExperimentInfo {
         return geoLocationEnabled;
     }
 
+    public void setOwner(DataManager.ID id) {
+        ownerId = id;
+    }
+
     public void setName(User owner, String name) {
-        if (hasPermission(owner))
-            this.name = name;
+        if (hasPermission(owner)) this.name = name;
     }
 
     public void setDescription(User owner, String description) {
-        if (hasPermission(owner))
-            this.description = description;
+        if (hasPermission(owner)) this.description = description;
     }
 
     public void setRegion(User owner, String region) {
-        if (hasPermission(owner))
-            this.region = region;
+        if (hasPermission(owner)) this.region = region;
     }
 
     public void setMinTrials(User owner, int minTrials) {
-        if (hasPermission(owner))
-            this.minTrials = minTrials;
+        if (hasPermission(owner)) this.minTrials = minTrials;
     }
 
     public void setGeoLocationEnabled(User owner, boolean geoLocationEnabled) {
-        if (hasPermission(owner))
-            this.geoLocationEnabled = geoLocationEnabled;
+        if (hasPermission(owner)) this.geoLocationEnabled = geoLocationEnabled;
     }
 
     boolean hasPermission(User owner) {
@@ -95,4 +88,6 @@ public class ExperimentInfo {
                 ", geoLocationEnabled=" + geoLocationEnabled +
                 '}';
     }
+
+
 }
