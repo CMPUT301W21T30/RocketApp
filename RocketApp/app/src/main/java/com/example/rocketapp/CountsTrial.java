@@ -2,11 +2,11 @@ package com.example.rocketapp;
 
 import com.google.firebase.firestore.Exclude;
 
-public class CountTrial extends Trial {
+public class CountsTrial extends Trial {
 
     private int numberCounted;
 
-    public CountTrial() {
+    public CountsTrial() {
         numberCounted = 0;
     }
 
