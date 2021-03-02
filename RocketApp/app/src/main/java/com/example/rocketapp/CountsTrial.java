@@ -7,7 +7,7 @@ public class CountTrial extends Trial {
     private int numberCounted;
 
     public CountTrial() {
-        numberCounted = 0
+        numberCounted = 0;
     }
 
     public void addCount(){
