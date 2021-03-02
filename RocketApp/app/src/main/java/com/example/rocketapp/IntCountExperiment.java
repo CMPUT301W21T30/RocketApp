@@ -13,12 +13,12 @@ public class IntCountExperiment extends Experiment {
 
     public float getMedian(){
         float length = trials.size();
-        float median = 0.0
+        float median = 0.0;
         if (length%2==1){
-            median = trials.get((length/2)+1).floatValue();
+            median = trials.get((length/2)+1).getPCount().floatValue();
         }
         else{
-            median = (trials.get((length/2)+1)+trials.get(length/2))/2
+            median = (trials.get((length/2)+1).getPCount()+trials.get((length/2))/2).getPCount();
         }
         return median;
     }

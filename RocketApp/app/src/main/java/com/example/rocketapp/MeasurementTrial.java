@@ -7,12 +7,14 @@ public class MeasurementTrial extends Trial {
     private float measurement;
 
     public MeasurementTrial() {
-        measurement = 0
+        measurement = 0;
     }
 
     public void addMeasurement(){
         measurement = measurement + 1;
     }
 
-
+    public float getMeasurement(){
+        return measurement;
+    }
 }
