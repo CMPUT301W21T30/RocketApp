@@ -18,7 +18,7 @@ public class IntCountExperiment extends Experiment {
             median = trials.get((length/2)+1).floatValue();
         }
         else{
-            median = (trials.get((length/2)+1)+trials.get(length/2))/2
+            median = (trials.get((length/2)+1)+trials.get(length/2))/2;
         }
         return median;
     }
