@@ -13,10 +13,15 @@ public class MeasurementTrial extends Trial {
         measurement = measure;
     }
 
-    public void addMeasurement(float measure){
+    public void addMeasurement(float measure) {
         measurement = measure;
     }
+    public String getType() {
+        return "Measurement";
+    }
 
+
+    @Exclude
     public float getMeasurement(){
         return measurement;
     }

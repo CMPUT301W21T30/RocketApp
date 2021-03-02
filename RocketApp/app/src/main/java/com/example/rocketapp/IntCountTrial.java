@@ -10,10 +10,15 @@ public class IntCountTrial extends Trial {
         posCount = 0;
     }
 
+    public String getType() {
+        return "IntCount";
+    }
+
     public void addPCount(){
         posCount = posCount + 1;
     }
 
+    @Exclude
     public int getPCount(){
         return posCount;
     }

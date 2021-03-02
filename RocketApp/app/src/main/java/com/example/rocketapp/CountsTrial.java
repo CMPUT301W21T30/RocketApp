@@ -10,10 +10,16 @@ public class CountsTrial extends Trial {
         numberCounted = 0;
     }
 
+    @Override
+    public String getType() {
+        return "Counts";
+    }
+
     public void addCount(){
         numberCounted = numberCounted + 1;
     }
 
+    @Exclude
     public int getCount(){
         return numberCounted;
     }

@@ -3,7 +3,9 @@ import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 
-public class Experiment {
+import static android.content.ContentValues.TAG;
+
+public abstract class Experiment extends FirestoreObject {
 
     public ExperimentInfo info;
 
@@ -70,4 +72,20 @@ public class Experiment {
                 "info=" + info +
                 '}';
     }
+
+    public abstract String getType();
+
+    @Exclude
+    public abstract float getMedian();
+
+    @Exclude
+    public abstract float getMean();
+
+    @Exclude
+    public abstract float getStdDev();
+
+    @Exclude
+    public abstract float getQuartiles();
+
 }
+
