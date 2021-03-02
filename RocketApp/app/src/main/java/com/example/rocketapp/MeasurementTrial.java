@@ -9,6 +9,9 @@ public class MeasurementTrial extends Trial {
     public MeasurementTrial() {
         measurement = 0;
     }
+    public MeasurementTrial(float measure){
+        measurement = measure;
+    }
 
     public void addMeasurement(float measure){
         measurement = measure;
