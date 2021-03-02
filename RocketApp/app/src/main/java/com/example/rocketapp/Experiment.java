@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
-public class Experiment extends FirestoreObject {
+public abstract class Experiment extends FirestoreObject {
 
     public ExperimentInfo info;
     private ArrayList<Trial> trialsArrayList = new ArrayList<>();
@@ -73,6 +73,19 @@ public class Experiment extends FirestoreObject {
                 "info=" + info +
                 '}';
     }
+    public abstract String getType();
+
+    @Exclude
+    public abstract float getMedian();
+
+    @Exclude
+    public abstract float getMean();
+
+    @Exclude
+    public abstract float getStdDev();
+
+    @Exclude
+    public abstract float getQuartiles();
 }
 
 

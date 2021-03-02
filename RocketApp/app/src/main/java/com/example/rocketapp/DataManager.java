@@ -126,7 +126,7 @@ public class DataManager {
             if (experiment.getId().equals(id))
                 return experiment;
         Log.e(TAG, "getExperiment() Experiment not found");
-        return new Experiment();
+        return null;
     }
 
     // Add or sync local experiment to FireStore
