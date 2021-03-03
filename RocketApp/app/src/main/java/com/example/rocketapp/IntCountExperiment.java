@@ -6,8 +6,6 @@ import com.google.firebase.firestore.Exclude;
 public class IntCountExperiment extends Experiment {
     public static String TYPE = "IntCount";
 
-    private ArrayList<IntCountTrial> trials = new ArrayList<>();
-
     public IntCountExperiment() {
         //TODO
     }
@@ -23,6 +21,7 @@ public class IntCountExperiment extends Experiment {
 
     @Exclude
     public float getMedian(){
+        ArrayList<IntCountTrial> trials = getTrials();
         int length = trials.size();
         float median;
         if(length%2==0) {
@@ -37,6 +36,7 @@ public class IntCountExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
+        ArrayList<IntCountTrial> trials = getTrials();
         int sum = 0;
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getPCount();
@@ -61,7 +61,7 @@ public class IntCountExperiment extends Experiment {
     @Exclude
     @Override
     public ArrayList<IntCountTrial> getTrials(){
-        return trials;
+        return (ArrayList<IntCountTrial>) trialsArrayList;
     }
 
 }

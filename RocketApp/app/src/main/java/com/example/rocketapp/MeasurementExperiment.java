@@ -6,8 +6,6 @@ import com.google.firebase.firestore.Exclude;
 public class MeasurementExperiment extends Experiment {
     public static String TYPE = "Measurement";
 
-    private ArrayList<MeasurementTrial> trials = new ArrayList<>();
-
     public MeasurementExperiment() {
         //TODO
     }
@@ -23,6 +21,7 @@ public class MeasurementExperiment extends Experiment {
 
     @Exclude
     public float getMedian(){
+        ArrayList<MeasurementTrial> trials = getTrials();
         int length = trials.size();
         float median;
         if(length%2==0) {
@@ -36,6 +35,7 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
+        ArrayList<MeasurementTrial> trials = getTrials();
         float sum = 0;
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getMeasurement();
@@ -61,7 +61,7 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     @Override
     public ArrayList<MeasurementTrial> getTrials(){
-        return trials;
+        return (ArrayList<MeasurementTrial>) trialsArrayList;
     }
 
 }

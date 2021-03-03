@@ -6,7 +6,6 @@ import com.google.firebase.firestore.Exclude;
 public class BinomialExperiment extends Experiment {
     public static String TYPE = "Binomial";
 
-    private ArrayList<BinomialTrial> trials = new ArrayList<>();
 
     public BinomialExperiment() {
         //TODO
@@ -22,26 +21,28 @@ public class BinomialExperiment extends Experiment {
     }
 
     @Exclude
-    public float getMedian(){
-        int length = trials.size();
-        float median;
-        if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getSuccessRate() + trials.get((length / 2) / 2).getSuccessRate())/2;
-        }
-        else {
-            median = (trials.get((length / 2)+1).getSuccessRate());
-        }
-        return median;
+    @Override
+    public float getMedian() {
+        //TODO
+        return 0;
     }
 
     @Exclude
     @Override
     public float getMean() {
-        float sum = 0;
-        for(int i = 0; i<trials.size(); i++){
-            sum = sum + trials.get(i).getSuccessRate();
+        ArrayList<BinomialTrial> trials = getTrials();
+        int length = trials.size();
+        int success = 0;
+        int failure = 0;
+        for(int i=0; i<length; i++){
+            if(trials.get(i).isValue()){
+                success = success+1;
+            }
+            else{
+                failure = failure+1;
+            }
         }
-        return (sum/trials.size());
+        return (float) ((success/failure)*1.0);
     }
 
     @Exclude
@@ -61,7 +62,7 @@ public class BinomialExperiment extends Experiment {
     @Exclude
     @Override
     public ArrayList<BinomialTrial> getTrials(){
-        return trials;
+        return (ArrayList<BinomialTrial>) trialsArrayList;
     }
 
 }
