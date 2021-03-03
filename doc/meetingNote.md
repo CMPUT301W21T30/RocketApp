@@ -1,4 +1,23 @@
-# Feb 17, 2021 Meeting Note
+# March 2nd, 2021 Meeting Note
+
+
+* Feb 16, 2021
+    * Create new branch for each new features implemented (use features as branch name)
+    * self assigned issues before working on it to prevent overlapping  
+    * Make Groups of Two to work on similar features:
+    * Trevor, Saji: Work on User Interface (e.g. xml file) and interaction between frontend and backend
+    * Mike, Archit: Great work on the backend and the Firestore, keep working on what you are doing (will be more define after next meeting)
+    * Saif, Aryan: Assign tasks during the next meeting
+
+
+* Feb 17, 2021
+    * Finished UI and StoryBoard
+    * Ask TA about plot, QR code, etc
+    * Meet with TA on Feb 18th to discuss work done
+
+* Feb 16, 2021
+    * Finished Project Backlog
+    * Ask TA definition of Risk and priority
 
 * Feb 15, 2021
     * Discussed the use of software for the storyboard
@@ -8,12 +27,3 @@
     * Project Backlog -> User Interface Mockups and Storyboard Sequences -> Object-Oriented Analysis -> Tool use
     * All: Read the Project Problem Description and start thinking about implementation of the Project Backlog
     * Mike: upload a workable application to github repo
-
-* Feb 16, 2021
-    * Finished Project Backlog
-    * Ask TA definition of Risk and priority
-
-* Feb 17, 2021
-    * Finished UI and StoryBoard
-    * Ask TA about plot, QR code, etc
-    * Meet with TA on Feb 18th to discuss work done
