@@ -4,6 +4,7 @@ import java.lang.Integer;
 import com.google.firebase.firestore.Exclude;
 
 public class IntCountExperiment extends Experiment {
+    public static String TYPE = "IntCount";
 
     private ArrayList<IntCountTrial> trials = new ArrayList<>();
 
@@ -11,9 +12,13 @@ public class IntCountExperiment extends Experiment {
         //TODO
     }
 
+    public IntCountExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
+        super(name, description, region, minTrials, geoLocationEnabled);
+    }
+
     @Override
     public String getType() {
-        return "IntCount";
+        return TYPE;
     }
 
     @Exclude
@@ -29,6 +34,7 @@ public class IntCountExperiment extends Experiment {
         return median;
     }
 
+    @Exclude
     @Override
     public float getMean() {
         int sum = 0;
@@ -38,12 +44,14 @@ public class IntCountExperiment extends Experiment {
         return (float) ((sum/trials.size())*1.0);
     }
 
+    @Exclude
     @Override
     public float getStdDev() {
         //TODO
         return 0;
     }
 
+    @Exclude
     @Override
     public float getQuartiles() {
         //TODO

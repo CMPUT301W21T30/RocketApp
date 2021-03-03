@@ -11,9 +11,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        exampleUsageForDataManager();
     }
 
-    private void ExampleUsageForDataManager() {
+    private void exampleUsageForDataManager() {
         // Should use the callback lambdas to do work following these methods, since these are asynchronous commands their effects
         // won't exist until after they synchronize with firebase (they will be synchronized at the point when lambdas are called).
 
@@ -31,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
 //
 //            });
 
-            // Publish a new experiment
+//             Publish a new experiment
 //            DataManager.publishExperiment(
-//                    new Experiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
+//                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
 //                    experiments -> {
 //                Log.d(TAG, "Subscribed experiments:");
 //
@@ -44,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d(TAG, "All experiments:");
 //                for (Experiment e : experiments) {
 //                    DataManager.subscribe(e, () -> {
-//
+//                        for (Experiment ex : DataManager.getExperimentArrayList()) {
+//                            Log.d(TAG, ex.toString());
+//                        }
 //                    });
 //                }
 //            });

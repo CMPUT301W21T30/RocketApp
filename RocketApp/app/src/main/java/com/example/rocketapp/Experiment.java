@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
+
 public abstract class Experiment extends FirestoreObject {
 
     public ExperimentInfo info;
@@ -73,6 +74,7 @@ public abstract class Experiment extends FirestoreObject {
                 "info=" + info +
                 '}';
     }
+
     public abstract String getType();
 
     @Exclude

@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.google.firebase.firestore.Exclude;
 
 public class BinomialTrial extends Trial {
+    public static final String TYPE = "Binomial";
 
     private int successNum;
     private int failureNum;
@@ -14,7 +15,7 @@ public class BinomialTrial extends Trial {
 
     @Override
     public String getType() {
-        return "Binomial";
+        return TYPE;
     }
 
     public void addSuccess(){

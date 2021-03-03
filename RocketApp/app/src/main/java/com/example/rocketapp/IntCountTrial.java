@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.google.firebase.firestore.Exclude;
 
 public class IntCountTrial extends Trial {
+    public static final String TYPE = "IntCount";
 
     private int posCount;
 
@@ -11,7 +12,7 @@ public class IntCountTrial extends Trial {
     }
 
     public String getType() {
-        return "IntCount";
+        return TYPE;
     }
 
     public void addPCount(){
