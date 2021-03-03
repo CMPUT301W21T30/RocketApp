@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        exampleUsageForDataManager();
+//        exampleUsageForDataManager();
     }
 
     private void exampleUsageForDataManager() {
@@ -33,12 +33,12 @@ public class MainActivity extends AppCompatActivity {
 //            });
 
 //             Publish a new experiment
-            DataManager.publishExperiment(
-                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
-                    experiments -> {
-                Log.d(TAG, "Subscribed experiments:");
-
-            });
+//            DataManager.publishExperiment(
+//                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
+//                    experiments -> {
+//                Log.d(TAG, "Subscribed experiments:");
+//
+//            });
 //
             // Pull all experiments from firebase
 //            DataManager.pullAllExperiments(experiments -> {
