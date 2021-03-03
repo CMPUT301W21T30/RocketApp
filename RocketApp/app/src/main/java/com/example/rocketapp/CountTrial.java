@@ -7,8 +7,14 @@ public class CountTrial extends Trial {
 
     private int numberCounted;
 
-    public CountTrial() {
+    public CountTrial(String description) {
+        super(description);
         numberCounted = 0;
+    }
+
+    public CountTrial(String description, int number){
+        super(description);
+        numberCounted = number;
     }
 
     @Override
@@ -20,7 +26,6 @@ public class CountTrial extends Trial {
         numberCounted = numberCounted + 1;
     }
 
-    @Exclude
     public int getCount(){
         return numberCounted;
     }

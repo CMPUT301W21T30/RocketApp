@@ -9,6 +9,12 @@ public class BinomialTrial extends Trial {
 
     public BinomialTrial(String description) {
         super(description);
+        value = false;
+    }
+
+    public BinomialTrial(String description, boolean success) {
+        super(description);
+        value = success;
     }
 
     @Override
@@ -16,7 +22,6 @@ public class BinomialTrial extends Trial {
         return TYPE;
     }
 
-    @Exclude
     public boolean isValue() {
         return value;
     }
