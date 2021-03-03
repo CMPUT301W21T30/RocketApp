@@ -1,6 +1,7 @@
 package com.example.rocketapp;
 import android.util.Log;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
@@ -33,6 +34,19 @@ public class DataManager {
     private static final String USERS = "Users";
     private static final String TRIALS = "Trials";
 
+    // TODO Add any new Experiment types to this map
+    private static final ImmutableMap<String, Class<? extends Experiment>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment>>builder()
+            .put(IntCountExperiment.TYPE, IntCountExperiment.class)
+            .build();
+
+    // TODO Add any new Experiment types to this map
+    private static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
+            .put(IntCountTrial.TYPE, IntCountTrial.class)
+            .put(MeasurementTrial.TYPE, MeasurementTrial.class)
+            .put(BinomialTrial.TYPE, BinomialTrial.class)
+            .put(CountTrial.TYPE, CountTrial.class)
+            .build();
+
     static {
         db = FirebaseFirestore.getInstance();
         initializeExperiments();
@@ -41,25 +55,25 @@ public class DataManager {
 
     // Creates "Friend" like functionality so function calls requiring a new ID can only be called from this class
     public static class ID {
-        private String id;
+        private String key;
 
         public ID() {}
 
         private ID(String id) {
-            this.id = id;
+            this.key = id;
         }
 
         public String getKey() {
-            return id;
+            return key;
         }
 
         @Exclude
         public boolean isValid() {
-            return id != null;
+            return key != null;
         }
 
         public boolean equals(ID other) {
-            return this.id != null && other != null && this.id.equals(other.id);
+            return this.key != null && other != null && this.key.equals(other.key);
         }
     }
 
@@ -126,7 +140,7 @@ public class DataManager {
             if (experiment.getId().equals(id))
                 return experiment;
         Log.e(TAG, "getExperiment() Experiment not found");
-        return new Experiment();
+        return null;
     }
 
     // Add or sync local experiment to FireStore
@@ -237,22 +251,25 @@ public class DataManager {
 
         // Listen for changes to experiment info
         experimentsRef.document(documentId).addSnapshotListener((snapshot, e) -> {
-            Experiment updatedExperiment = readFirebaseObjectSnapshot(Experiment.class, snapshot);
-            experiment.info = updatedExperiment.info;
+            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
+            Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot);
+            if (updatedExperiment != null) experiment.info = updatedExperiment.info;
+            else Log.e(TAG, "classType null in listen");
+
             onUpdate.callBack(experiment);
         });
 
         // Listen for changes in Trials
         CollectionReference trialsRef = experimentsRef.document(documentId).collection(TRIALS);
         trialsRef.addSnapshotListener((snapshots, e) -> {
-                    setTrials(experiment, snapshots);
+                    updateTrials(experiment, snapshots);
                     Log.d(TAG, "Pulled Trials: " + snapshots.size());
                 });
 
         // Listen for changes in Questions
         CollectionReference questionsRef = experimentsRef.document(documentId).collection(QUESTIONS);
         questionsRef.addSnapshotListener((snapshots, e) -> {
-                    setQuestions(experiment, snapshots);
+                    updateQuestions(experiment, snapshots);
                     Log.d(TAG, "Pulled Questions: " + snapshots.size());
                 });
     }
@@ -305,7 +322,9 @@ public class DataManager {
             experimentsRef.whereIn(FieldPath.documentId(), experimentIds).get()
                     .addOnSuccessListener(experiments -> {
                         for (DocumentSnapshot snapshot : experiments) {
-                            subscriptions.add(readFirebaseObjectSnapshot(Experiment.class, snapshot));
+                            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
+                            if (classType != null) subscriptions.add(readFirebaseObjectSnapshot(classType, snapshot));
+                            else Log.e(TAG, "experimentClassMap returned null");
                         }
                         subscribedExperimentArrayList = subscriptions;
                         onComplete.callBack(subscribedExperimentArrayList);
@@ -334,7 +353,11 @@ public class DataManager {
             experimentsRef.whereIn(FieldPath.documentId(), experimentIds).get()
                     .addOnSuccessListener(experimentSnapshots -> {
                         for (DocumentSnapshot snapshot : experimentSnapshots)
-                            experiments.add(readFirebaseObjectSnapshot(Experiment.class, snapshot));
+                        {
+                            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
+                            if (classType != null) experiments.add(readFirebaseObjectSnapshot(classType, snapshot));
+                            else Log.e(TAG, "classType null in pullAllFromCollection");
+                        }
                         ownedExperimentsArrayList = experiments;
                         if (onComplete != null) onComplete.callBack(ownedExperimentsArrayList);
                     }).addOnFailureListener(e -> {
@@ -367,7 +390,11 @@ public class DataManager {
                     if (task.getDocuments().size() > 0) {
                         DocumentSnapshot snapshot = task.getDocuments().get(0);
                         user = readFirebaseObjectSnapshot(User.class, snapshot);
-                        Log.d(TAG, "Login successful: " + user.toString());
+                        if (user != null) Log.d(TAG, "Login successful: " + user.toString());
+                        else if (onFailure != null) {
+                            onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
+                            return;
+                        };
                         if (onSuccess != null) onSuccess.callBack(user);
                     } else {
                         if (onFailure != null) onFailure.callBack(new Exception("User not found"));
@@ -513,7 +540,8 @@ public class DataManager {
     // Converts firebase snapshot to classes that extend FirebaseObjects and adds id
     private static <ClassType extends FirestoreObject> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
         ClassType object = snapshot.toObject(typeClass);
-        object.setId(new ID(snapshot.getId()));
+        if (object != null) object.setId(new ID(snapshot.getId()));
+        else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
         return object;
     }
 
@@ -538,12 +566,13 @@ public class DataManager {
     }
 
     private static void updateExperiments(QuerySnapshot experimentsSnapshot) {
-        experimentArrayList.clear();
-        for (QueryDocumentSnapshot snapshot : experimentsSnapshot)
-            experimentArrayList.add(readFirebaseObjectSnapshot(Experiment.class, snapshot));
-
-        for (Experiment experiment : experimentArrayList)
-            System.out.println("Experiment: " + experiment.toString());
+        ArrayList<Experiment> array = new ArrayList<>();
+        for (QueryDocumentSnapshot snapshot : experimentsSnapshot) {
+            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
+            if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot));
+            else Log.e(TAG, "classType null in updateExperiments");
+        }
+        experimentArrayList = array;
     }
 
     private static void initializeUsers() {
@@ -562,16 +591,19 @@ public class DataManager {
         userArrayList = users;
     }
 
-    private static void setTrials(Experiment experiment, QuerySnapshot userSnapshots) {
-        ArrayList<Trial> trials = new ArrayList<>();
+    private static void updateTrials(Experiment experiment, QuerySnapshot userSnapshots) {
+        ArrayList<Trial> array = new ArrayList<>();
 
-        for (QueryDocumentSnapshot snapshot : userSnapshots)
-            trials.add(readFirebaseObjectSnapshot(Trial.class, snapshot));
+        for (QueryDocumentSnapshot snapshot : userSnapshots) {
+            Class<? extends Trial> classType = trialClassMap.get(snapshot.getString("type"));
+            if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot));
+            else Log.e(TAG, "classType null in updateTrials");
+        }
 
-        experiment.setTrials(trials);
+        experiment.setTrials(array);
     }
 
-    private static void setQuestions(Experiment experiment, QuerySnapshot userSnapshots) {
+    private static void updateQuestions(Experiment experiment, QuerySnapshot userSnapshots) {
         ArrayList<Question> questions = new ArrayList<>();
 
         for (QueryDocumentSnapshot snapshot : userSnapshots)

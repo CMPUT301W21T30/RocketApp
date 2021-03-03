@@ -2,7 +2,7 @@ package com.example.rocketapp;
 
 import com.google.firebase.firestore.Exclude;
 
-public class Trial extends FirestoreObject {
+public abstract class Trial extends FirestoreObject {
 
     private String description;
 
@@ -15,4 +15,6 @@ public class Trial extends FirestoreObject {
     public String getDescription() {
         return description;
     }
+
+    public abstract String getType();
 }
