@@ -11,7 +11,7 @@ import static android.content.ContentValues.TAG;
 public abstract class Experiment extends FirestoreObject {
 
     public ExperimentInfo info;
-    private ArrayList<Trial> trialsArrayList = new ArrayList<>();
+    protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();
     private ArrayList<Question> questionsArrayList = new ArrayList<>();
     private boolean isActive;
 
@@ -40,7 +40,7 @@ public abstract class Experiment extends FirestoreObject {
     }
 
     @Exclude
-    public abstract ArrayList<?> getTrials() ;
+    public abstract ArrayList<? extends Trial> getTrials() ;
 
     @Exclude
     public ArrayList<Question> getQuestions() {
@@ -56,7 +56,7 @@ public abstract class Experiment extends FirestoreObject {
     }
 
     @Exclude
-    public void setTrials(ArrayList<Trial> trials) {
+    public void setTrials(ArrayList<? extends Trial> trials) {
         trialsArrayList = trials;
     }
 
@@ -88,7 +88,6 @@ public abstract class Experiment extends FirestoreObject {
     public abstract float getQuartiles();
 
 }
-
 
 
 
