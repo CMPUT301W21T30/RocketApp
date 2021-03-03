@@ -18,8 +18,8 @@ public class MainActivity extends AppCompatActivity {
         // Should use the callback lambdas to do work following these methods, since these are asynchronous commands their effects
         // won't exist until after they synchronize with firebase (they will be synchronized at the point when lambdas are called).
 
-//        // Create a new user and login
-//        DataManager.createUser("Morty", user -> {
+        // Create a new user and login
+//        DataManager.createUser("Marty", user -> {
 //
 //        }, error -> {
 //            Log.e(TAG, error.toString());
@@ -33,12 +33,12 @@ public class MainActivity extends AppCompatActivity {
 //            });
 
 //             Publish a new experiment
-//            DataManager.publishExperiment(
-//                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
-//                    experiments -> {
-//                Log.d(TAG, "Subscribed experiments:");
-//
-//            });
+            DataManager.publishExperiment(
+                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
+                    experiments -> {
+                Log.d(TAG, "Subscribed experiments:");
+
+            });
 //
             // Pull all experiments from firebase
 //            DataManager.pullAllExperiments(experiments -> {
@@ -54,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
 //            // Pull all experiments owned by this user from firebase
 //            DataManager.pullOwnedExperiments(experiments -> {
-//                for (Experiment experiment : experiments)
-//                    DataManager.push(new Question("Here is a question"), experiment, trial -> {});
+//                for (Experiment experiment : experiments) {
+////                    DataManager.push(new Question("Here is a question"), experiment, question -> {});
+//                    DataManager.push(new BinomialTrial("Here is a question"), experiment, trial -> {});
+//                }
 //            });
 //
 //            // Pull all subscriptions by this user from firebase

@@ -8,7 +8,8 @@ public class BinomialTrial extends Trial {
     private int successNum;
     private int failureNum;
 
-    public BinomialTrial() {
+    public BinomialTrial(String description) {
+        super(description);
         successNum = 0;
         failureNum = 0;
     }
