@@ -7,6 +7,7 @@ public class BinomialTrial extends Trial {
 
     private int successNum;
     private int failureNum;
+    private float successRate;
 
     public BinomialTrial(String description) {
         super(description);
@@ -35,5 +36,16 @@ public class BinomialTrial extends Trial {
     @Exclude
     public int getFailure(){
         return failureNum;
+    }
+
+    @Exclude
+    public float getSuccessRate(){
+        if(successNum+failureNum==0){
+            successRate = 0;
+        }
+        else{
+            successRate = (float)successNum/failureNum;
+        }
+        return successRate;
     }
 }

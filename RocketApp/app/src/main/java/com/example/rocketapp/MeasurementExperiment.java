@@ -3,16 +3,16 @@ import java.util.ArrayList;
 import java.lang.Integer;
 import com.google.firebase.firestore.Exclude;
 
-public class IntCountExperiment extends Experiment {
-    public static String TYPE = "IntCount";
+public class MeasurementExperiment extends Experiment {
+    public static String TYPE = "Measurement";
 
-    private ArrayList<IntCountTrial> trials = new ArrayList<>();
+    private ArrayList<MeasurementTrial> trials = new ArrayList<>();
 
-    public IntCountExperiment() {
+    public MeasurementExperiment() {
         //TODO
     }
 
-    public IntCountExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
+    public MeasurementExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(name, description, region, minTrials, geoLocationEnabled);
     }
 
@@ -26,10 +26,9 @@ public class IntCountExperiment extends Experiment {
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getPCount() + trials.get((length / 2) / 2).getPCount())/2;
-        }
-        else {
-            median = (trials.get((length / 2)+1).getPCount());
+            median = (trials.get((length / 2) + 1).getMeasurement() + trials.get((length / 2) / 2).getMeasurement() / 2);
+        } else {
+            median = (trials.get((length / 2)+1).getMeasurement());
         }
         return median;
     }
@@ -37,11 +36,12 @@ public class IntCountExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
-        int sum = 0;
+        float sum = 0;
         for(int i = 0; i<trials.size(); i++){
-            sum = sum + trials.get(i).getPCount();
+            sum = sum + trials.get(i).getMeasurement();
         }
-        return (float) ((sum/trials.size())*1.0);
+        final float mean = sum / trials.size();
+        return mean;
     }
 
     @Exclude
@@ -60,7 +60,7 @@ public class IntCountExperiment extends Experiment {
 
     @Exclude
     @Override
-    public ArrayList<IntCountTrial> getTrials(){
+    public ArrayList<MeasurementTrial> getTrials(){
         return trials;
     }
 

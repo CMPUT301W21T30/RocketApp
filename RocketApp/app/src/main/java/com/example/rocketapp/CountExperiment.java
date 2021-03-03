@@ -3,16 +3,16 @@ import java.util.ArrayList;
 import java.lang.Integer;
 import com.google.firebase.firestore.Exclude;
 
-public class IntCountExperiment extends Experiment {
-    public static String TYPE = "IntCount";
+public class CountExperiment extends Experiment {
+    public static String TYPE = "Count";
 
-    private ArrayList<IntCountTrial> trials = new ArrayList<>();
+    private ArrayList<CountTrial> trials = new ArrayList<>();
 
-    public IntCountExperiment() {
+    public CountExperiment() {
         //TODO
     }
 
-    public IntCountExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
+    public CountExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(name, description, region, minTrials, geoLocationEnabled);
     }
 
@@ -26,10 +26,10 @@ public class IntCountExperiment extends Experiment {
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getPCount() + trials.get((length / 2) / 2).getPCount())/2;
+            median = (trials.get((length / 2) + 1).getCount() + trials.get((length / 2) / 2).getCount())/2;
         }
         else {
-            median = (trials.get((length / 2)+1).getPCount());
+            median = (trials.get((length / 2)+1).getCount());
         }
         return median;
     }
@@ -39,7 +39,7 @@ public class IntCountExperiment extends Experiment {
     public float getMean() {
         int sum = 0;
         for(int i = 0; i<trials.size(); i++){
-            sum = sum + trials.get(i).getPCount();
+            sum = sum + trials.get(i).getCount();
         }
         return (float) ((sum/trials.size())*1.0);
     }
@@ -60,7 +60,7 @@ public class IntCountExperiment extends Experiment {
 
     @Exclude
     @Override
-    public ArrayList<IntCountTrial> getTrials(){
+    public ArrayList<CountTrial> getTrials(){
         return trials;
     }
 

@@ -40,9 +40,7 @@ public abstract class Experiment extends FirestoreObject {
     }
 
     @Exclude
-    public ArrayList<Trial> getTrials() {
-        return trialsArrayList;
-    }
+    public abstract ArrayList<?> getTrials() ;
 
     @Exclude
     public ArrayList<Question> getQuestions() {
@@ -88,6 +86,7 @@ public abstract class Experiment extends FirestoreObject {
 
     @Exclude
     public abstract float getQuartiles();
+
 }
 
 
