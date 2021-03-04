@@ -7,8 +7,14 @@ public class IntCountTrial extends Trial {
 
     private int posCount;
 
-    public IntCountTrial() {
+    public IntCountTrial(String description) {
+        super(description);
         posCount = 0;
+    }
+
+    public IntCountTrial(String description, int value) {
+        super(description);
+        posCount = value;
     }
 
     public String getType() {
@@ -19,7 +25,6 @@ public class IntCountTrial extends Trial {
         posCount = posCount + 1;
     }
 
-    @Exclude
     public int getPCount(){
         return posCount;
     }

@@ -7,8 +7,13 @@ public class MeasurementTrial extends Trial {
 
     private float measurement;
 
-    public MeasurementTrial() {
+    public MeasurementTrial(String description) {
+        super(description);
         measurement = 0;
+    }
+    public MeasurementTrial(String description, float value){
+        super(description);
+        measurement = value;
     }
     public MeasurementTrial(float measure){
         measurement = measure;
@@ -22,7 +27,6 @@ public class MeasurementTrial extends Trial {
         return TYPE;
     }
 
-    @Exclude
     public float getMeasurement(){
         return measurement;
     }

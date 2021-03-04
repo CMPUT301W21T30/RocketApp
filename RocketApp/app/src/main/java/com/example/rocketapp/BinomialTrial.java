@@ -5,13 +5,16 @@ import com.google.firebase.firestore.Exclude;
 public class BinomialTrial extends Trial {
     public static final String TYPE = "Binomial";
 
-    private int successNum;
-    private int failureNum;
+    private boolean value;
 
     public BinomialTrial(String description) {
         super(description);
-        successNum = 0;
-        failureNum = 0;
+        value = false;
+    }
+
+    public BinomialTrial(String description, boolean success) {
+        super(description);
+        value = success;
     }
 
     @Override
@@ -19,21 +22,11 @@ public class BinomialTrial extends Trial {
         return TYPE;
     }
 
-    public void addSuccess(){
-        successNum = successNum + 1;
+    public boolean isValue() {
+        return value;
     }
 
-    public void addFailure(){
-        failureNum = failureNum + 1;
-    }
-
-    @Exclude
-    public int getSuccess(){
-        return successNum;
-    }
-
-    @Exclude
-    public int getFailure(){
-        return failureNum;
+    public void setValue(boolean value) {
+        this.value = value;
     }
 }
