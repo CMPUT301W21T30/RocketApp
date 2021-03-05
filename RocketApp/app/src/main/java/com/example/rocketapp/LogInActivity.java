@@ -1,18 +1,78 @@
 package com.example.rocketapp;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Switch;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static android.content.ContentValues.TAG;
 
-public class MainActivity extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
+
+    public Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
+//
+        // Set up switch
+        AtomicBoolean isOwner = new AtomicBoolean(false);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch isOwnerSwitch = findViewById(R.id.isOwnerSwitch);
+        isOwnerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isOwner.set(isChecked);
+        });
 
-//        exampleUsageForDataManager();
+        // set up login Button
+        loginBtn = findViewById(R.id.loginBtn);
+        loginBtn.setOnClickListener(v -> {
+            EditText usernameEditText = findViewById(R.id.usernameEditText);
+            String username = usernameEditText.getText().toString();
+            loginOrCreateUser(username, isOwner.get());
+        });
+
+
     }
+
+
+
+
+
+    private void loginOrCreateUser(String username, Boolean isOwner) {
+        DataManager.login(username, user -> {
+            Log.d("Login Succesfully", "Login Successfully");
+            DataManager.setIsOwner(isOwner);
+            Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+            startActivity(ExperimentsListActivityIntent);
+        }, loginError -> {
+
+            Log.d("Login Error", "User Doesn't exist");
+            DataManager.createUser(username, user -> {
+
+                Log.d("Created New user", "Created New User.");
+                DataManager.login(username, user1 -> {
+
+                    DataManager.setIsOwner(isOwner);
+                    Log.d("Login Succesfully", "Login Successfully");
+                    Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+                    startActivity(ExperimentsListActivityIntent);
+                }, loginErrorAfterCreateUser -> {
+                    Log.e("Can't Login", "User cannot be created and Login.");
+                });
+            }, createUserError -> {
+                Log.e("User cannot be created", "User Can Not be created.");
+            });
+        });
+    }
+
 
     private void exampleUsageForDataManager() {
         // Should use the callback lambdas to do work following these methods, since these are asynchronous commands their effects
@@ -70,5 +130,8 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "User not found.");
         });
     }
+
+
+
 }
 
