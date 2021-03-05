@@ -2,8 +2,11 @@ package com.example.rocketapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -46,14 +49,25 @@ public class LogInActivity extends AppCompatActivity {
     private void loginOrCreateUser(String username, Boolean isOwner) {
         DataManager.login(username, user -> {
             Log.d("Login Succesfully", "Login Successfully");
-            // TODO: Pass User Info to main screen activity
-            // startActivity(Intent);
-        }, e -> {
+            DataManager.setIsOwner(isOwner);
+            Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+            startActivity(ExperimentsListActivityIntent);
+        }, loginError -> {
+
+            Log.d("Login Error", "User Doesn't exist");
             DataManager.createUser(username, user -> {
-                Log.d("Create New user", "Create New User.");
-                // TODO: Pass User Info to main Screen Activity
-                // startActivity(Intent);
-            }, e1 -> {
+
+                Log.d("Created New user", "Created New User.");
+                DataManager.login(username, user1 -> {
+
+                    DataManager.setIsOwner(isOwner);
+                    Log.d("Login Succesfully", "Login Successfully");
+                    Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+                    startActivity(ExperimentsListActivityIntent);
+                }, loginErrorAfterCreateUser -> {
+                    Log.e("Can't Login", "User cannot be created and Login.");
+                });
+            }, createUserError -> {
                 Log.e("User cannot be created", "User Can Not be created.");
             });
         });

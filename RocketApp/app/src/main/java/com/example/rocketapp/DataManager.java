@@ -18,6 +18,7 @@ import static android.content.ContentValues.TAG;
 
 public class DataManager {
     private static User user;
+    private static boolean isOwner;
     private static ArrayList<User> userArrayList;
     private static ArrayList<Experiment> ownedExperimentsArrayList;
     private static ArrayList<Experiment> subscribedExperimentArrayList;
@@ -52,6 +53,10 @@ public class DataManager {
         initializeExperiments();
         initializeUsers();
     }
+
+    public static boolean getIsOwner() { return isOwner; }
+
+    public static void setIsOwner(boolean isOwner) { DataManager.isOwner = isOwner; }
 
     // Creates "Friend" like functionality so function calls requiring a new ID can only be called from this class
     public static class ID {
