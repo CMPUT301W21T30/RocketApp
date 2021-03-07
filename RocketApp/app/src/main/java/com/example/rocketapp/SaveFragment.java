@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
 
+
+// popup to confirm information has been saved on the user profile page
 public class SaveFragment extends AppCompatDialogFragment {
 
     @Override

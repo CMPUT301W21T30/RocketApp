@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class ExperimentsListActivity extends AppCompatActivity {
+    //use this button to navigate to the profile page of the user
     public ImageButton profileBtn;
 
     @Override
