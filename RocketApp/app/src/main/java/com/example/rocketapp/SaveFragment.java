@@ -16,7 +16,7 @@ public class SaveFragment extends AppCompatDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("saved!")
-                .setMessage("you're information has been saved successfully")
+                .setMessage("your information has been saved successfully")
                 .setPositiveButton("ok", new DialogInterface.OnClickListener(){
                     @Override
                     public  void onClick(DialogInterface dialogInterface, int i ){
