@@ -38,6 +38,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 DataManager.getUser().setPhone_number(phone);
                 DataManager.getUser().setEmail(email);
 
+                DataManager.push(DataManager.getUser());
+
             }
         });
 
