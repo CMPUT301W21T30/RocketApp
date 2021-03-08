@@ -4,13 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class ExperimentsListActivity extends AppCompatActivity {
+public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
+    
     //use this button to navigate to the profile page of the user
     public ImageButton profileBtn;
 
@@ -35,6 +38,11 @@ public class ExperimentsListActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void returnExperiment(Experiment exp) {
+        Log.d("ExperimentsListActivity", "sendExperiment: got the experiment" + exp.info.getDescription());
+        //TODO: handle received experiment
+    }
             /*
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(v -> {
