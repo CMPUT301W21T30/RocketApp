@@ -2,12 +2,20 @@ package com.example.rocketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
-public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener{
-
+public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
+    
+    //use this button to navigate to the profile page of the user
+    public ImageButton profileBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +26,15 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         textView.setText(DataManager.getUser().getName());
         TextView textView2 = findViewById(R.id.textView2);
         textView2.setText(String.valueOf(DataManager.getIsOwner()));
+
+
+        profileBtn = findViewById(R.id.profile_button);
+        profileBtn.setOnClickListener(v -> {
+
+            Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+            startActivity(userProfileIntent);
+
+        });
     }
 
 
@@ -26,4 +43,12 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         Log.d("ExperimentsListActivity", "sendExperiment: got the experiment" + exp.info.getDescription());
         //TODO: handle received experiment
     }
+            /*
+        loginBtn = findViewById(R.id.loginBtn);
+        loginBtn.setOnClickListener(v -> {
+        EditText usernameEditText = findViewById(R.id.usernameEditText);
+        String username = usernameEditText.getText().toString();
+        loginOrCreateUser(username, isOwner.get());
+    });
+    */
 }

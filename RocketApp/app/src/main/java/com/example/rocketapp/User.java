@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class User extends FirestoreObject {
 
     private String name;
+    private String email;
+    private String phone_number;
     // TODO add contact info
 
     public User(){}
@@ -38,6 +40,23 @@ public class User extends FirestoreObject {
                 ", id='" + getId() + '\'' +
                 '}';
     }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+    public void setPhone_number(String phone_number){
+        this.phone_number = phone_number;
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+
+    public String getPhone_number(){
+        return this.phone_number;
+    }
+
 
 
 }
