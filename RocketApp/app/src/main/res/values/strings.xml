@@ -16,19 +16,5 @@
         </string-array>
 
 
-    <string name="app_name">RocketApp</string>
-    <string name="description">Description</string>
-    <string name="region">Region</string>
-    <string name="min_trial">Min trial count</string>
-    <string name="geolocation">Geolocation</string>
-    <string name="ok">Ok</string>
-    <string name="cancel">Cancel</string>
-    <string name="dropdown_prompt">Select Experiment Type</string>
-    <string-array name ="experiments">
-        <item>Binomial Experiment</item>
-        <item>Count Experiment</item>
-        <item>Integer Count Experiment</item>
-        <item>Measurement Experiment</item>
-    </string-array>
-
+  
 </resources>
