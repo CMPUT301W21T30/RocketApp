@@ -19,11 +19,12 @@ public class ExperimentsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
 
+        /*
         TextView textView = findViewById(R.id.textView);
         textView.setText(DataManager.getUser().getName());
         TextView textView2 = findViewById(R.id.textView2);
         textView2.setText(String.valueOf(DataManager.getIsOwner()));
-
+        */
 
         profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
@@ -32,7 +33,9 @@ public class ExperimentsListActivity extends AppCompatActivity {
             startActivity(userProfileIntent);
 
         });
+
     }
+
 
 
             /*
