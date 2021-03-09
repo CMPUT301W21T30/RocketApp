@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class ExperimentsListActivity extends AppCompatActivity {
+public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
 
     //use this button to navigate to the profile page of the user
     public ImageButton profileBtn;
@@ -22,12 +22,11 @@ public class ExperimentsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
 
-        /*
-        TextView textView = findViewById(R.id.textView);
-        textView.setText(DataManager.getUser().getName());
-        TextView textView2 = findViewById(R.id.textView2);
-        textView2.setText(String.valueOf(DataManager.getIsOwner()));
-        */
+        //TextView textView = findViewById(R.id.textView);
+        //textView.setText(DataManager.getUser().getName());
+        //TextView textView2 = findViewById(R.id.textView2);
+        //textView2.setText(String.valueOf(DataManager.getIsOwner()));
+
 
         profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
@@ -36,7 +35,6 @@ public class ExperimentsListActivity extends AppCompatActivity {
             startActivity(userProfileIntent);
 
         });
-
     }
 
 
@@ -45,8 +43,7 @@ public class ExperimentsListActivity extends AppCompatActivity {
         Log.d("ExperimentsListActivity", "sendExperiment: got the experiment" + exp.info.getDescription());
         //TODO: handle received experiment
     }
-
-    /*
+            /*
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(v -> {
         EditText usernameEditText = findViewById(R.id.usernameEditText);
