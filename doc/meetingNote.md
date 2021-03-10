@@ -4,7 +4,7 @@
     * Trevor, Saji: working on main page UI with some backend (handling experiment list)
     * Mike, Archit: Mostly backend work with some implementation of UI user classes, Firestore implementation and major base classes mostly complete 
     * Saif, Aryan: Working on QR code and implementing ExperimentFragment
-    * Important: will update UI to avoid switching between tabs for different experiment types to avoid complications - no final solution yet but a couple of ideas were discussed
+    * Important: will update UI to avoid switching between tabs for different experiment types to avoid complications - no final solution yet but a couple of ideas were discussed.
 
 * Feb 16, 2021
     * Create new branch for each new features implemented (use features as branch name)
