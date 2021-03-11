@@ -6,7 +6,6 @@ import static android.content.ContentValues.TAG;
 
 class ExperimentInfo {
     private DataManager.ID ownerId;
-    private String name;
     private String description;
     private String region;
     private int minTrials;
@@ -14,8 +13,7 @@ class ExperimentInfo {
 
     public ExperimentInfo() { }
 
-    public ExperimentInfo(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
-        this.name = name;
+    public ExperimentInfo(String description, String region, int minTrials, boolean geoLocationEnabled) {
         this.description = description;
         this.region = region;
         this.minTrials = minTrials;
@@ -23,10 +21,6 @@ class ExperimentInfo {
     }
 
     public DataManager.ID getOwner() { return ownerId; }
-
-    public String getName() {
-        return name;
-    }
 
     public String getDescription() {
         return description;
@@ -48,10 +42,6 @@ class ExperimentInfo {
         ownerId = id;
     }
 
-    public void setName(User owner, String name) {
-        if (hasPermission(owner)) this.name = name;
-    }
-
     public void setDescription(User owner, String description) {
         if (hasPermission(owner)) this.description = description;
     }
@@ -68,7 +58,7 @@ class ExperimentInfo {
         if (hasPermission(owner)) this.geoLocationEnabled = geoLocationEnabled;
     }
 
-    boolean hasPermission(User owner) {
+    public boolean hasPermission(User owner) {
         boolean permission = this.ownerId.equals(owner.getId());
         if (permission)
             return true;
@@ -77,11 +67,15 @@ class ExperimentInfo {
         return false;
     }
 
+    public boolean contains(String string) {
+        return this.region.contains(string) ||
+                this.description.contains(string);
+    }
+
     @Override
     public String toString() {
         return "ExperimentInfo{" +
                 "owner=" + ownerId +
-                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", region='" + region + '\'' +
                 ", minTrials=" + minTrials +

@@ -5,28 +5,39 @@ import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * Handles all interaction between the application and firestore.
+ * Keeps firestore synced user list, experiments list, and current user.
+ * Handles user login and account creation, and adding/modifying/deleting experiments, trials, and questions.
+ */
 public class DataManager {
     private static User user;
-    private static boolean isOwner;
     private static ArrayList<User> userArrayList;
-    private static ArrayList<Experiment> ownedExperimentsArrayList;
-    private static ArrayList<Experiment> subscribedExperimentArrayList;
+    private static ArrayList<ID> subscriptions;
     private static ArrayList<Experiment> experimentArrayList;
 
     private static final FirebaseFirestore db;
     private static CollectionReference experimentsRef;
     private static CollectionReference usersRef;
+    private static ListenerRegistration
+            subscriptionsListener,
+            usersListener,
+            experimentsListener,
+            experimentListener,
+            trialsListener,
+            questionsListener;
 
     // Collection names
     private static final String SUBSCRIPTIONS = "Subscriptions";
@@ -38,6 +49,9 @@ public class DataManager {
     // TODO Add any new Experiment types to this map
     private static final ImmutableMap<String, Class<? extends Experiment>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment>>builder()
             .put(IntCountExperiment.TYPE, IntCountExperiment.class)
+            .put(CountExperiment.TYPE, CountExperiment.class)
+            .put(BinomialExperiment.TYPE, BinomialExperiment.class)
+            .put(MeasurementExperiment.TYPE, MeasurementExperiment.class)
             .build();
 
     // TODO Add any new Experiment types to this map
@@ -48,17 +62,22 @@ public class DataManager {
             .put(CountTrial.TYPE, CountTrial.class)
             .build();
 
+
     static {
         db = FirebaseFirestore.getInstance();
         initializeExperiments();
         initializeUsers();
     }
 
-    public static boolean getIsOwner() { return isOwner; }
 
-    public static void setIsOwner(boolean isOwner) { DataManager.isOwner = isOwner; }
+    // Private to prevent instantiation
+    private DataManager() { }
 
-    // Creates "Friend" like functionality so function calls requiring a new ID can only be called from this class
+
+    /**
+     * ID class, Creates "Friend" like functionality so function calls requiring a new ID can only be called
+     * from this class to make sure updates will be synced with firestore.
+     */
     public static class ID {
         private String key;
 
@@ -68,41 +87,34 @@ public class DataManager {
             this.key = id;
         }
 
+        /**
+         * Gets the key corresponding to the documentId in firestore.
+         * @return
+         *      string corresponding to the documentId in firestore.
+         */
         public String getKey() {
             return key;
         }
 
+        /**
+         * Returns true if it has a valid key. Will only be true for objects pulled from firestore.
+         * @return
+         *      true if has valid key
+         */
         @Exclude
         public boolean isValid() {
             return key != null;
         }
 
-        public boolean equals(ID other) {
-            return this.key != null && other != null && this.key.equals(other.key);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ID id = (ID) o;
+            return this.key.equals(id.key);
         }
     }
 
-    private DataManager() { }
-
-    public static User getUser() {
-        return user;
-    }
-
-    public static ArrayList<User> getUserArrayList() {
-        return userArrayList;
-    }
-
-    public static ArrayList<Experiment> getExperimentArrayList() {
-        return experimentArrayList;
-    }
-
-    public static ArrayList<Experiment> getOwnedExperimentsArrayList() {
-        return ownedExperimentsArrayList;
-    }
-
-    public static ArrayList<Experiment> getSubscribedExperimentArrayList() {
-        return subscribedExperimentArrayList;
-    }
 
     public interface Callback {
         void callBack();
@@ -136,10 +148,98 @@ public class DataManager {
         void callBack(User user);
     }
 
-    /** Experiments **/
 
-    // Get experiment by id. Should send Id through intent when creating a new ExperimentActivity,
-    // then get the experiment with this.
+    /**
+     * Get the current logged in user
+     * @return
+     *      The current user
+     */
+    public static User getUser() {
+        return user;
+    }
+
+
+    /**
+     * Gets the current list of all users
+     * @return
+     *      Array of users
+     */
+    public static ArrayList<User> getUserArrayList() {
+        return userArrayList;
+    }
+
+
+    /**
+     * Gets the list of all experiments
+     * @return
+     *      List of all experiments
+     */
+    public static ArrayList<Experiment> getExperimentArrayList() {
+        return experimentArrayList;
+    }
+
+
+    /**
+     * Get a filtered list of all experiments
+     * @param filter
+     *      String keyword to search for
+     * @return
+     *      filtered list of experiments
+     */
+    public static ArrayList<Experiment> getExperimentArrayList(String filter) {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
+            if (experiment.info.contains(filter))
+                filteredExperiments.add(experiment);
+        }
+
+        return experimentArrayList;
+    }
+
+
+    /**
+     * Gets all experiments owned by current user
+     * @return
+     *      list of owned experiments
+     */
+    public static ArrayList<Experiment> getOwnedExperimentsArrayList() {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
+            if (experiment.info.getOwner().getKey().equals(user.getId().getKey()))
+                filteredExperiments.add(experiment);
+        }
+
+        return filteredExperiments;
+    }
+
+
+    /**
+     * Gets all experiments subscribed to by current user
+     * @return
+     *      list of subscribed experiments
+     */
+    public static ArrayList<Experiment> getSubscribedExperimentArrayList() {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
+            if (experiment.info.getOwner() == user.getId())
+                filteredExperiments.add(experiment);
+        }
+
+        return filteredExperiments;
+    }
+
+
+    /**
+     * Retrieves an experiment from the list of experiments.
+     * Should pass an ID through an intent and use this to get an experiment in ExperimentActivity.
+     * @param id
+     *      ID of the experiment to retrieve
+     * @return
+     *      Returns the experiment object matching the ID
+     */
     public static Experiment getExperiment(ID id) {
         for (Experiment experiment : experimentArrayList)
             if (experiment.getId().equals(id))
@@ -148,17 +248,16 @@ public class DataManager {
         return null;
     }
 
-    // Add or sync local experiment to FireStore
-    public static void push(Experiment experiment) {
-        push(experiment, null, null);
-    }
 
-    // Add or sync local experiment to FireStore
-    public static void push(Experiment experiment, ExperimentCallback onComplete) {
-        push(experiment, onComplete, null);
-    }
-
-    // Add or sync local experiment to FireStore
+    /**
+     * Add or update and experiment.
+     * @param experiment
+     *      Experiment to add or update
+     * @param onComplete
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
     public static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
         DataManager.ID id = experiment.getId();
         if (id != null && id.isValid()) {
@@ -175,15 +274,16 @@ public class DataManager {
         }
     }
 
-    public static void publishExperiment(Experiment experiment) {
-        publishExperiment(experiment, null, null);
-    }
 
-    public static void publishExperiment(Experiment experiment, ExperimentCallback onComplete) {
-        publishExperiment(experiment, onComplete, null);
-    }
-
-        // Publish a new experiment
+    /**
+     * Publish a new experiment
+     * @param experiment
+     *      Experiment to publish
+     * @param onComplete
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for failure
+     */
     public static void publishExperiment(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
             if (onFailure != null)
@@ -200,28 +300,58 @@ public class DataManager {
             return;
         }
 
-        push(experiment, exp -> {
-            Map<String, String> data = new HashMap<>();
-            data.put("id", exp.getId().getKey());
-            usersRef.document(experiment.info.getOwner().getKey()).collection(EXPERIMENTS).add(data);
-            if (onComplete != null) onComplete.callBack(exp);
-        }, onFailure );
+        push(experiment, onComplete, onFailure);
     }
 
-    // End an experiment
-    public static void endExperiment(Experiment experiment) {
-        endExperiment(experiment, null, null);
-    }
 
-    // End an experiment
-    public static void endExperiment(Experiment experiment, ExperimentCallback onSuccess) {
-        endExperiment(experiment, onSuccess, null);
-    }
+    /**
+     * Deletes an experiment
+     * @param experiment
+     *      Experiment to delete
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for when fails
+     */
+    public static void unpublishExperiment(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+        if (experiment == null) {
+            Log.e(TAG, "unpublishExperiment called with null experiment.");
+            onFailure.callBack(new Exception("unpublishExperiment called with null experiment."));
+            return;
+        }
 
-    // End an experiment
-    public static void endExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || experiment.info.getOwner() != user.getId()) {
             Log.e(TAG, "User does not have permission to end this experiment. Not logged in, or doesn't own it.");
+            onFailure.callBack(new Exception("User does not have permission to end this experiment. Not logged in, or doesn't own it."));
+            return;
+        }
+
+        experimentsRef.document(experiment.getId().getKey()).delete().addOnSuccessListener(aVoid -> {
+            onSuccess.callBack();
+        }).addOnFailureListener((e -> onFailure.callBack(e)));
+    }
+
+
+    /**
+     * Ends an experiment. Leaves the experiment visible, but should not be modified.
+     * @param experiment
+     *      The experiment to end.
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback with exception for when fails
+     */
+    public static void endExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
+
+        if (user == null) {
+            Log.e(TAG, "Not logged in, cannot end experiment");
+            onFailure.callBack(new Exception("Not logged in, cannot end experiment"));
+            return;
+        }
+
+        if (experiment == null || experiment.info.getOwner() != user.getId()) {
+            Log.e(TAG, "User does not own this experiment. Cannot end experiment.");
+            onFailure.callBack(new Exception("User does not own this experiment. Cannot end experiment."));
             return;
         }
 
@@ -229,23 +359,15 @@ public class DataManager {
         push(experiment, onSuccess, onFailure);
     }
 
-    // Pull all experiments from firestore
-    public static void pullAllExperiments(ExperimentsCallback onSuccess) {
-        pullAllExperiments(onSuccess, null);
-    }
 
-    // Pull all experiments from firestore
-    public static void pullAllExperiments(ExperimentsCallback onSuccess, ExceptionCallback onFailure) {
-        experimentsRef.get().addOnSuccessListener(experimentSnapshots -> {
-            updateExperiments(experimentSnapshots);
-            if (onSuccess != null) onSuccess.callBack(experimentArrayList);
-        })
-        .addOnFailureListener(e -> {
-            if (onFailure != null) onFailure.callBack(e);
-        });
-    }
-
-    // Call when opening an experiment to get all it's data. This will load and listen for changes to questions and trials for this experiment from FireStore.
+    /**
+     * Listens to firestore for changes to this experiment. You MUST use this to get the trials and questions for an experiment.
+     * You may want to update the UI in onUpdate.
+     * @param experiment
+     *      The experiment to listen to.
+     * @param onUpdate
+     *      Callback for implementing desired behaviour when the experiment is updated in firestore.
+     */
     public static void listen(Experiment experiment, ExperimentCallback onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
@@ -255,7 +377,8 @@ public class DataManager {
         String documentId = experiment.getId().getKey();
 
         // Listen for changes to experiment info
-        experimentsRef.document(documentId).addSnapshotListener((snapshot, e) -> {
+        if (experimentListener != null) experimentListener.remove();
+        experimentListener = experimentsRef.document(documentId).addSnapshotListener((snapshot, e) -> {
             Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot);
             if (updatedExperiment != null) experiment.info = updatedExperiment.info;
@@ -266,44 +389,51 @@ public class DataManager {
 
         // Listen for changes in Trials
         CollectionReference trialsRef = experimentsRef.document(documentId).collection(TRIALS);
-        trialsRef.addSnapshotListener((snapshots, e) -> {
+        if (trialsListener != null) trialsListener.remove();
+        trialsListener = trialsRef.addSnapshotListener((snapshots, e) -> {
                     updateTrials(experiment, snapshots);
                     Log.d(TAG, "Pulled Trials: " + snapshots.size());
                 });
 
         // Listen for changes in Questions
         CollectionReference questionsRef = experimentsRef.document(documentId).collection(QUESTIONS);
-        questionsRef.addSnapshotListener((snapshots, e) -> {
+        if (questionsListener != null) questionsListener.remove();
+        questionsListener = questionsRef.addSnapshotListener((snapshots, e) -> {
                     updateQuestions(experiment, snapshots);
                     Log.d(TAG, "Pulled Questions: " + snapshots.size());
                 });
     }
 
-    // Subscribe to an experiment
-    public static void subscribe(Experiment experiment) {
-        subscribe(experiment, null, null);
-    }
 
-    // Subscribe to an experiment
-    public static void subscribe(Experiment experiment, Callback onSuccess) {
-        subscribe(experiment, onSuccess, null);
-    }
-
-    // Subscribe to an experiment
+    /**
+     * Subscribe to an experiment. Subscribed experiments can be retrieved with getSubscribedExperimentArrayList().
+     * @param experiment
+     *      The experiment to subscribe the current user to
+     * @param onSuccess
+     *      Callback for when subscribing is successful
+     * @param onFailure
+     *      Callback for when subscribing fails
+     */
     public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
             Log.d(TAG, "Failed to subscribe. User must be logged in to subscribe to an experiment.");
+            if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. User must be logged in to subscribe to an experiment."));
             return;
         }
 
         if (experiment == null || !experiment.isValid()) {
             Log.d(TAG, "Failed to subscribe. Experiment does not have id.");
+            if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. Experiment does not have id."));
             return;
         }
 
-        Map<String, String> data = new HashMap<>();
-        data.put("id", experiment.getId().getKey());
-        usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).add(data)
+        if (subscriptions.contains(experiment.getId())) {
+            Log.d(TAG, "Already subscribed to this experiment.");
+            if (onFailure != null) onFailure.callBack(new Exception("Already subscribed to this experiment."));
+            return;
+        }
+
+        usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).add(experiment.getId())
                 .addOnSuccessListener(task -> {
                     if (onSuccess != null) onSuccess.callBack();
                 }).addOnFailureListener(e -> {
@@ -311,91 +441,51 @@ public class DataManager {
                 });
     }
 
-    // Updates the subscribed experiments list of the user
-    public static void pullSubscriptions(ExperimentsCallback onComplete) {
-        if (user == null || !user.isValid()) {
-            Log.d(TAG, "User must be logged in to call pullSubscriptions()");
-            return;
-        }
 
-        pullAllFromCollection(user, usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS), "id", experimentIds -> {
-            if (experimentIds.isEmpty()) {
-                Log.d(TAG, "No subscriptions for user found in FireStore.");
-                return;
-            }
-            ArrayList<Experiment> subscriptions = new ArrayList<>();
-            experimentsRef.whereIn(FieldPath.documentId(), experimentIds).get()
-                    .addOnSuccessListener(experiments -> {
-                        for (DocumentSnapshot snapshot : experiments) {
-                            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
-                            if (classType != null) subscriptions.add(readFirebaseObjectSnapshot(classType, snapshot));
-                            else Log.e(TAG, "experimentClassMap returned null");
-                        }
-                        subscribedExperimentArrayList = subscriptions;
-                        onComplete.callBack(subscribedExperimentArrayList);
-                    });
-        });
-    }
-
-    // Updates the owned experiments list of the user
-    public static void pullOwnedExperiments(ExperimentsCallback onComplete) {
-        pullOwnedExperiments(onComplete, null);
-    }
-
-    // Updates the owned experiments list of the user
-    public static void pullOwnedExperiments(ExperimentsCallback onComplete, ExceptionCallback onFailure) {
-        if (user == null || !user.isValid()) {
-            Log.d(TAG, "User must be logged in to call pullOwnedExperiments()");
-            return;
-        }
-
-        pullAllFromCollection(user, usersRef.document(user.getId().getKey()).collection(EXPERIMENTS), "id", experimentIds -> {
-            if (experimentIds.isEmpty()) {
-                Log.d(TAG, "No owned experiments for user found in firestore.");
-                return;
-            }
-            ArrayList<Experiment> experiments = new ArrayList<>();
-            experimentsRef.whereIn(FieldPath.documentId(), experimentIds).get()
-                    .addOnSuccessListener(experimentSnapshots -> {
-                        for (DocumentSnapshot snapshot : experimentSnapshots)
-                        {
-                            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
-                            if (classType != null) experiments.add(readFirebaseObjectSnapshot(classType, snapshot));
-                            else Log.e(TAG, "classType null in pullAllFromCollection");
-                        }
-                        ownedExperimentsArrayList = experiments;
-                        if (onComplete != null) onComplete.callBack(ownedExperimentsArrayList);
-                    }).addOnFailureListener(e -> {
-                        if (onFailure != null) onFailure.callBack(e);
-            });
-        });
-    }
-
-
-
-    /** Users **/
-
-    // Create a new user and login
+    /**
+     * Creates a new user and logs in.
+     * @param userName
+     *      Username for new user
+     * @param onSuccess
+     *      Callback for when user creation is successful
+     * @param onFailure
+     *      Callback for when username already exists fails
+     */
     public static void createUser(String userName, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
                 onFailure.callBack(new Exception("Username not available"));
             } else {
-                push(new User(userName), onSuccess, onFailure);
+                push(new User(userName), (user) -> {
+                    listen(user);
+                    onSuccess.callBack(user);
+                }, onFailure);
             }
         }).addOnFailureListener(e -> {
             if (onFailure != null) onFailure.callBack(e);
         });
     }
 
-    // password-less "Login" functionality. Just needs username.
+
+    /**
+     * Login to user account with user name.
+     * @param userName
+     *      Username for new user
+     * @param onSuccess
+     *      Callback for when login is successful
+     * @param onFailure
+     *      Callback for when login fails (username does not exist)
+     */
     public static void login(String userName, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get()
                 .addOnSuccessListener(task -> {
                     if (task.getDocuments().size() > 0) {
                         DocumentSnapshot snapshot = task.getDocuments().get(0);
                         user = readFirebaseObjectSnapshot(User.class, snapshot);
-                        if (user != null) Log.d(TAG, "Login successful: " + user.toString());
+                        if (user != null) {
+                            listen(user);  // Listen to subscriptions
+                            Log.d(TAG, "Login successful: " + user.toString());
+                        }
                         else if (onFailure != null) {
                             onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
                             return;
@@ -409,18 +499,17 @@ public class DataManager {
         });
     }
 
-    // Add or sync local user to FireStore
-    public static void push(User user) {
-        push(user, null, null);
-    }
 
-    // Add or sync local user to FireStore
-    public static void push(User user, UserCallback onSuccess) {
-        push(user, onSuccess, null);
-    }
-
-    // Add or sync local user to FireStore
-    public static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
+    /**
+     * Adds or updates a user in firebase.
+     * @param user
+     *      The user class to update or store in firestore.
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
         if (user.isValid()) {
             usersRef.document(user.getId().getKey()).set(user);
         } else {
@@ -434,115 +523,70 @@ public class DataManager {
         }
     }
 
-    // Get User data from id
-    // Call to view other profiles, and to load names for comments and experiment owners
-    public static User getUser(String id) {
+
+    /**
+     * Retrieve a user from an ID
+     * @param id
+     *      ID of user to retrieve user data for.
+     * @return
+     *      User object matching id
+     */
+    public static User getUser(ID id) {
             for (User user : userArrayList)
-                if (user.getId().getKey().equals(id))
+                if (user.getId().equals(id))
                     return user;
         Log.e(TAG, "getUser() User not found.");
         return new User();
     }
 
 
-
-    /** Trials **/
-
-    // Sync local trial change to FireStore
-    public static void push(Trial trial, Experiment experiment) {
-        push(trial, experiment, null, null);
-    }
-
-    // Sync local trial change to FireStore
-    public static void push(Trial trial, Experiment experiment, TrialCallback onComplete) {
-        push(trial, experiment, onComplete, null);
-    }
-
-    // Sync local trial change to FireStore
-    public static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
-        if (experiment == null || !experiment.isValid()) {
-            Log.e(TAG, "Push failed. Tried to add trial to experiment without ID");
-            return;
-        }
-
-        if (user == null || user.getId() == null || !user.getId().isValid()) {
-            Log.e(TAG, "Push failed. Must be logged in to push.");
-            return;
-        }
-
-        trial.setOwner(user.getId());
-        CollectionReference trialsRef = experimentsRef.document(experiment.getId().getKey()).collection(TRIALS);
-
-        if (trial.getId() != null) {
-            trialsRef.document(trial.getId().getKey()).set(trial).addOnSuccessListener(trialSnapshot -> {
-                if (onComplete != null) onComplete.callBack(trial);
-            }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
-            });
-        } else {
-            trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
-                trial.setId(new ID(trialSnapshot.getId()));
-                if (onComplete != null) onComplete.callBack(trial);
-            }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
-            });
-        }
+    /**
+     * Add a new trial for an experiment.
+     * @param trial
+     *      New trial to add.
+     * @param experiment
+     *      Experiment to add trial to.
+     * @param onComplete
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void addTrial(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
+        push(trial, experiment, onComplete, onFailure);
     }
 
 
 
 
 
-    /** Questions **/
 
-    // Sync local trial change to FireStore
-    public static void push(Question question, Experiment experiment) {
-        push(question, experiment, null, null);
-    }
 
-    // Sync local trial change to FireStore
-    public static void push(Question question, Experiment experiment, QuestionCallback onComplete) {
-        push(question, experiment, onComplete, null);
-    }
 
-    // Sync local trial change to FireStore
-    public static void push(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
-        if (experiment == null || !experiment.isValid()) {
-            Log.e(TAG, "Push failed. Tried to add question to experiment without ID");
-            return;
-        }
 
-        if (user == null || user.getId() == null || !user.getId().isValid())
-        {
-            Log.e(TAG, "Push failed. Must be logged in to push.");
-            return;
-        }
+    //** Questions **/
 
-        question.setOwner(user.getId());
-        CollectionReference trialsRef = experimentsRef.document(experiment.getId().getKey()).collection(QUESTIONS);
-
-        if (question.getId() != null) {
-            trialsRef.document(question.getId().getKey()).set(question).addOnSuccessListener(questionSnapshot -> {
-                if (onComplete != null) onComplete.callBack(question);
-            }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
-            });
-        } else {
-            trialsRef.add(question).addOnCompleteListener(task -> {
-                question.setId(new ID(task.getResult().getId()));
-                if (onComplete != null) onComplete.callBack(question);
-            }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
-            });
-        }
+    /**
+     * Add a question.
+     * @param question
+     *      The question object
+     * @param experiment
+     *      The experiment to add the question to
+     * @param onComplete
+     *      Callback for when push successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void addQuestion(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
+        push(question, experiment, onComplete, onFailure);
     }
 
 
 
 
-    /** Private **/
 
-    // Converts firebase snapshot to classes that extend FirebaseObjects and adds id
+
+
+    //** Private **/
     private static <ClassType extends FirestoreObject> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
         ClassType object = snapshot.toObject(typeClass);
         if (object != null) object.setId(new ID(snapshot.getId()));
@@ -550,7 +594,7 @@ public class DataManager {
         return object;
     }
 
-    // Gets a list of all string values of a field from all objects in a collection
+
     private static void pullAllFromCollection(User user, CollectionReference collectionReference, String field, StringArrayCallback onComplete) {
         if (!user.isValid()) return;
 
@@ -563,11 +607,26 @@ public class DataManager {
         });
     }
 
+    private static void listen(User user) {
+        if (subscriptionsListener != null) subscriptionsListener.remove();
+
+        subscriptionsListener = usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).addSnapshotListener((snapshots, e) -> {
+            ArrayList<ID> subscriptionsList = new ArrayList<>();
+            for (QueryDocumentSnapshot snapshot : snapshots)
+                subscriptionsList.add(snapshot.toObject(ID.class));
+            subscriptions = subscriptionsList;
+            System.out.println("subscriptions updated");
+            for (ID id : subscriptions) {
+                System.out.println(id.key);
+
+            }
+        });
+    }
+
     private static void initializeExperiments() {
         experimentArrayList = new ArrayList<>();
         experimentsRef = db.collection(EXPERIMENTS);
-        experimentsRef.addSnapshotListener((snapshot, e) -> updateExperiments(snapshot));
-//        experimentsRef.get().addOnCompleteListener(task -> updateExperiments(task.getResult()));
+        experimentsListener = experimentsRef.addSnapshotListener((snapshot, e) -> updateExperiments(snapshot));
     }
 
     private static void updateExperiments(QuerySnapshot experimentsSnapshot) {
@@ -582,10 +641,12 @@ public class DataManager {
 
     private static void initializeUsers() {
         userArrayList = new ArrayList<>();
+        subscriptions = new ArrayList<>();
         usersRef = db.collection(USERS);
-        usersRef.addSnapshotListener((snapshot, e) -> updateUsers(snapshot));
-//        usersRef.get().addOnCompleteListener(task -> updateUsers(task.getResult()));
+        usersListener = usersRef.addSnapshotListener((snapshot, e) -> updateUsers(snapshot));
     }
+
+
 
     private static void updateUsers(QuerySnapshot userSnapshots) {
         ArrayList<User> users = new ArrayList<>();
@@ -615,5 +676,74 @@ public class DataManager {
             questions.add(readFirebaseObjectSnapshot(Question.class, snapshot));
 
         experiment.setQuestions(questions);
+    }
+
+    private static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
+        if (experiment == null || !experiment.isValid()) {
+            Log.e(TAG, "Push failed. Tried to add trial to experiment without ID.");
+            onFailure.callBack(new Exception("Push failed. Tried to add trial to experiment without ID."));
+            return;
+        }
+
+        if (trial == null) {
+            Log.e(TAG, "Push failed. Tried to add null trial to experiment.");
+            onFailure.callBack(new Exception("Push failed. Tried to add null trial to experiment."));
+            return;
+        }
+
+        if (user == null || user.getId() == null || !user.getId().isValid()) {
+            Log.e(TAG, "Push failed. Must be logged in to push.");
+            onFailure.callBack(new Exception("Push failed. Must be logged in to push."));
+            return;
+        }
+
+        trial.setOwner(user.getId());
+        CollectionReference trialsRef = experimentsRef.document(experiment.getId().getKey()).collection(TRIALS);
+
+        if (trial.getId() != null) {
+            trialsRef.document(trial.getId().getKey()).set(trial).addOnSuccessListener(trialSnapshot -> {
+                if (onComplete != null) onComplete.callBack(trial);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        } else {
+            trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
+                trial.setId(new ID(trialSnapshot.getId()));
+                if (onComplete != null) onComplete.callBack(trial);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        }
+    }
+
+    private static void push(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
+        if (experiment == null || !experiment.isValid()) {
+            Log.e(TAG, "Push failed. Tried to add question to experiment without ID");
+            return;
+        }
+
+        if (user == null || user.getId() == null || !user.getId().isValid())
+        {
+            Log.e(TAG, "Push failed. Must be logged in to push.");
+            return;
+        }
+
+        question.setOwner(user.getId());
+        CollectionReference trialsRef = experimentsRef.document(experiment.getId().getKey()).collection(QUESTIONS);
+
+        if (question.getId() != null) {
+            trialsRef.document(question.getId().getKey()).set(question).addOnSuccessListener(questionSnapshot -> {
+                if (onComplete != null) onComplete.callBack(question);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        } else {
+            trialsRef.add(question).addOnCompleteListener(task -> {
+                question.setId(new ID(task.getResult().getId()));
+                if (onComplete != null) onComplete.callBack(question);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        }
     }
 }

@@ -22,8 +22,8 @@ public abstract class Experiment extends FirestoreObject {
         isActive = true;
     }
 
-    public Experiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
-        this(new ExperimentInfo(name, description, region, minTrials, geoLocationEnabled));
+    public Experiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
+        this(new ExperimentInfo(description, region, minTrials, geoLocationEnabled));
     }
 
     public void endExperiment(User user) {
@@ -52,7 +52,7 @@ public abstract class Experiment extends FirestoreObject {
 
         this.info = info;
 
-        DataManager.push(this, onComplete);
+        DataManager.push(this, onComplete, null);
     }
 
     @Exclude

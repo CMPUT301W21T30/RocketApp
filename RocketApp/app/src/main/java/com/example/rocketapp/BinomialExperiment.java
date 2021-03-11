@@ -11,8 +11,8 @@ public class BinomialExperiment extends Experiment {
         //TODO
     }
 
-    public BinomialExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
-        super(name, description, region, minTrials, geoLocationEnabled);
+    public BinomialExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
+        super(description, region, minTrials, geoLocationEnabled);
     }
 
     @Override
