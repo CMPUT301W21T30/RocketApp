@@ -1,8 +1,8 @@
 package com.example.rocketapp;
 
-import com.google.firebase.firestore.Exclude;
+import static java.lang.Math.ceil;
 
-public class MeasurementTrial extends Trial {
+public class MeasurementTrial extends Trial implements Comparable<MeasurementTrial>{
     public static final String TYPE = "Measurement";
 
     private float measurement;
@@ -15,6 +15,13 @@ public class MeasurementTrial extends Trial {
         super(description);
         measurement = value;
     }
+
+    @Override
+    public int compareTo(MeasurementTrial trial) {
+        float compareCount = ((MeasurementTrial)trial).getMeasurement();
+        return (int) ceil((this.getMeasurement() - compareCount));
+    }
+
     public MeasurementTrial(float measure){
         measurement = measure;
     }

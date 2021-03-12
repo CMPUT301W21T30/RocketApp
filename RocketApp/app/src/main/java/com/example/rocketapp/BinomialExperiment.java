@@ -42,21 +42,34 @@ public class BinomialExperiment extends Experiment {
                 failure = failure+1;
             }
         }
-        return (float) ((success/failure)*1.0);
+        return (float) ((success/(failure+success))*1.0);
     }
 
     @Exclude
     @Override
     public float getStdDev() {
-        //TODO
-        return 0;
+        float mean = getMean();
+        return (getTrials().size() * (1 - mean) * mean);
     }
 
     @Exclude
     @Override
-    public float getQuartiles() {
-        //TODO
-        return 0;
+    public float getTopQuartile() {
+        if (getMean() < 0.25) {
+            return 0;
+        } else if (getMean() == 0.25) {
+            return (float) 0.5;
+        } else return 1;
+    }
+
+    @Exclude
+    @Override
+    public float getBottomQuartile() {
+        if (getMean() < 0.75) {
+            return 0;
+        } else if (getMean() == 0.75) {
+            return (float) 0.5;
+        } else return 1;
     }
 
     @Exclude
