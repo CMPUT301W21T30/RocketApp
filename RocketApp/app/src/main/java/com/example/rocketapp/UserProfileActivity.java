@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import javax.security.auth.callback.Callback;
+
 public class UserProfileActivity extends AppCompatActivity {
     public ImageButton saveProfileData;
 
@@ -37,9 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 DataManager.getUser().setPhone_number(phone);
                 DataManager.getUser().setEmail(email);
-
-                DataManager.push(DataManager.getUser());
-
+                DataManager.updateUser(user -> {}, e -> {});
             }
         });
 

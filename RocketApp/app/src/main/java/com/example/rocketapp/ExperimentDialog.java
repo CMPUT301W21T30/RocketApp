@@ -108,23 +108,23 @@ public class ExperimentDialog extends DialogFragment {
         switch(type) {
             //TODO: deal with name
             case ("Binomial Experiment"):
-                exp = new BinomialExperiment("memes", descriptionET.getText().toString(),
+                exp = new BinomialExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             case ("Count Experiment"):
-                exp = new CountExperiment("memes", descriptionET.getText().toString(),
+                exp = new CountExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             case ("Integer Count Experiment"):
-                exp = new IntCountExperiment("memes", descriptionET.getText().toString(),
+                exp = new IntCountExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             case ("Measurement Experiment"):
-                exp = new MeasurementExperiment("memes", descriptionET.getText().toString(),
+                exp = new MeasurementExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             default:
-                exp = new BinomialExperiment("notMemes", descriptionET.getText().toString(),
+                exp = new BinomialExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
 

@@ -49,7 +49,6 @@ public class LogInActivity extends AppCompatActivity {
     private void loginOrCreateUser(String username, Boolean isOwner) {
         DataManager.login(username, user -> {
             Log.d("Login Succesfully", "Login Successfully");
-            DataManager.setIsOwner(isOwner);
             Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
         }, loginError -> {
@@ -60,7 +59,6 @@ public class LogInActivity extends AppCompatActivity {
                 Log.d("Created New user", "Created New User.");
                 DataManager.login(username, user1 -> {
 
-                    DataManager.setIsOwner(isOwner);
                     Log.d("Login Succesfully", "Login Successfully");
                     Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
                     startActivity(ExperimentsListActivityIntent);

@@ -10,8 +10,8 @@ public class MeasurementExperiment extends Experiment {
         //TODO
     }
 
-    public MeasurementExperiment(String name, String description, String region, int minTrials, boolean geoLocationEnabled) {
-        super(name, description, region, minTrials, geoLocationEnabled);
+    public MeasurementExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
+        super(description, region, minTrials, geoLocationEnabled);
     }
 
     @Override
