@@ -52,7 +52,7 @@ public abstract class Experiment extends FirestoreObject {
 
         this.info = info;
 
-        DataManager.push(this, onComplete, null);
+        DataManager.update(this, onComplete, (e) -> {});
     }
 
     @Exclude

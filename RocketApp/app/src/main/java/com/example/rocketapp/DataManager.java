@@ -250,32 +250,6 @@ public class DataManager {
 
 
     /**
-     * Add or update and experiment.
-     * @param experiment
-     *      Experiment to add or update
-     * @param onComplete
-     *      Callback for when push is successful
-     * @param onFailure
-     *      Callback for when push fails
-     */
-    public static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
-        DataManager.ID id = experiment.getId();
-        if (id != null && id.isValid()) {
-            experimentsRef.document(experiment.getId().getKey()).set(experiment);;
-        } else {
-            experimentsRef.add(experiment)
-                    .addOnSuccessListener(task -> {
-                        experiment.setId(new ID(task.getId()));
-                        if (onComplete != null) onComplete.callBack(experiment);
-                    })
-                    .addOnFailureListener((e -> {
-                        if (onFailure != null) onFailure.callBack(e);
-                    }));
-        }
-    }
-
-
-    /**
      * Publish a new experiment
      * @param experiment
      *      Experiment to publish
@@ -443,6 +417,20 @@ public class DataManager {
 
 
     /**
+     * Update an experiment. Can only be called by the experiments owner.
+     * @param experiment
+     *      Experiment to update
+     * @param onSuccess
+     *      Callback for when update is successful
+     * @param onFailure
+     *      Callback for when update fails
+     */
+    public static void update(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
+        push(experiment, onSuccess, onFailure);
+    }
+
+
+    /**
      * Creates a new user and logs in.
      * @param userName
      *      Username for new user
@@ -501,26 +489,14 @@ public class DataManager {
 
 
     /**
-     * Adds or updates a user in firebase.
-     * @param user
-     *      The user class to update or store in firestore.
+     * Sync user info to firebase
      * @param onSuccess
-     *      Callback for when successful
+     *      Callback for when update is successful
      * @param onFailure
-     *      Callback for when push fails
+     *      Callback for when update fails
      */
-    private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
-        if (user.isValid()) {
-            usersRef.document(user.getId().getKey()).set(user);
-        } else {
-            usersRef.add(user)
-                    .addOnSuccessListener(u -> {
-                        user.setId(new ID(u.getId()));
-                        if (onSuccess != null) onSuccess.callBack(user); })
-                    .addOnFailureListener(e -> {
-                        if (onFailure != null) onFailure.callBack(e);
-                    });
-        }
+    public static void updateUser(UserCallback onSuccess, ExceptionCallback onFailure) {
+        push(user, onSuccess, onFailure);
     }
 
 
@@ -540,6 +516,8 @@ public class DataManager {
     }
 
 
+    //** Trials **/
+
     /**
      * Add a new trial for an experiment.
      * @param trial
@@ -554,12 +532,6 @@ public class DataManager {
     public static void addTrial(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
         push(trial, experiment, onComplete, onFailure);
     }
-
-
-
-
-
-
 
 
 
@@ -676,6 +648,54 @@ public class DataManager {
             questions.add(readFirebaseObjectSnapshot(Question.class, snapshot));
 
         experiment.setQuestions(questions);
+    }
+
+    /**
+     * Adds or updates a user in firebase.
+     * @param user
+     *      The user class to update or store in firestore.
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
+        if (user.isValid()) {
+            usersRef.document(user.getId().getKey()).set(user);
+        } else {
+            usersRef.add(user)
+                    .addOnSuccessListener(u -> {
+                        user.setId(new ID(u.getId()));
+                        if (onSuccess != null) onSuccess.callBack(user); })
+                    .addOnFailureListener(e -> {
+                        if (onFailure != null) onFailure.callBack(e);
+                    });
+        }
+    }
+
+    /**
+     * Add or update and experiment.
+     * @param experiment
+     *      Experiment to add or update
+     * @param onComplete
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    private static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
+        DataManager.ID id = experiment.getId();
+        if (id != null && id.isValid()) {
+            experimentsRef.document(experiment.getId().getKey()).set(experiment);;
+        } else {
+            experimentsRef.add(experiment)
+                    .addOnSuccessListener(task -> {
+                        experiment.setId(new ID(task.getId()));
+                        if (onComplete != null) onComplete.callBack(experiment);
+                    })
+                    .addOnFailureListener((e -> {
+                        if (onFailure != null) onFailure.callBack(e);
+                    }));
+        }
     }
 
     private static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {

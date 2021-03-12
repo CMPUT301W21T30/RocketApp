@@ -30,17 +30,8 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
 
         profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
-
-//            Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
-//            startActivity(userProfileIntent);
-//            DataManager.publishExperiment(new BinomialExperiment("Second Experiment description", "Canada", 10, true), null, null);
-            DataManager.subscribe(DataManager.getExperimentArrayList().get(0), null);
-
-
-//            System.out.println("Owned experiments.");
-//            for (Experiment experiment : DataManager.getOwnedExperimentsArrayList()) {
-//                System.out.println(experiment.toString());
-//            }
+            Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+            startActivity(userProfileIntent);
         });
     }
 
