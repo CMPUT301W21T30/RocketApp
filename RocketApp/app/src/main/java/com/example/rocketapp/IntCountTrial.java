@@ -1,6 +1,8 @@
 package com.example.rocketapp;
 
-public class IntCountTrial extends Trial {
+import com.google.firebase.firestore.Exclude;
+
+public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
     public static final String TYPE = "IntCount";
 
     private int posCount;
@@ -16,6 +18,11 @@ public class IntCountTrial extends Trial {
     }
 
     @Override
+    public int compareTo(IntCountTrial trial) {
+        int compareCount = ((IntCountTrial)trial).getPCount();
+        return this.getPCount() - compareCount;
+    }
+
     public String getType() {
         return TYPE;
     }
