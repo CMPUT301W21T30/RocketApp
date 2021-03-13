@@ -15,6 +15,10 @@ public abstract class Experiment extends FirestoreObject {
     protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();
     private ArrayList<Question> questionsArrayList = new ArrayList<>();
 
+    // TODO: Switch to using two boolean instead
+//    private Boolean isPublished;
+//    private Boolean isActive;
+
     enum State {
         ACTIVE,
         ENDED,
