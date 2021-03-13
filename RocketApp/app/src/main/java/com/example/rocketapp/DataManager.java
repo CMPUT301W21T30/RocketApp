@@ -721,7 +721,10 @@ public class DataManager {
      */
     private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
         if (user.isValid()) {
-            usersRef.document(user.getId().getKey()).set(user);
+            usersRef.document(user.getId().getKey()).set(user)
+                    .addOnSuccessListener(u -> {
+                       onSuccess.callBack(user);
+                    });
         } else {
             usersRef.add(user)
                     .addOnSuccessListener(u -> {

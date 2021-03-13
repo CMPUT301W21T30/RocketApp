@@ -37,7 +37,6 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         Set<Experiment> set = new LinkedHashSet<>(DataManager.getSubscribedExperimentArrayList());
         set.addAll(DataManager.getOwnedExperimentsArrayList());
         experiments = new ArrayList<>(set);
-
         initRecyclerView();
 
 

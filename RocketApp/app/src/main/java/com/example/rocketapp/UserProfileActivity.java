@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +39,10 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 DataManager.getUser().setPhone_number(phone);
                 DataManager.getUser().setEmail(email);
-                DataManager.updateUser(user -> {}, e -> {});
-                finish();
+                DataManager.updateUser(user -> {
+                    Toast.makeText(UserProfileActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
+                    finish();
+                }, e -> {});
             }
         });
 
