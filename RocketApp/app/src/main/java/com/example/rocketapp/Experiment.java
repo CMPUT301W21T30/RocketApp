@@ -11,15 +11,21 @@ import static android.content.ContentValues.TAG;
 public abstract class Experiment extends FirestoreObject {
 
     public ExperimentInfo info;
+    private State state;
     protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();
     private ArrayList<Question> questionsArrayList = new ArrayList<>();
-    private boolean isActive;
+
+    enum State {
+        ACTIVE,
+        ENDED,
+        UNPUBLISHED
+    }
 
     public Experiment(){}
 
     public Experiment(ExperimentInfo info) {
         this.info = info;
-        isActive = true;
+        this.state = State.ACTIVE;
     }
 
     public Experiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
@@ -32,11 +38,15 @@ public abstract class Experiment extends FirestoreObject {
             return;
         }
 
-        isActive = false;
+        state = State.ENDED;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public State getState() {
+        return state;
+    }
+
+    public void setState(DataManager.ID ownerId, State state) {
+        this.state = state;
     }
 
     @Exclude
@@ -85,7 +95,10 @@ public abstract class Experiment extends FirestoreObject {
     public abstract float getStdDev();
 
     @Exclude
-    public abstract float getQuartiles();
+    public abstract float getTopQuartile();
+
+    @Exclude
+    public abstract float getBottomQuartile();
 
 }
 

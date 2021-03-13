@@ -41,6 +41,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
+
         });
     }
 
