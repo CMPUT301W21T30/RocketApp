@@ -43,6 +43,7 @@ public class DataManager {
     private static final String SUBSCRIPTIONS = "Subscriptions";
     private static final String EXPERIMENTS = "Experiments";
     private static final String QUESTIONS = "Questions";
+    private static final String ANSWERS = "Answers";
     private static final String USERS = "Users";
     private static final String TRIALS = "Trials";
 
@@ -134,6 +135,10 @@ public class DataManager {
 
     public interface QuestionCallback {
         void callBack(Question question);
+    }
+
+    public interface AnswerCallback {
+        void callBack(Answer answer);
     }
 
     public interface TrialCallback {
@@ -520,13 +525,13 @@ public class DataManager {
      *      New trial to add.
      * @param experiment
      *      Experiment to add trial to.
-     * @param onComplete
+     * @param onSuccess
      *      Callback for when push is successful
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addTrial(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
-        push(trial, experiment, onComplete, onFailure);
+    public static void addTrial(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+        push(trial, experiment, onSuccess, onFailure);
     }
 
     /**
@@ -535,31 +540,31 @@ public class DataManager {
      *      New trial to add.
      * @param experiment
      *      Experiment to add trial to.
-     * @param onComplete
+     * @param onSuccess
      *      Callback for when push is successful
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
-        push(trial, experiment, onComplete, onFailure);
+    public static void update(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+        push(trial, experiment, onSuccess, onFailure);
     }
 
 
     //** Questions **/
 
     /**
-     * Add a question.
+     * Add a question to an experiment.
      * @param question
      *      The question object
      * @param experiment
      *      The experiment to add the question to
-     * @param onComplete
+     * @param onSuccess
      *      Callback for when push successful
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addQuestion(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
-        push(question, experiment, onComplete, onFailure);
+    public static void addQuestion(Question question, Experiment experiment, QuestionCallback onSuccess, ExceptionCallback onFailure) {
+        push(question, experiment, onSuccess, onFailure);
     }
 
     /**
@@ -568,20 +573,45 @@ public class DataManager {
      *      The question object
      * @param experiment
      *      The experiment the question belongs to
-     * @param onComplete
+     * @param onSuccess
      *      Callback for when push successful
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
-        push(question, experiment, onComplete, onFailure);
+    public static void update(Question question, Experiment experiment, QuestionCallback onSuccess, ExceptionCallback onFailure) {
+        push(question, experiment, onSuccess, onFailure);
     }
 
-    public static void addAnswer(Answer answer, Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
-
+    /**
+     * Add an answer to a question.
+     * @param answer
+     *      The answer object
+     * @param question
+     *      The question the answer belongs to
+     * @param onSuccess
+     *      Callback for when push successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void addAnswer(Answer answer, Question question, AnswerCallback onSuccess, ExceptionCallback onFailure) {
+        push(answer, question, onSuccess, onFailure);
     }
 
 
+    /**
+     * Update an answer.
+     * @param answer
+     *      The answer object
+     * @param question
+     *      The question the answer belongs to
+     * @param onSuccess
+     *      Callback for when push successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void update(Answer answer, Question question, AnswerCallback onSuccess, ExceptionCallback onFailure) {
+        push(answer, question, onSuccess, onFailure);
+    }
 
 
 
@@ -788,6 +818,37 @@ public class DataManager {
             trialsRef.add(question).addOnCompleteListener(task -> {
                 question.setId(new ID(task.getResult().getId()));
                 if (onComplete != null) onComplete.callBack(question);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        }
+    }
+
+    private static void push(Answer answer, Question question, AnswerCallback onSuccess, ExceptionCallback onFailure) {
+        if (question == null || !question.isValid()) {
+            Log.e(TAG, "Push failed. Tried to add answer to question without ID");
+            return;
+        }
+
+        if (user == null || user.getId() == null || !user.getId().isValid())
+        {
+            Log.e(TAG, "Push failed. Must be logged in to push answer.");
+            return;
+        }
+
+        answer.setOwner(user.getId());
+        CollectionReference answersRef = experimentsRef.document(question.getParent().getKey()).collection(QUESTIONS).document(question.getId().getKey()).collection(ANSWERS);
+
+        if (question.getId() != null) {
+            answersRef.document(question.getId().getKey()).set(answer).addOnSuccessListener(questionSnapshot -> {
+                if (onSuccess != null) onSuccess.callBack(answer);
+            }).addOnFailureListener(e -> {
+                if (onFailure != null) onFailure.callBack(e);
+            });
+        } else {
+            answersRef.add(answer).addOnCompleteListener(task -> {
+                question.setId(new ID(task.getResult().getId()));
+                if (onSuccess != null) onSuccess.callBack(answer);
             }).addOnFailureListener(e -> {
                 if (onFailure != null) onFailure.callBack(e);
             });

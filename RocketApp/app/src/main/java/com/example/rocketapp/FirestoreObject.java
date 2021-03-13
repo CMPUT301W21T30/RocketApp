@@ -12,6 +12,10 @@ public abstract class FirestoreObject {
         return id;
     }
 
+    public DataManager.ID getOwner() {
+        return ownerId;
+    }
+
     // Should only be called in DataManager
     public void setId(DataManager.ID id) {
         if (id == null || !id.isValid())
@@ -28,10 +32,6 @@ public abstract class FirestoreObject {
         if (id == null || !id.isValid())
             Log.d(TAG, "Tried to call setOwnerId with invalid id. Function can only be called from DataManager.");
         ownerId = id;
-    }
-
-    public DataManager.ID getOwner() {
-        return ownerId;
     }
 
     @Exclude
