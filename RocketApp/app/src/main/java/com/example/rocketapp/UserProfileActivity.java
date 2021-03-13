@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,13 +34,15 @@ public class UserProfileActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                openSave();
                 String email = userEmail.getText().toString();
                 String phone = userPhoneNumber.getText().toString();
 
                 DataManager.getUser().setPhone_number(phone);
                 DataManager.getUser().setEmail(email);
-                DataManager.updateUser(user -> {}, e -> {});
+                DataManager.updateUser(user -> {
+                    Toast.makeText(UserProfileActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
+                    finish();
+                }, e -> {});
             }
         });
 
@@ -47,8 +50,4 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     }
-    public void openSave(){
-        SaveFragment saveFragment = new SaveFragment();
-        saveFragment.show(getSupportFragmentManager(), "save");
-     }
 }
