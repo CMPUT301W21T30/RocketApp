@@ -1,5 +1,14 @@
 # March 5th, 2021 Meeting Note
 
+* Mar 12, 2021
+    * Aryan: Fix the Storyboard design
+    * Saif: Geo-location
+    * Mike: Fix Firestore related to getting experiment and make adjustment to getting experiment
+    * Archit: Subscribe Experiment Fragment
+    * Trevor and Saji: Fix main Screen with update firestore from Mike, change experiment design on main screen to fit owner and experimenter, link to experiment dialog (create experiment dialog).
+    * IMPORTANT: We changed the design of our app, instead of having a toggle to change between mode, we display everything together but seperate them with a flag
+    
+
 * Mar 5, 2021
     * Trevor, Saji: working on main page UI with some backend (handling experiment list)
     * Mike, Archit: Mostly backend work with some implementation of UI user classes, Firestore implementation and major base classes mostly complete 
