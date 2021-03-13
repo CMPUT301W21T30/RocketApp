@@ -473,12 +473,15 @@ public class DataManager {
                         user = readFirebaseObjectSnapshot(User.class, snapshot);
                         if (user != null) {
                             listen(user);  // Listen to subscriptions
-                            Log.d(TAG, "Login successful: " + user.toString());
+                            pullSubscriptions(()-> {
+                                Log.d(TAG, "Login successful: " + user.toString());
+                                onSuccess.callBack(user);
+                                }, onFailure);
                         }
                         else if (onFailure != null) {
                             onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
                             return;
-                        };
+                        }
                         if (onSuccess != null) onSuccess.callBack(user);
                     } else {
                         if (onFailure != null) onFailure.callBack(new Exception("User not found"));
@@ -853,5 +856,19 @@ public class DataManager {
                 if (onFailure != null) onFailure.callBack(e);
             });
         }
+    }
+
+    private static void pullSubscriptions(Callback onSuccess, ExceptionCallback onFailure) {
+        usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
+            ArrayList<ID> subscriptionsList = new ArrayList<>();
+            for (QueryDocumentSnapshot sub : subs.getResult())
+                subscriptionsList.add(sub.toObject(ID.class));
+            subscriptions = subscriptionsList;
+            System.out.println("subscriptions updated");
+            for (ID id : subscriptions) {
+                System.out.println(id.key);
+            }
+            onSuccess.callBack();
+        }).addOnFailureListener(onFailure::callBack);
     }
 }
