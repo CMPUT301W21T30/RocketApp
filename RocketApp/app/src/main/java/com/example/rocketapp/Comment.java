@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 
 public abstract class Comment extends FirestoreObject {
     private String text;
+    private DataManager.ID parent;
 
     public Comment() {};
 
@@ -14,6 +15,10 @@ public abstract class Comment extends FirestoreObject {
 
     public String getText() {
         return text;
+    }
+
+    public DataManager.ID getParent() {
+        return parent;
     }
 
     public void setText(User user, String text) {

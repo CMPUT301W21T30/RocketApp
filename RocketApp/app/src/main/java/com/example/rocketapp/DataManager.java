@@ -207,7 +207,7 @@ public class DataManager {
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
         for (Experiment experiment : experimentArrayList) {
-            if (experiment.info.getOwner().getKey().equals(user.getId().getKey()))
+            if (experiment.info.getOwner().equals(user.getId()))
                 filteredExperiments.add(experiment);
         }
 
@@ -223,9 +223,13 @@ public class DataManager {
     public static ArrayList<Experiment> getSubscribedExperimentArrayList() {
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
-        for (Experiment experiment : experimentArrayList) {
-            if (experiment.info.getOwner() == user.getId())
-                filteredExperiments.add(experiment);
+        for (ID id : subscriptions) {
+            for (Experiment experiment : experimentArrayList) {
+                if (experiment.getId().getKey().equals(id.getKey())) {
+                    filteredExperiments.add(experiment);
+                    break;
+                }
+            }
         }
 
         return filteredExperiments;
@@ -253,12 +257,12 @@ public class DataManager {
      * Publish a new experiment
      * @param experiment
      *      Experiment to publish
-     * @param onComplete
+     * @param onSuccess
      *      Callback for when successful
      * @param onFailure
      *      Callback for failure
      */
-    public static void publishExperiment(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
+    public static void publishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
             if (onFailure != null)
                 onFailure.callBack(new Exception("Publish Experiment Failed. Must be signed in to publish experiment"));
@@ -267,14 +271,8 @@ public class DataManager {
 
         experiment.setOwner(user.getId());
         experiment.info.setOwner(user.getId());
-
-        if (experiment.info.getOwner() == null) {
-            if (onFailure != null)
-                onFailure.callBack(new Exception("Owner does not have id. Cannot publish experiment"));
-            return;
-        }
-
-        push(experiment, onComplete, onFailure);
+        experiment.setState(user.getId(), Experiment.State.ACTIVE);
+        push(experiment, onSuccess, onFailure);
     }
 
 
@@ -287,22 +285,21 @@ public class DataManager {
      * @param onFailure
      *      Callback for when fails
      */
-    public static void unpublishExperiment(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
-        if (experiment == null) {
-            Log.e(TAG, "unpublishExperiment called with null experiment.");
-            onFailure.callBack(new Exception("unpublishExperiment called with null experiment."));
+    public static void unpublishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
+        if (user == null || !user.isValid()) {
+            Log.e(TAG, "User not logged in. Cannot un-publish experiment");
+            onFailure.callBack(new Exception("User not logged in. Cannot un-publish experiment"));
             return;
         }
 
-        if (user == null || experiment.info.getOwner() != user.getId()) {
-            Log.e(TAG, "User does not have permission to end this experiment. Not logged in, or doesn't own it.");
-            onFailure.callBack(new Exception("User does not have permission to end this experiment. Not logged in, or doesn't own it."));
+        if (experiment == null || experiment.getId().isValid() || experiment.info.getOwner() != user.getId()) {
+            Log.e(TAG, "User does not own this experiment. Cannot un-publish.");
+            onFailure.callBack(new Exception("User does not own this experiment. Cannot un-publish."));
             return;
         }
 
-        experimentsRef.document(experiment.getId().getKey()).delete().addOnSuccessListener(aVoid -> {
-            onSuccess.callBack();
-        }).addOnFailureListener((e -> onFailure.callBack(e)));
+        experiment.setState(user.getId(), Experiment.State.UNPUBLISHED);
+        push(experiment, onSuccess, onFailure);
     }
 
 
@@ -316,20 +313,19 @@ public class DataManager {
      *      Callback with exception for when fails
      */
     public static void endExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
-
-        if (user == null) {
-            Log.e(TAG, "Not logged in, cannot end experiment");
-            onFailure.callBack(new Exception("Not logged in, cannot end experiment"));
+        if (user == null || !user.isValid()) {
+            Log.e(TAG, "User not logged in. Cannot end experiment.");
+            onFailure.callBack(new Exception("User not logged in. Cannot end experiment."));
             return;
         }
 
-        if (experiment == null || experiment.info.getOwner() != user.getId()) {
+        if (experiment == null || experiment.getId().isValid() || experiment.info.getOwner() != user.getId()) {
             Log.e(TAG, "User does not own this experiment. Cannot end experiment.");
             onFailure.callBack(new Exception("User does not own this experiment. Cannot end experiment."));
             return;
         }
 
-        experiment.endExperiment(user);
+        experiment.setState(user.getId(), Experiment.State.ENDED);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -533,6 +529,20 @@ public class DataManager {
         push(trial, experiment, onComplete, onFailure);
     }
 
+    /**
+     * Update a trial for an experiment.
+     * @param trial
+     *      New trial to add.
+     * @param experiment
+     *      Experiment to add trial to.
+     * @param onComplete
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void update(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
+        push(trial, experiment, onComplete, onFailure);
+    }
 
 
     //** Questions **/
@@ -552,7 +562,24 @@ public class DataManager {
         push(question, experiment, onComplete, onFailure);
     }
 
+    /**
+     * Update a question.
+     * @param question
+     *      The question object
+     * @param experiment
+     *      The experiment the question belongs to
+     * @param onComplete
+     *      Callback for when push successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void update(Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
+        push(question, experiment, onComplete, onFailure);
+    }
 
+    public static void addAnswer(Answer answer, Question question, Experiment experiment, QuestionCallback onComplete, ExceptionCallback onFailure) {
+
+    }
 
 
 
