@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
 
@@ -31,6 +32,8 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
         initRecyclerView();
+
+
         //TextView textView = findViewById(R.id.textView);
         //textView.setText(DataManager.getUser().getName());
         //TextView textView2 = findViewById(R.id.textView2);
@@ -45,7 +48,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         });
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         for (int i = 0; i < experiments.size(); i++) {
             Log.d("experiment", experiments.get(i).info.getDescription());
