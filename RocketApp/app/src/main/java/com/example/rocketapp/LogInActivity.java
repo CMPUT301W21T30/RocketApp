@@ -23,20 +23,13 @@ public class LogInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//
-        // Set up switch
-        AtomicBoolean isOwner = new AtomicBoolean(false);
-        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch isOwnerSwitch = findViewById(R.id.isOwnerSwitch);
-        isOwnerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            isOwner.set(isChecked);
-        });
 
         // set up login Button
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(v -> {
             EditText usernameEditText = findViewById(R.id.usernameEditText);
             String username = usernameEditText.getText().toString();
-            loginOrCreateUser(username, isOwner.get());
+            loginOrCreateUser(username);
         });
 
 
@@ -46,7 +39,7 @@ public class LogInActivity extends AppCompatActivity {
 
 
 
-    private void loginOrCreateUser(String username, Boolean isOwner) {
+    private void loginOrCreateUser(String username) {
         DataManager.login(username, user -> {
             Log.d("Login Succesfully", "Login Successfully");
             Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
