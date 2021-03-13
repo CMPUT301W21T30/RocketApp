@@ -1,5 +1,8 @@
 # March 5th, 2021 Meeting Note
 
+* Question for TA:
+    * What is our issues for our UML diagram for GUI, and how can we improve it. 
+
 * Mar 12, 2021
     * Aryan: Fix the Storyboard design
     * Saif: Geo-location
