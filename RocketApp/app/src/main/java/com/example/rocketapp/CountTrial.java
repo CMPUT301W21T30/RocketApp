@@ -1,7 +1,5 @@
 package com.example.rocketapp;
 
-import com.google.firebase.firestore.Exclude;
-
 public class CountTrial extends Trial {
     public static final String TYPE = "Count";
 

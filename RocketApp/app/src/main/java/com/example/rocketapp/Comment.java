@@ -1,9 +1,10 @@
 package com.example.rocketapp;
 
 import android.util.Log;
+
 import static android.content.ContentValues.TAG;
 
-public abstract class Comment extends FirestoreChild {
+public abstract class Comment extends DataManager.FirestoreNestableDocument implements DataManager.Type {
     private String text;
 
     public Comment() {};
@@ -12,12 +13,15 @@ public abstract class Comment extends FirestoreChild {
         this.text = text;
     }
 
+    @Override
+    public abstract String getType();
+
     public String getText() {
         return text;
     }
 
     public void setText(User user, String text) {
-        if (this.getOwner() != user.getId()) {
+        if (this.getOwnerId() != user.getId()) {
             Log.e(TAG, "Owner does not have permission to edit this question");
             return;
         }

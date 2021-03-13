@@ -1,7 +1,5 @@
 package com.example.rocketapp;
 
-import com.google.firebase.firestore.Exclude;
-
 public class IntCountTrial extends Trial {
     public static final String TYPE = "IntCount";
 
@@ -17,6 +15,7 @@ public class IntCountTrial extends Trial {
         posCount = value;
     }
 
+    @Override
     public String getType() {
         return TYPE;
     }

@@ -1,9 +1,7 @@
 package com.example.rocketapp;
 import com.google.firebase.firestore.Exclude;
 
-import java.util.ArrayList;
-
-public class User extends FirestoreObject {
+public class User extends DataManager.FirestoreOwnableDocument {
 
     private String name;
     private String email;
@@ -25,8 +23,8 @@ public class User extends FirestoreObject {
     }
 
     @Exclude
-    public DataManager.ID getOwner() {
-        return super.getOwner();
+    public DocumentId getOwnerId() {
+        return super.getOwnerId();
     }
 
     public boolean equals(User user) {

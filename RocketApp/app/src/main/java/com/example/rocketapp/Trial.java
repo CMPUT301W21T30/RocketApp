@@ -1,8 +1,6 @@
 package com.example.rocketapp;
 
-import com.google.firebase.firestore.Exclude;
-
-public abstract class Trial extends FirestoreChild {
+public abstract class Trial extends DataManager.FirestoreNestableDocument implements DataManager.Type {
 
     private String description;
 
@@ -16,5 +14,6 @@ public abstract class Trial extends FirestoreChild {
         return description;
     }
 
+    @Override
     public abstract String getType();
 }

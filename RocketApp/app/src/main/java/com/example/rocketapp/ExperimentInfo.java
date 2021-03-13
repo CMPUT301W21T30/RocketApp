@@ -1,11 +1,7 @@
 package com.example.rocketapp;
 
-import android.util.Log;
-
-import static android.content.ContentValues.TAG;
-
-class ExperimentInfo {
-    private DataManager.ID ownerId;
+public class ExperimentInfo {
+//    private DataManager.ID ownerId;
     private String description;
     private String region;
     private int minTrials;
@@ -20,7 +16,7 @@ class ExperimentInfo {
         this.geoLocationEnabled = geoLocationEnabled;
     }
 
-    public DataManager.ID getOwner() { return ownerId; }
+//    public DataManager.FirestoreObject.ID getOwner() { return ownerId; }
 
     public String getDescription() {
         return description;
@@ -38,36 +34,40 @@ class ExperimentInfo {
         return geoLocationEnabled;
     }
 
-    public void setOwner(DataManager.ID id) {
-        ownerId = id;
-    }
+//    public void setOwner(DataManager.ID id) {
+//        ownerId = id;
+//    }
 
     public void setDescription(User owner, String description) {
-        if (hasPermission(owner)) this.description = description;
+//        if (hasPermission(owner))
+            this.description = description;
     }
 
     public void setRegion(User owner, String region) {
-        if (hasPermission(owner)) this.region = region;
+//        if (hasPermission(owner))
+            this.region = region;
     }
 
     public void setMinTrials(User owner, int minTrials) {
-        if (hasPermission(owner)) this.minTrials = minTrials;
+//        if (hasPermission(owner))
+            this.minTrials = minTrials;
     }
 
     public void setGeoLocationEnabled(User owner, boolean geoLocationEnabled) {
-        if (hasPermission(owner)) this.geoLocationEnabled = geoLocationEnabled;
+//        if (hasPermission(owner))
+            this.geoLocationEnabled = geoLocationEnabled;
     }
 
-    public boolean hasPermission(User owner) {
-        boolean permission = this.ownerId.equals(owner.getId());
-        if (permission)
-            return true;
-        else
-            Log.d(TAG, "Error: Tried to set property without permission");
-        return false;
-    }
+//    public boolean hasPermission(User owner) {
+//        boolean permission = this.get.equals(owner.getId());
+//        if (permission)
+//            return true;
+//        else
+//            Log.d(TAG, "Error: Tried to set property without permission");
+//        return false;
+//    }
 
-    public boolean contains(String string) {
+    public boolean containsString(String string) {
         return this.region.contains(string) ||
                 this.description.contains(string);
     }
@@ -75,7 +75,7 @@ class ExperimentInfo {
     @Override
     public String toString() {
         return "ExperimentInfo{" +
-                "owner=" + ownerId +
+//                "owner=" + ownerId +
                 ", description='" + description + '\'' +
                 ", region='" + region + '\'' +
                 ", minTrials=" + minTrials +

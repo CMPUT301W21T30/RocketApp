@@ -1,7 +1,5 @@
 package com.example.rocketapp;
 
-import com.google.firebase.firestore.Exclude;
-
 public class MeasurementTrial extends Trial {
     public static final String TYPE = "Measurement";
 
@@ -23,6 +21,7 @@ public class MeasurementTrial extends Trial {
         measurement = measure;
     }
 
+    @Override
     public String getType() {
         return TYPE;
     }

@@ -2,20 +2,17 @@ package com.example.rocketapp;
 import android.util.Log;
 
 import com.google.firebase.firestore.Exclude;
-
 import java.util.ArrayList;
-
 import static android.content.ContentValues.TAG;
 
-
-public abstract class Experiment extends FirestoreObject {
+public abstract class Experiment extends DataManager.FirestoreOwnableDocument implements DataManager.Type {
 
     public ExperimentInfo info;
     private State state;
     protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();
     private ArrayList<Question> questionsArrayList = new ArrayList<>();
 
-    enum State {
+    public enum State {
         ACTIVE,
         ENDED,
         UNPUBLISHED
@@ -33,7 +30,7 @@ public abstract class Experiment extends FirestoreObject {
     }
 
     public void endExperiment(User user) {
-        if (user == null || user.getId() != info.getOwner()) {
+        if (user == null || user.getId() != this.getOwnerId()) {
             Log.e(TAG, "Cannot end experiment. Not the owner.");
             return;
         }
@@ -45,7 +42,7 @@ public abstract class Experiment extends FirestoreObject {
         return state;
     }
 
-    public void setState(DataManager.ID ownerId, State state) {
+    public void setState(DocumentId ownerId, State state) {
         this.state = state;
     }
 
@@ -58,8 +55,7 @@ public abstract class Experiment extends FirestoreObject {
     }
 
     public void update(ExperimentInfo info, DataManager.ExperimentCallback onComplete) {
-        if (DataManager.getUser() == null || this.getOwner() != DataManager.getUser().getId()) return;
-
+        if (DataManager.getUser() == null || this.getOwnerId() != DataManager.getUser().getId()) return;
         this.info = info;
 
         DataManager.update(this, onComplete, (e) -> {});
@@ -83,6 +79,7 @@ public abstract class Experiment extends FirestoreObject {
                 '}';
     }
 
+    @Override
     public abstract String getType();
 
     @Exclude
