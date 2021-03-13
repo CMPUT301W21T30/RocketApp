@@ -88,7 +88,8 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/rocket2"/>
+            app:lottie_rawRes="@raw/rocket2"
+            tools:ignore="MissingClass" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_searchbar"
@@ -302,17 +303,18 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
+            android:id="@+id/experimentRecyclerView"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView9"
-            android:id="@+id/experimentRecyclerView"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
