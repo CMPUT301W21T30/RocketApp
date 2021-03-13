@@ -1,11 +1,10 @@
 package com.example.rocketapp;
 import java.util.ArrayList;
-import java.lang.Integer;
+
 import com.google.firebase.firestore.Exclude;
 
 public class BinomialExperiment extends Experiment {
     public static String TYPE = "Binomial";
-
 
     public BinomialExperiment() {
         //TODO

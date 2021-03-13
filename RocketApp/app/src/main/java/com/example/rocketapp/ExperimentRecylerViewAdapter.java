@@ -39,7 +39,7 @@ public class ExperimentRecylerViewAdapter extends RecyclerView.Adapter<Experimen
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        if (experiments.get(position).info.hasPermission(DataManager.getUser())) {
+        if (experiments.get(position).getOwnerId().equals(DataManager.getUser().getId())) {
             holder.experimentNameTextView.setText(experiments.get(position).info.getDescription());
             holder.ownerBtn.setVisibility(View.VISIBLE);
         } else {

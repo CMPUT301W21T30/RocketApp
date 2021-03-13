@@ -1,5 +1,4 @@
 package com.example.rocketapp;
-
 import static java.lang.Math.ceil;
 
 public class MeasurementTrial extends Trial implements Comparable<MeasurementTrial>{
@@ -30,6 +29,7 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
         measurement = measure;
     }
 
+    @Override
     public String getType() {
         return TYPE;
     }

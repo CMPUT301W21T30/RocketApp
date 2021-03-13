@@ -36,7 +36,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         // Join Two list of Experiment Together
         Set<Experiment> set = new LinkedHashSet<>(DataManager.getSubscribedExperimentArrayList());
         // TODO: There is a problem with getOwnedExperimentsArrayList() Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'boolean com.example.rocketapp.DataManager$ID.equals(java.lang.Object)' on a null object reference at DataManager.getOwnedExperimentsArrayList(DataManager.java:215)
-//        set.addAll(DataManager.getOwnedExperimentsArrayList());
+        set.addAll(DataManager.getOwnedExperimentsArrayList());
         experiments = new ArrayList<>(set);
         initRecyclerView();
 
