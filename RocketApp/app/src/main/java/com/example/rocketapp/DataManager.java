@@ -365,7 +365,7 @@ public class DataManager {
         }
 
         ((FirestoreOwnableDocument) experiment).setOwnerId(user.getId());
-        experiment.setState(user.getId(), Experiment.State.ACTIVE);
+        experiment.setState(user.getId(), Experiment.State.PUBLISHED);
         push(experiment, onSuccess, onFailure);
     }
 

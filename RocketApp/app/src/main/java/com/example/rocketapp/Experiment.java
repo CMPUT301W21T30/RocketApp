@@ -13,7 +13,7 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
     private ArrayList<Question> questionsArrayList = new ArrayList<>();
 
     public enum State {
-        ACTIVE,
+        PUBLISHED,
         ENDED,
         UNPUBLISHED
     }
@@ -22,7 +22,7 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
 
     public Experiment(ExperimentInfo info) {
         this.info = info;
-        this.state = State.ACTIVE;
+        this.state = State.PUBLISHED;
     }
 
     public Experiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
