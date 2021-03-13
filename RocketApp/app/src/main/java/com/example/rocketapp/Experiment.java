@@ -85,7 +85,10 @@ public abstract class Experiment extends FirestoreObject {
     public abstract float getStdDev();
 
     @Exclude
-    public abstract float getQuartiles();
+    public abstract float getTopQuartile();
+
+    @Exclude
+    public abstract float getBottomQuartile();
 
 }
 

@@ -1,7 +1,15 @@
 package com.example.rocketapp;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 import java.lang.Integer;
+import java.util.Collections;
+
 import com.google.firebase.firestore.Exclude;
+
+import static java.lang.Math.sqrt;
 
 public class CountExperiment extends Experiment {
     public static String TYPE = "Count";
@@ -48,15 +56,60 @@ public class CountExperiment extends Experiment {
     @Exclude
     @Override
     public float getStdDev() {
-        //TODO
-        return 0;
+        ArrayList<CountTrial> trials = getTrials();
+        float mean = getMean();
+        float squareSum = 0;
+        float meanDif = 0;
+        for(int i = 0; i<trials.size(); i++){
+            meanDif = (trials.get(i).getCount() - mean);
+            squareSum = squareSum + (meanDif * meanDif);
+        }
+        final double stdDev = sqrt(squareSum / trials.size());
+        return (float) stdDev;
     }
 
     @Exclude
     @Override
-    public float getQuartiles() {
-        //TODO
-        return 0;
+    public float getTopQuartile() {
+        float quart;
+        ArrayList<CountTrial> trials = getTrials();
+        Collections.sort(trials);
+        switch(trials.size()%4){
+            case (0):
+                quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getCount() + trials.get((trials.size() * 3) / 4 ).getCount()) )/ 2;
+                return quart;
+            case (1):
+                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 ).getCount() + trials.get(((trials.size() - 1) * 3) / 4 + 1).getCount())) / 2;
+                return quart;
+            case (2):
+                quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getCount());
+                return quart;
+            default:
+                quart = (float)(trials.get(((trials.size() - 3)* 3) / 4 + 2).getCount());
+                return quart;
+        }
+    }
+
+    @Exclude
+    @Override
+    public float getBottomQuartile() {
+        float quart;
+        ArrayList<CountTrial> trials = getTrials();
+        Collections.sort(trials);
+        switch (trials.size()%4){
+            case (0):
+                quart = ( (float)(trials.get( trials.size()  / 4 - 1).getCount() + trials.get(trials.size() / 4 ).getCount()) )/ 2;
+                return quart;
+            case (1):
+                quart = ( (float)(trials.get( (trials.size() - 1 )/ 4 - 1).getCount() + trials.get((trials.size() - 1 )/ 4 ).getCount()) )/ 2;
+                return quart;
+            case (2):
+                quart = (float)(trials.get((trials.size() - 2) / 4 ).getCount());
+                return quart;
+            default:
+                quart = (float)(trials.get((trials.size() - 3) / 4 ).getCount());
+                return quart;
+        }
     }
 
     @Exclude
