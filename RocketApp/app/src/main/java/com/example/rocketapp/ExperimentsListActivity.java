@@ -26,19 +26,15 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
     private static final String TAG = "ExperimentsListActivity";
     public ImageButton profileBtn;
 
-    protected ArrayList<Experiment> experiments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
 
-        // Join Two list of Experiment Together
-        Set<Experiment> set = new LinkedHashSet<>(DataManager.getSubscribedExperimentArrayList());
-        // TODO: There is a problem with getOwnedExperimentsArrayList() Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'boolean com.example.rocketapp.DataManager$ID.equals(java.lang.Object)' on a null object reference at DataManager.getOwnedExperimentsArrayList(DataManager.java:215)
-        set.addAll(DataManager.getOwnedExperimentsArrayList());
-        experiments = new ArrayList<>(set);
-        initRecyclerView();
+        // Display Subscribed Experiment
+        ArrayList<Experiment> experiments = DataManager.getSubscribedExperimentArrayList();
+        initRecyclerView(experiments);
 
 
         profileBtn = findViewById(R.id.profile_button);
@@ -49,10 +45,12 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         });
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView(ArrayList<Experiment> experiments){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerView);
+
+        // You can pass in a flag to the constructor
         ExperimentRecylerViewAdapter adapter = new ExperimentRecylerViewAdapter(this, experiments);
         experimentRecyclerView.setAdapter(adapter);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
