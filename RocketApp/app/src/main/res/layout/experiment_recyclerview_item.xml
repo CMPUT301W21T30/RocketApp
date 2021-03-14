@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/experimentListItemLayout"
     android:layout_gravity="center_horizontal"
     android:background="@color/white"
@@ -46,7 +45,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/nunito_regular"
-            android:text="Owner"
+            android:text="Region"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
