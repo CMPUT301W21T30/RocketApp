@@ -54,7 +54,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
 
         // You can pass in a flag to the constructor
-        ExperimentRecylerViewAdapter adapter = new ExperimentRecylerViewAdapter(this, experimentsOwned);
+        ExperimentRecyclerViewOwnedAdapter adapter = new ExperimentRecyclerViewOwnedAdapter(this, experimentsOwned);
         experimentRecyclerView.setAdapter(adapter);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
