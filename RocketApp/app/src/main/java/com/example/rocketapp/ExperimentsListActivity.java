@@ -32,6 +32,9 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
 
+        ArrayList<Experiment> experimentsOwned = DataManager.getOwnedExperimentsArrayList();
+        initRecyclerViewOwner(experimentsOwned);
+
         // Display Subscribed Experiment
         ArrayList<Experiment> experiments = DataManager.getSubscribedExperimentArrayList();
         initRecyclerView(experiments);
@@ -43,6 +46,17 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
             startActivity(userProfileIntent);
 
         });
+    }
+
+    private void initRecyclerViewOwner(ArrayList<Experiment> experimentsOwned) {
+        Log.d(TAG, "initRecyclerView: init recyclerview.");
+
+        RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
+
+        // You can pass in a flag to the constructor
+        ExperimentRecylerViewAdapter adapter = new ExperimentRecylerViewAdapter(this, experimentsOwned);
+        experimentRecyclerView.setAdapter(adapter);
+        experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void initRecyclerView(ArrayList<Experiment> experiments){
