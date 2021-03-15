@@ -9,16 +9,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
+public class ExperimentsListActivity extends AppCompatActivity{
 
     //use this button to navigate to the profile page of the user
     private static final String TAG = "ExperimentsListActivity";
     public ImageButton profileBtn;
+    public Button addNewExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
     ExperimentRecyclerViewOwnedAdapter adapterOwned;
@@ -43,6 +46,9 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
 //            DataManager.publishExperiment(new CountExperiment("2nd Experiment", "BC", 20, true), (s) -> {}, (e) -> {});
 
         });
+
+        addNewExperiment = findViewById(R.id.createExpBtn);
+        addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
     }
 
     /**
@@ -120,9 +126,4 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         }
     };
 
-    @Override
-    public void returnExperiment(Experiment exp) {
-        Log.d("ExperimentsListActivity", "sendExperiment: got the experiment" + exp.info.getDescription());
-        //TODO: handle received experiment
-    }
 }

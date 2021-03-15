@@ -22,21 +22,16 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Objects;
 
-public class ExperimentDialog extends DialogFragment {
+public class CreateExperimentDialog extends DialogFragment {
 
     //Forces implementing class to create a function that handles experiment returned from fragment
-    public interface OnInputListener{
-        void returnExperiment(Experiment exp);
-    }
-
-    public OnInputListener dialogListener;
 
     private static final String TAG = "ExperimentDialog";
 
     private EditText descriptionET, regionET, minTrialsET;      //Add experiment info
-    private Button okButton, cancelButton;                      //Confirm or Cancel information
+    private Button publishBtn, cancelButton;                      //Confirm or Cancel information
     private CheckBox geoBox;                                    //Handle boolean geoLocationEnabled
-    private Boolean geolocationEnabled;                         //Set through geoBox
+    private Boolean geolocationEnabled = false;                         //Set through geoBox
     private Spinner expType;                                    //Dropdown box to select experiment type
 
     /**
@@ -53,22 +48,20 @@ public class ExperimentDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.experiment_dialog, container, false);
+        View view = inflater.inflate(R.layout.create_experiment_dialog, container, false);
         initialSetup(view);
 
         geoBox.setOnClickListener(v -> {
             if (geoBox.isChecked()){            //if experiment requires geoLocation to be enabled
                 geolocationEnabled = true;
                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Geolocation Enabled", Toast.LENGTH_LONG).show();
-            } else {
-                geolocationEnabled = false;     //Experiment does not require geoLocation to be enabled
             }
         });
 
-        okButton.setOnClickListener(v -> {          //Confirm button is clicked
+        publishBtn.setOnClickListener(v -> {          //Confirm button is clicked
             if (checkInputsValid()) {
                 Log.d(TAG, "onClick: capturing input");
-                if (dialogListener != null) dialogListener.returnExperiment(getExperiment(expType.getSelectedItem().toString()));
+                returnExperiment(getExperiment(expType.getSelectedItem().toString()));
                 Objects.requireNonNull(getDialog()).dismiss();
             }
         });         //Validates input and adds experiment
@@ -96,7 +89,7 @@ public class ExperimentDialog extends DialogFragment {
         regionET = view.findViewById(R.id.region_input);                //region
         minTrialsET = view.findViewById(R.id.min_trial);                //minimum number of trials
         geoBox = view.findViewById(R.id.geolocation);                   //geoLocation enabled or disabled
-        okButton = view.findViewById(R.id.add_exp);                     //Confirm experiment
+        publishBtn = view.findViewById(R.id.add_exp);                     //Confirm experiment
         cancelButton = view.findViewById(R.id.cancel_exp);              //Do not create experiment
         expType = view.findViewById(R.id.select_exp);                   //Type of experiment ("Binomial", "Count", "IntCount", "Measurement")
         ArrayAdapter<String> myAdapter = new ArrayAdapter<>(getContext(),
@@ -109,10 +102,18 @@ public class ExperimentDialog extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try{
-            dialogListener = (OnInputListener) getActivity();
+            /*dialogListener = (OnInputListener) getActivity();*/
         }catch(ClassCastException e){
             Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
         }
+    }
+
+    public void returnExperiment(Experiment newExperiment){ ;
+        DataManager.publishExperiment(newExperiment, experiment -> {
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment published", Toast.LENGTH_LONG).show();
+        }, exception -> {
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment could not be added", Toast.LENGTH_LONG).show();
+        });
     }
 
     /**
@@ -125,11 +126,6 @@ public class ExperimentDialog extends DialogFragment {
     public Experiment getExperiment(String type){
         Experiment exp;
         switch(type) {
-            //TODO: deal with name
-            case ("Binomial Experiment"):
-                exp = new BinomialExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);

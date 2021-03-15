@@ -134,8 +134,8 @@
                     android:layout_marginEnd="4dp"
                     android:layout_marginRight="4dp"
                     android:fontFamily="@font/nunito_regular"
-                    android:paddingTop="4dp"
                     android:hint="Search for Trials"
+                    android:paddingTop="4dp"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/searchBt"
@@ -242,16 +242,12 @@
             android:id="@+id/createExpBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="84dp"
-            android:layout_marginLeft="84dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="392dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="New"
-            app:layout_constraintBottom_toTopOf="@+id/experimentRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.166"
-            app:layout_constraintStart_toEndOf="@+id/textView9"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
