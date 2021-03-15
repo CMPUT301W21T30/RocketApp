@@ -2,7 +2,24 @@ package com.example.rocketapp;
 
 import android.widget.EditText;
 
+/**
+ * Used to validate user input
+ * Validates if integer entered is in a certain range
+ * Validates if length is within two given length sizes
+ */
 public class Validate {
+    /**
+     * Returns true if integer entered is within the two parametric integers passed
+     * @param editText
+     *          text box with integer value
+     * @param min
+     *          minimum value the integer should have
+     * @param max
+     *          maximum value the integer could have
+     * @param showError
+     *          if showError is true, the error is displayed.
+     * @return
+     */
     static boolean intInRange(EditText editText, int min, int max, boolean showError) {
         boolean isValid = false;
         try {
@@ -18,6 +35,18 @@ public class Validate {
         return isValid;
     }
 
+    /**
+     * Returns true if text entered has length within the two parametric integers passed
+     * @param editText
+     *          text box with some text
+     * @param min
+     *          minimum length the text should have
+     * @param max
+     *          maximum length the text could have
+     * @param showError
+     *          if showError is true, the error is displayed.
+     * @return
+     */
     static boolean lengthInRange(EditText editText, int min, int max, boolean showError) {
         boolean isValid = false;
         try {
