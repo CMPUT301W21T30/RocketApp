@@ -590,7 +590,6 @@ public class DataManager {
                             onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
                             return;
                         }
-                        if (onSuccess != null) onSuccess.callBack(user);
                     } else {
                         if (onFailure != null) onFailure.callBack(new Exception("User not found"));
                     }})
