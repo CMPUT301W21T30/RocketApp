@@ -33,12 +33,22 @@ public class ExperimentDialog extends DialogFragment {
 
     private static final String TAG = "ExperimentDialog";
 
-    private EditText descriptionET, regionET, minTrialsET;
-    private Button okButton, cancelButton;
-    private CheckBox geoBox;
-    private Boolean geolocationEnabled;
-    private Spinner expType;
+    private EditText descriptionET, regionET, minTrialsET;      //Add experiment info
+    private Button okButton, cancelButton;                      //Confirm or Cancel information
+    private CheckBox geoBox;                                    //Handle boolean geoLocationEnabled
+    private Boolean geolocationEnabled;                         //Set through geoBox
+    private Spinner expType;                                    //Dropdown box to select experiment type
 
+    /**
+     *
+     * @param inflater
+     *          Instantiates a layout XML file into its corresponding View objects.     //https://developer.android.com/reference/android/view/LayoutInflater
+     * @param container
+     *          a view used to contain other views
+     * @param savedInstanceState
+     *          save the state of the application
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
@@ -47,30 +57,34 @@ public class ExperimentDialog extends DialogFragment {
         initialSetup(view);
 
         geoBox.setOnClickListener(v -> {
-            if (geoBox.isChecked()){
+            if (geoBox.isChecked()){            //if experiment requires geoLocation to be enabled
                 geolocationEnabled = true;
                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Geolocation Enabled", Toast.LENGTH_LONG).show();
             } else {
-                geolocationEnabled = false;
+                geolocationEnabled = false;     //Experiment does not require geoLocation to be enabled
             }
         });
 
-        okButton.setOnClickListener(v -> {
+        okButton.setOnClickListener(v -> {          //Confirm button is clicked
             if (checkInputsValid()) {
                 Log.d(TAG, "onClick: capturing input");
                 if (dialogListener != null) dialogListener.returnExperiment(getExperiment(expType.getSelectedItem().toString()));
                 Objects.requireNonNull(getDialog()).dismiss();
             }
-        });
+        });         //Validates input and adds experiment
 
-        cancelButton.setOnClickListener(v -> {
+        cancelButton.setOnClickListener(v -> {      //Cancel button is clicked
             Log.d(TAG, "onClick: Closing Dialog");
             Objects.requireNonNull(getDialog()).dismiss();
-        });
+        });         //Does not add the experiment
 
         return view;
     }
 
+    /**
+     * Connects with UI of Experiment Dialog box
+     * @param view
+     */
     public void initialSetup(View view){
 
         //Initializing dialog attributes
@@ -78,17 +92,17 @@ public class ExperimentDialog extends DialogFragment {
         //How to add a checkbox: https://developer.android.com/guide/topics/ui/controls/checkbox
         //how to add a dropdown list: https://developer.android.com/guide/topics/ui/controls/spinner
 
-        descriptionET = view.findViewById(R.id.description_input);
-        regionET = view.findViewById(R.id.region_input);
-        minTrialsET = view.findViewById(R.id.min_trial);
-        geoBox = view.findViewById(R.id.geolocation);
-        okButton = view.findViewById(R.id.add_exp);
-        cancelButton = view.findViewById(R.id.cancel_exp);
-        expType = view.findViewById(R.id.select_exp);
+        descriptionET = view.findViewById(R.id.description_input);      //description
+        regionET = view.findViewById(R.id.region_input);                //region
+        minTrialsET = view.findViewById(R.id.min_trial);                //minimum number of trials
+        geoBox = view.findViewById(R.id.geolocation);                   //geoLocation enabled or disabled
+        okButton = view.findViewById(R.id.add_exp);                     //Confirm experiment
+        cancelButton = view.findViewById(R.id.cancel_exp);              //Do not create experiment
+        expType = view.findViewById(R.id.select_exp);                   //Type of experiment ("Binomial", "Count", "IntCount", "Measurement")
         ArrayAdapter<String> myAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.experiments));
-        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        expType.setAdapter(myAdapter);
+        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);       //dropdown for experiment types
+        expType.setAdapter(myAdapter);                                  //set experiment type from selected item inside dropdown
     }
 
     @Override
@@ -101,9 +115,14 @@ public class ExperimentDialog extends DialogFragment {
         }
     }
 
+    /**
+     * given a string describing the experiment type, returns an experiment of said type based on user inputs
+     * @param type
+     *          experiment type
+     * @return
+     *          experiment of said type based on user input
+     */
     public Experiment getExperiment(String type){
-
-        //given a string describing the experiment type, returns an experiment of said type based on user inputs
         Experiment exp;
         switch(type) {
             //TODO: deal with name
@@ -131,6 +150,15 @@ public class ExperimentDialog extends DialogFragment {
         }
     }
 
+    /**
+     * Validates user input
+     * description must be within [1,40] characters
+     * minimum amount of trials before an experiment can be ENDED must be described
+     * region length must be within [1,40] characters
+     * @return
+     *      True if user input is valid
+     *      False if user input is invalid
+     */
     private boolean checkInputsValid() {
         return  Validate.lengthInRange(descriptionET, 1, 40, true) &&
                 Validate.intInRange(minTrialsET, 0, Integer.MAX_VALUE, true) &&

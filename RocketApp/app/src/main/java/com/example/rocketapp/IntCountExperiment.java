@@ -7,6 +7,10 @@ import com.google.firebase.firestore.Exclude;
 
 import static java.lang.Math.sqrt;
 
+/**
+ * Class for experiments of type "IntCount".
+ * Inherits from abstract class Experiment.
+ */
 public class IntCountExperiment extends Experiment {
     public static String TYPE = "IntCount";
 
@@ -14,15 +18,33 @@ public class IntCountExperiment extends Experiment {
         //TODO
     }
 
+    /**Constructor for IntCountExperiment
+     * @param description   - String
+     *          Details regarding what the experiment is and how to perform
+     * @param region    - String
+     *          Region where the experiment is performed.
+     * @param minTrials     - Int
+     *          The minimum number of trials required to derive a conclusion.
+     * @param geoLocationEnabled    - Boolean
+     *          True if the trial requires user to submit their geoLocation, False otherwise.
+     */
     public IntCountExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(description, region, minTrials, geoLocationEnabled);
     }
 
+    /**
+     * @return Type of experiment. Objects of this class return "IntCount" - String
+     */
     @Override
     public String getType() {
         return TYPE;
     }
 
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the median from all trials present in this experiment
+     * @return the median of experiment
+     */
     @Exclude
     public float getMedian(){
         ArrayList<IntCountTrial> trials = getTrials();
@@ -37,6 +59,11 @@ public class IntCountExperiment extends Experiment {
         return median;
     }
 
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the mean from all trials present in this experiment
+     * @return the mean of experiment
+     */
     @Exclude
     @Override
     public float getMean() {
@@ -48,6 +75,11 @@ public class IntCountExperiment extends Experiment {
         return (float) ((sum/trials.size())*1.0);
     }
 
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the standard deviation based on normal distribution from all trials present in this experiment
+     * @return the standard deviation of experiment
+     */
     @Exclude
     @Override
     public float getStdDev() {
@@ -63,6 +95,11 @@ public class IntCountExperiment extends Experiment {
         return (float) stdDev;
     }
 
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the 75th percentile from all trials present in this experiment
+     * @return the Q3 of experiment
+     */
     @Exclude
     @Override
     public float getTopQuartile() {
@@ -85,6 +122,11 @@ public class IntCountExperiment extends Experiment {
         }
     }
 
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the 25th percentile from all trials present in this experiment
+     * @return Q1 of this experiment
+     */
     @Exclude
     @Override
     public float getBottomQuartile() {
@@ -107,6 +149,9 @@ public class IntCountExperiment extends Experiment {
         }
     }
 
+    /**
+     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
+     */
     @Exclude
     @Override
     public ArrayList<IntCountTrial> getTrials(){
