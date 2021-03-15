@@ -363,7 +363,7 @@ public class DataManager {
                 onFailure.callBack(new Exception("Publish Experiment Failed."));
             return;
         }
-
+        Log.d("datamanager", "in publish");
         ((FirestoreOwnableDocument) experiment).setOwnerId(user.getId());
         experiment.setState(user.getId(), Experiment.State.PUBLISHED);
         push(experiment, onSuccess, onFailure);
@@ -381,13 +381,16 @@ public class DataManager {
      */
     public static void unpublishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
-            Log.e(TAG, "User not logged in. Cannot un-publish experiment");
             onFailure.callBack(new Exception("User not logged in. Cannot un-publish experiment"));
             return;
         }
-
+        // There is a problem with this if statement, experiment.getOwnerId() return a different id than that of the user
         if (experiment == null || experiment.getId().isValid() || experiment.getOwnerId() != user.getId()) {
-            Log.e(TAG, "User does not own this experiment. Cannot un-publish.");
+            Log.e("datamanager", "User does not own this experiment. Cannot un-publish.");
+            Log.e("datamanager", String.valueOf(experiment.getId().isValid()));
+            Log.e("datamanager", String.valueOf(experiment.getOwnerId()));
+            Log.e("datamanager", String.valueOf(user.getId()));
+
             onFailure.callBack(new Exception("User does not own this experiment. Cannot un-publish."));
             return;
         }

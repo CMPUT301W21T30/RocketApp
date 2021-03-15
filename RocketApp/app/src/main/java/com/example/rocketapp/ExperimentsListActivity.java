@@ -30,7 +30,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiments_list);
 
-        initRecyclerViewOwner();
+        initRecyclerViewOwned();
 
         initRecyclerViewSubscribed();
 
@@ -51,11 +51,11 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
     @Override
     protected void onResume() {
         super.onResume();
-        initRecyclerViewOwner();
+        initRecyclerViewOwned();
         initRecyclerViewSubscribed();
     }
 
-    private void initRecyclerViewOwner() {
+    private void initRecyclerViewOwned() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
