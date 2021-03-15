@@ -29,7 +29,7 @@ public class CreateExperimentDialog extends DialogFragment {
     private EditText descriptionET, regionET, minTrialsET;
     private Button publishButton, cancelButton;
     private CheckBox geoBox;
-    private Boolean geolocationEnabled;
+    private Boolean geolocationEnabled = false;
     private Spinner expType;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -43,8 +43,6 @@ public class CreateExperimentDialog extends DialogFragment {
             if (geoBox.isChecked()){
                 geolocationEnabled = true;
                 Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Geolocation Enabled", Toast.LENGTH_LONG).show();
-            } else {
-                geolocationEnabled = false;
             }
         });
 
@@ -101,19 +99,19 @@ public class CreateExperimentDialog extends DialogFragment {
         switch(type) {
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()),false);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()),geolocationEnabled);
                 return exp;
             case ("Integer Count Experiment"):
                 exp = new IntCountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             case ("Measurement Experiment"):
                 exp = new MeasurementExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
             default:
                 exp = new BinomialExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
                 return exp;
 
         }
