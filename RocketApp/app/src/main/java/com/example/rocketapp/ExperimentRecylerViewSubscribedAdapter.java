@@ -5,25 +5,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
-public class ExperimentRecylerViewAdapter extends RecyclerView.Adapter<ExperimentRecylerViewAdapter.ViewHolder> {
+public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter<ExperimentRecylerViewSubscribedAdapter.ViewHolder> {
 
     private static final String TAG = "ExperimentRecylerViewAd";
 
     private ArrayList<Experiment> experiments;
     private Context context;
 
-    public ExperimentRecylerViewAdapter(Context context, ArrayList<Experiment> experiments) {
+    public ExperimentRecylerViewSubscribedAdapter(Context context, ArrayList<Experiment> experiments) {
         this.experiments = experiments;
         this.context = context;
     }
@@ -39,15 +38,9 @@ public class ExperimentRecylerViewAdapter extends RecyclerView.Adapter<Experimen
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        if (experiments.get(position).getOwnerId().equals(DataManager.getUser().getId())) {
-            holder.experimentNameTextView.setText(experiments.get(position).info.getDescription());
-            holder.ownerBtn.setVisibility(View.VISIBLE);
-        } else {
-            holder.experimentNameTextView.setText(experiments.get(position).info.getDescription());
-            holder.ownerBtn.setVisibility(View.INVISIBLE);
-        }
-
-
+        // use the flag to seperate top and bottom
+        holder.experimentNameTextView.setText(experiments.get(position).info.getDescription());
+        holder.regionTextView.setText(experiments.get(position).info.getRegion());
         holder.experimentListItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,13 +59,13 @@ public class ExperimentRecylerViewAdapter extends RecyclerView.Adapter<Experimen
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView experimentNameTextView;
-        Button ownerBtn;
-        ConstraintLayout experimentListItemLayout;
+        TextView regionTextView;
+        MaterialCardView experimentListItemLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             experimentNameTextView = itemView.findViewById(R.id.experimentNameTextView);
-            ownerBtn = itemView.findViewById(R.id.ownerBtn);
+            regionTextView = itemView.findViewById(R.id.regionTextView);
             experimentListItemLayout = itemView.findViewById(R.id.experimentListItemLayout);
         }
     }

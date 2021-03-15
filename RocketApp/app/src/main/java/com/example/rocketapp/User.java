@@ -7,8 +7,7 @@ import com.google.firebase.firestore.Exclude;
  * They can behave as Experimenters by subscribing or participating by submitting trials to an experiment
  * Users are added to firestore database upon creation
  */
-public class User extends DataManager.FirestoreOwnableDocument {
-
+public class User extends DataManager.FirestoreDocument {
     private String name;        //username
     private String email;       //user email
     private String phone_number;        //user phone number
@@ -44,16 +43,6 @@ public class User extends DataManager.FirestoreOwnableDocument {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Every user has a unique id generated upon creation
-     * @return
-     *      unique user id
-     */
-    @Exclude
-    public DocumentId getOwnerId() {
-        return super.getOwnerId();
     }
 
     /**
