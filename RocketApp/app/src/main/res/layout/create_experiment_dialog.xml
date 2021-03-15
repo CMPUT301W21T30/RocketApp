@@ -55,7 +55,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="1dp"
         android:layout_marginLeft="4dp"
-        android:text="@string/publish" />
+        android:text="@string/publish"
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/cancel_exp"
@@ -67,6 +68,8 @@
         android:layout_marginLeft="208dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="0dp"
-        android:text="@string/cancel" />
+        android:text="@string/cancel"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="1dp" />
 
 </RelativeLayout>
