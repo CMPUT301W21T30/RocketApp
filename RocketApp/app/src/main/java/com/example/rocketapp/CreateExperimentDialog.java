@@ -101,19 +101,19 @@ public class CreateExperimentDialog extends DialogFragment {
         switch(type) {
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()),false);
                 return exp;
             case ("Integer Count Experiment"):
                 exp = new IntCountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
                 return exp;
             case ("Measurement Experiment"):
                 exp = new MeasurementExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
                 return exp;
             default:
                 exp = new BinomialExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
+                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), false);
                 return exp;
 
         }
