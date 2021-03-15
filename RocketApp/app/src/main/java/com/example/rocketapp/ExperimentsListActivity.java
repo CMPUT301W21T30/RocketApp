@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -23,7 +22,7 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
     ExperimentRecyclerViewOwnedAdapter adapterOwned;
-    ExperimentRecylerViewSubscribedAdapter adapteSubscribedr;
+    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
 
 
     @Override
@@ -71,13 +70,14 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         itemTouchHelperOwned.attachToRecyclerView(experimentRecyclerView);
     }
 
+
     private void initRecyclerViewSubscribed(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
 
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
-        adapteSubscribedr = new ExperimentRecylerViewSubscribedAdapter(this, experimentsSubscribed);
-        experimentRecyclerView.setAdapter(adapteSubscribedr);
+        adapterSubscribed = new ExperimentRecylerViewSubscribedAdapter(this, experimentsSubscribed);
+        experimentRecyclerView.setAdapter(adapterSubscribed);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
