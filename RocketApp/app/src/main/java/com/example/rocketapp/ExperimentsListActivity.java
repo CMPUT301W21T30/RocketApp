@@ -6,25 +6,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.TextView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-public class ExperimentsListActivity extends AppCompatActivity implements ExperimentDialog.OnInputListener {
+public class ExperimentsListActivity extends AppCompatActivity /*implements CreateExperimentDialog.OnInputListener*/ {
 
     //use this button to navigate to the profile page of the user
     private static final String TAG = "ExperimentsListActivity";
     public ImageButton profileBtn;
+    public Button createExpBtn;
 
     protected ArrayList<Experiment> experiments = new ArrayList<>();
 
@@ -47,6 +43,14 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
             startActivity(userProfileIntent);
 
         });
+
+        createExpBtn = findViewById(R.id.createExpBtn);
+        createExpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment");
+            }
+        });
     }
 
     private void initRecyclerView(){
@@ -58,11 +62,6 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    @Override
-    public void returnExperiment(Experiment exp) {
-        Log.d("ExperimentsListActivity", "sendExperiment: got the experiment" + exp.info.getDescription());
-        //TODO: handle received experiment
-    }
             /*
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(v -> {

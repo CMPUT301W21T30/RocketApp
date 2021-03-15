@@ -22,19 +22,12 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Objects;
 
-public class ExperimentDialog extends DialogFragment {
-
-    //Forces implementing class to create a function that handles experiment returned from fragment
-    public interface OnInputListener{
-        void returnExperiment(Experiment exp);
-    }
-
-    public OnInputListener dialogListener;
+public class CreateExperimentDialog extends DialogFragment {
 
     private static final String TAG = "ExperimentDialog";
 
     private EditText descriptionET, regionET, minTrialsET;
-    private Button okButton, cancelButton;
+    private Button publishButton, cancelButton;
     private CheckBox geoBox;
     private Boolean geolocationEnabled;
     private Spinner expType;
@@ -43,7 +36,7 @@ public class ExperimentDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.experiment_dialog, container, false);
+        View view = inflater.inflate(R.layout.create_experiment_dialog, container, false);
         initialSetup(view);
 
         geoBox.setOnClickListener(v -> {
@@ -55,10 +48,10 @@ public class ExperimentDialog extends DialogFragment {
             }
         });
 
-        okButton.setOnClickListener(v -> {
+        publishButton.setOnClickListener(v -> {
             if (checkInputsValid()) {
                 Log.d(TAG, "onClick: capturing input");
-                if (dialogListener != null) dialogListener.returnExperiment(getExperiment(expType.getSelectedItem().toString()));
+                returnExperiment(getExperiment(expType.getSelectedItem().toString()));
                 Objects.requireNonNull(getDialog()).dismiss();
             }
         });
@@ -82,7 +75,7 @@ public class ExperimentDialog extends DialogFragment {
         regionET = view.findViewById(R.id.region_input);
         minTrialsET = view.findViewById(R.id.min_trial);
         geoBox = view.findViewById(R.id.geolocation);
-        okButton = view.findViewById(R.id.add_exp);
+        publishButton = view.findViewById(R.id.add_exp);
         cancelButton = view.findViewById(R.id.cancel_exp);
         expType = view.findViewById(R.id.select_exp);
         ArrayAdapter<String> myAdapter = new ArrayAdapter<>(getContext(),
@@ -95,7 +88,7 @@ public class ExperimentDialog extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try{
-            dialogListener = (OnInputListener) getActivity();
+            /*dialogListener = (OnInputListener) getActivity();*/
         }catch(ClassCastException e){
             Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
         }
@@ -106,11 +99,6 @@ public class ExperimentDialog extends DialogFragment {
         //given a string describing the experiment type, returns an experiment of said type based on user inputs
         Experiment exp;
         switch(type) {
-            //TODO: deal with name
-            case ("Binomial Experiment"):
-                exp = new BinomialExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),
                         regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
@@ -136,5 +124,13 @@ public class ExperimentDialog extends DialogFragment {
                 Validate.intInRange(minTrialsET, 0, Integer.MAX_VALUE, true) &&
                 Validate.lengthInRange(regionET, 1, 40, true)
                 ;
+    }
+
+    private void returnExperiment(Experiment newExperiment){
+        DataManager.publishExperiment(newExperiment, experiment -> {
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment published", Toast.LENGTH_LONG).show();
+        }, exception -> {
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment could not be added", Toast.LENGTH_LONG).show();
+        });
     }
 }
