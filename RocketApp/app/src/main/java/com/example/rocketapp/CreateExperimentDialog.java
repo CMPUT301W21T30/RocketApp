@@ -110,9 +110,9 @@ public class CreateExperimentDialog extends DialogFragment {
 
     public void returnExperiment(Experiment newExperiment){ ;
         DataManager.publishExperiment(newExperiment, experiment -> {
-            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment published", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Experiment published");
         }, exception -> {
-            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Experiment could not be added", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Experiment not published");
         });
     }
 
