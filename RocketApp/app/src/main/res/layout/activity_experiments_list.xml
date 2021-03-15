@@ -327,6 +327,7 @@
             android:layout_marginTop="24dp"
             android:text="New"
             app:layout_constraintBottom_toTopOf="@+id/experimentRecyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
