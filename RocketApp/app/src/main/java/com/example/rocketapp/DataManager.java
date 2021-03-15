@@ -11,9 +11,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
@@ -276,7 +273,7 @@ public class DataManager {
 
         experiment.setOwner(user.getId());
         experiment.info.setOwner(user.getId());
-        experiment.setState(user.getId(), Experiment.State.ACTIVE);
+        experiment.setState(user.getId(), Experiment.State.PUBLISHED);
         push(experiment, onSuccess, onFailure);
     }
 

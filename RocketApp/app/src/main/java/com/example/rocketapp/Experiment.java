@@ -20,7 +20,7 @@ public abstract class Experiment extends FirestoreObject {
 //    private Boolean isActive;
 
     enum State {
-        ACTIVE,
+        PUBLISHED,
         ENDED,
         UNPUBLISHED
     }
@@ -29,7 +29,7 @@ public abstract class Experiment extends FirestoreObject {
 
     public Experiment(ExperimentInfo info) {
         this.info = info;
-        this.state = State.ACTIVE;
+        this.state = State.PUBLISHED;
     }
 
     public Experiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
