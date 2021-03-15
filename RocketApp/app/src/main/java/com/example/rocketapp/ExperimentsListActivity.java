@@ -95,13 +95,24 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:
-                    DataManager.publishExperiment(experimentsOwned.get(position), (s) -> {}, (e) -> {});
-                    Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
+
+
+
+                    DataManager.publishExperiment(experimentsOwned.get(position), (experiment) -> {
+                        Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
+                    }, (e) -> {
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    });
+
                     adapterOwned.notifyDataSetChanged();
                     break;
                 case ItemTouchHelper.RIGHT:
-                    DataManager.unpublishExperiment(experimentsOwned.get(position), (s) -> {}, (e) -> {});
-                    Toast.makeText(getApplicationContext(), "UnPublished " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
+                    DataManager.unpublishExperiment(experimentsOwned.get(position), (experiment) -> {
+                        Toast.makeText(getApplicationContext(), "UnPublished " + experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
+                    }, (e) -> {
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    });
+
                     adapterOwned.notifyDataSetChanged();
                     break;
             }

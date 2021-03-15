@@ -133,14 +133,13 @@ public class DataManager {
          */
         @Exclude
         public boolean isValid() {
-            return id != null;
+            return id != null && id.isValid();
         }
     }
 
 
     public abstract static class FirestoreOwnableDocument extends FirestoreDocument {
 
-//        private DocumentId id;          // The firestore documentId for this object
         private DocumentId ownerId;     // The firestore documentId for this objects owner
 
         /**
@@ -166,13 +165,25 @@ public class DataManager {
          */
         @Exclude
         public boolean ownerIsValid() {
-            return ownerId != null;
+            return ownerId != null && ownerId.isValid();
+        }
+
+        /**
+         * @return true if documentId and ownerDocumentId are valid.
+         */
+        @Override
+        @Exclude
+        public boolean isValid() {
+            return super.isValid() && ownerIsValid();
         }
     }
 
     public abstract static class FirestoreNestableDocument extends FirestoreOwnableDocument {
         private DocumentId parentId;
 
+        /**
+         * @return firestore documentId for this objects parent
+         */
         public DocumentId getParentId() {
             return parentId;
         }
@@ -185,7 +196,16 @@ public class DataManager {
 
         @Exclude
         public boolean parentIsValid() {
-            return parentId != null;
+            return parentId != null && parentId.isValid();
+        }
+
+        /**
+         * @return true if documentId, ownerDocumentId, and parentId are valid.
+         */
+        @Override
+        @Exclude
+        public boolean isValid() {
+            return super.isValid() && parentIsValid();
         }
     }
 
@@ -283,7 +303,7 @@ public class DataManager {
                 filteredExperiments.add(experiment);
         }
 
-        return experimentArrayList;
+        return filteredExperiments;
     }
 
 
@@ -296,7 +316,7 @@ public class DataManager {
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
         for (Experiment experiment : experimentArrayList) {
-            if (experiment.getOwnerId().equals(user.getId()))
+            if (experiment.isValid() && experiment.getOwnerId().equals(user.getId()))
                 filteredExperiments.add(experiment);
         }
 
@@ -314,7 +334,7 @@ public class DataManager {
 
         for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
             for (Experiment experiment : experimentArrayList) {
-                if (experiment.getId().getKey().equals(id.toString())) {
+                if (experiment.isValid() && experiment.getId().getKey().equals(id.toString())) {
                     filteredExperiments.add(experiment);
                     break;
                 }
@@ -335,7 +355,7 @@ public class DataManager {
      */
     public static Experiment getExperiment(FirestoreOwnableDocument.DocumentId id) {
         for (Experiment experiment : experimentArrayList)
-            if (experiment.getId().equals(id))
+            if (experiment.isValid() && experiment.getId().equals(id))
                 return experiment;
         Log.e(TAG, "getExperiment() Experiment not found");
         return null;
@@ -353,17 +373,17 @@ public class DataManager {
      */
     public static void publishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
-            if (onFailure != null)
-                onFailure.callBack(new Exception("Publish Experiment Failed. User must be signed in to publish experiment"));
+            Log.e("DataManager", "publishExperiment() Failed. User must be signed in to publish experiment.");
+            onFailure.callBack(new Exception("Publish Experiment Failed. User must be signed in to publish experiment."));
             return;
         }
 
         if (experiment == null) {
-            if (onFailure != null)
-                onFailure.callBack(new Exception("Publish Experiment Failed."));
+            Log.e("DataManager", "publishExperiment() Failed. Experiment was null.");
+            onFailure.callBack(new Exception("Publish Experiment Failed. Experiment was null."));
             return;
         }
-        Log.d("datamanager", "in publish");
+
         ((FirestoreOwnableDocument) experiment).setOwnerId(user.getId());
         experiment.setState(user.getId(), Experiment.State.PUBLISHED);
         push(experiment, onSuccess, onFailure);
@@ -381,16 +401,19 @@ public class DataManager {
      */
     public static void unpublishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
+            Log.e("DataManager", "User not logged in. Cannot un-publish experiment");
             onFailure.callBack(new Exception("User not logged in. Cannot un-publish experiment"));
             return;
         }
-        // There is a problem with this if statement, experiment.getOwnerId() return a different id than that of the user
-        if (experiment == null || experiment.getId().isValid() || experiment.getOwnerId() != user.getId()) {
-            Log.e("datamanager", "User does not own this experiment. Cannot un-publish.");
-            Log.e("datamanager", String.valueOf(experiment.getId().isValid()));
-            Log.e("datamanager", String.valueOf(experiment.getOwnerId()));
-            Log.e("datamanager", String.valueOf(user.getId()));
 
+        if (experiment == null || !experiment.isValid()) {
+            Log.e("DataManager", "Invalid experiment. Cannot un-publish.");
+            onFailure.callBack(new Exception("Invalid experiment. Cannot un-publish experiment"));
+            return;
+        }
+
+        if (!experiment.getOwnerId().equals(user.getId())) {
+            Log.e("DataManager", "User (" + user.getId().key + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot un-publish.");
             onFailure.callBack(new Exception("User does not own this experiment. Cannot un-publish."));
             return;
         }
@@ -411,14 +434,20 @@ public class DataManager {
      */
     public static void endExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
-            Log.e(TAG, "User not logged in. Cannot end experiment.");
-            onFailure.callBack(new Exception("User not logged in. Cannot end experiment."));
+            Log.e("DataManager", "User not logged in. Cannot end experiment");
+            onFailure.callBack(new Exception("User not logged in. Cannot end experiment"));
             return;
         }
 
-        if (experiment == null || experiment.getId().isValid() || experiment.getOwnerId() != user.getId()) {
-            Log.e(TAG, "User does not own this experiment. Cannot end experiment.");
-            onFailure.callBack(new Exception("User does not own this experiment. Cannot end experiment."));
+        if (experiment == null || !experiment.isValid()) {
+            Log.e("DataManager", "Invalid experiment. Cannot end.");
+            onFailure.callBack(new Exception("Invalid experiment. Cannot end."));
+            return;
+        }
+
+        if (!experiment.getOwnerId().equals(user.getId())) {
+            Log.e("DataManager", "User (" + user.getId().key + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot end.");
+            onFailure.callBack(new Exception("User does not own this experiment. Cannot end."));
             return;
         }
 
@@ -589,11 +618,9 @@ public class DataManager {
                                 onSuccess.callBack(user);
                                 }, onFailure);
                         }
-                        else if (onFailure != null) {
+                        else {
                             onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
-                            return;
                         }
-                        if (onSuccess != null) onSuccess.callBack(user);
                     } else {
                         if (onFailure != null) onFailure.callBack(new Exception("User not found"));
                     }})

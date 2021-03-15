@@ -1,7 +1,7 @@
 package com.example.rocketapp;
 import com.google.firebase.firestore.Exclude;
 
-public class User extends DataManager.FirestoreOwnableDocument {
+public class User extends DataManager.FirestoreDocument {
 
     private String name;
     private String email;
@@ -20,11 +20,6 @@ public class User extends DataManager.FirestoreOwnableDocument {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Exclude
-    public DocumentId getOwnerId() {
-        return super.getOwnerId();
     }
 
     public boolean equals(User user) {
