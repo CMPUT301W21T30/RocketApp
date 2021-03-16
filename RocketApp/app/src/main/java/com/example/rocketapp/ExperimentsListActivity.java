@@ -90,8 +90,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
     private void initRecyclerViewSubscribed(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
-
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
+        System.out.println(DataManager.getSubscribedExperimentArrayList());
         adapterSubscribed = new ExperimentRecylerViewSubscribedAdapter(this, experimentsSubscribed);
         experimentRecyclerView.setAdapter(adapterSubscribed);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));

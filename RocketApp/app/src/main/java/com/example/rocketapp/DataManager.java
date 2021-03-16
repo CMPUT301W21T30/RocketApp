@@ -1,4 +1,5 @@
 package com.example.rocketapp;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableMap;
@@ -358,9 +359,8 @@ public class DataManager {
 
         for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
             for (Experiment experiment : experimentArrayList) {
-                if (experiment.isValid() && experiment.getId().getKey().equals(id.toString())) {
+                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
                     filteredExperiments.add(experiment);
-                    break;
                 }
             }
         }
@@ -537,6 +537,7 @@ public class DataManager {
      * @param onFailure
      *      Callback for when subscribing fails
      */
+
     public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
             Log.d("DataManager", "Failed to subscribe. User must be logged in to subscribe to an experiment.");

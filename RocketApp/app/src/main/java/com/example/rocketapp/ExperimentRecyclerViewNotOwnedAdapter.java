@@ -46,6 +46,11 @@ public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<
         holder.experimentListItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DataManager.subscribe(experiments.get(position),() -> {
+                    Log.d(TAG, "Subscribed");
+                } ,exception -> {
+                    Log.d(TAG, "Could not be subscribed.");
+                });
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
                 Intent expViewintent = new Intent(v.getContext(), ExperimentView.class);
                 expViewintent.putExtra("type", experiments.get(position).getType());
