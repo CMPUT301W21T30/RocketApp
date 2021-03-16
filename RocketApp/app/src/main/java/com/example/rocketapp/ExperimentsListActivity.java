@@ -16,6 +16,16 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
 
     //use this button to navigate to the profile page of the user
     public ImageButton profileBtn;
+<<<<<<< Updated upstream
+=======
+    public Button addNewExperiment;
+    public Button subscribeToExperiment;
+    ArrayList<Experiment> experimentsOwned;
+    ArrayList<Experiment> experimentsSubscribed;
+    ExperimentRecyclerViewOwnedAdapter adapterOwned;
+    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
+
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +43,16 @@ public class ExperimentsListActivity extends AppCompatActivity implements Experi
 
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
+<<<<<<< Updated upstream
+=======
+        });
+
+        subscribeToExperiment = findViewById(R.id.subscribe_button);
+        //subscribeToExperiment.setOnClickListener();
+
+        addNewExperiment = findViewById(R.id.createExpBtn);
+        addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
+>>>>>>> Stashed changes
 
         });
     }
