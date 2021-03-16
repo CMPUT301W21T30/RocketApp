@@ -73,7 +73,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
-        adapterOwned = new ExperimentListAdapter(this, experimentsOwned, experiment -> {
+        adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
             // What to do when experiment is clicked
             Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
         });
@@ -91,7 +91,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
 
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
-        adapterSubscribed = new ExperimentListAdapter(this, experimentsSubscribed, experiment -> {
+        adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
             // What to do when experiment is clicked
             Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
         });
