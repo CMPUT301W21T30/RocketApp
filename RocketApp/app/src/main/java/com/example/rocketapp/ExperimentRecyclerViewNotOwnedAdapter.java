@@ -1,6 +1,7 @@
 package com.example.rocketapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<ExperimentRecyclerViewNotOwnedAdapter.ViewHolder> {
 
-    private static final String TAG = "ExperimentRecylerViewAdapterNotOwned";
+    private static final String TAG = "ExpRecNOAdp";
 
     private ArrayList<Experiment> experiments;
     private Context context;
@@ -46,7 +47,10 @@ public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-
+                Intent expViewintent = new Intent(v.getContext(), ExperimentView.class);
+                expViewintent.putExtra("type", experiments.get(position).getType());
+                expViewintent.putExtra("description", experiments.get(position).info.getDescription());
+                context.startActivity(expViewintent);
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -71,5 +75,4 @@ public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<
         }
     }
 }
-
 
