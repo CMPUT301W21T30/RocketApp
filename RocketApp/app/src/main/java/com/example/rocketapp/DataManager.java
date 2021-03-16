@@ -338,13 +338,13 @@ public class DataManager {
 
     /**
      * Get a filtered list of all experiments
-     * @param filter
-     *      String keyword to search for
+     * @param searchWords
+     *      String keywords to search for
      * @return
      *      filtered list of experiments
      */
-    public static ArrayList<Experiment> getExperimentArrayList(String filter) {
-        String[] words = filter.split(" ");
+    public static ArrayList<Experiment> getExperimentArrayList(String searchWords) {
+        String[] words = searchWords.split(" ");
         return getExperimentArrayList(experiment -> {
             for (String word : words)
                 if (!experiment.toString().toLowerCase().contains(word.toLowerCase()))
