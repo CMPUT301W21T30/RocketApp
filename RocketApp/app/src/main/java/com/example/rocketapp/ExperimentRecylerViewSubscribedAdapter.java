@@ -46,9 +46,16 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-                Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
-                expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                context.startActivity(expViewintent);
+                if(experiments.get(position).getType()=="Count") {
+                    Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
+                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+                    context.startActivity(expViewintent);
+                }
+                if(experiments.get(position).getType()=="Binomial"){
+                    Intent expViewintent = new Intent(v.getContext(), BinomialView.class);
+                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+                    context.startActivity(expViewintent);
+                }
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
             }
         });
