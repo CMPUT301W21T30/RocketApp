@@ -385,6 +385,14 @@ public class DataManager {
         return null;
     }
 
+    public static Experiment getExperiment(String id) {
+        for (Experiment experiment : experimentArrayList)
+            if (experiment.isValid() && experiment.getId().toString().equals(id))
+                return experiment;
+        Log.e(TAG, "getExperiment() Experiment not found");
+        return null;
+    }
+
 
     /**
      * Publish a new experiment

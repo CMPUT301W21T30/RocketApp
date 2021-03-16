@@ -16,11 +16,11 @@ public class ExperimentView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_view);
         Intent i = getIntent();
-        String type = i.getStringExtra("type");
-        String description = i.getStringExtra("description");
+        String id = i.getStringExtra("id");
+        Experiment experiment = DataManager.getExperiment(id);
         TextView expType = findViewById(R.id.exp_type);
         TextView expDescription = findViewById(R.id.exp_desc);
-        expType.setText(type);
-        expDescription.setText(description);
+        expType.setText(experiment.getType());
+        expDescription.setText(experiment.info.getDescription());
     }
 }
