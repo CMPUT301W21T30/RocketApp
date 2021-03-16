@@ -344,8 +344,15 @@ public class DataManager {
      *      filtered list of experiments
      */
     public static ArrayList<Experiment> getExperimentArrayList(String filter) {
-        return getExperimentArrayList(experiment -> experiment.toString().toLowerCase().contains(filter.toLowerCase()));
+        String[] words = filter.split(" ");
+        return getExperimentArrayList(experiment -> {
+            for (String word : words)
+                if (!experiment.toString().toLowerCase().contains(word.toLowerCase()))
+                    return false;
+            return true;
+        });
     }
+
 
     /**
      * Get a filtered list of all experiments
