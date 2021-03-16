@@ -24,8 +24,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
     public Button addNewExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
-    ExperimentRecyclerViewOwnedAdapter adapterOwned;
-    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
+//    ExperimentRecyclerViewOwnedAdapter adapterOwned;
+//    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
+    ExperimentListAdapter adapterOwned;
+    ExperimentListAdapter adapterSubscribed;
 
 
     @Override
@@ -71,7 +73,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
-        adapterOwned = new ExperimentRecyclerViewOwnedAdapter(this, experimentsOwned);
+        adapterOwned = new ExperimentListAdapter(this, experimentsOwned, experiment -> {
+            // What to do when experiment is clicked
+            Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
+        });
         experimentRecyclerView.setAdapter(adapterOwned);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -86,7 +91,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
 
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
-        adapterSubscribed = new ExperimentRecylerViewSubscribedAdapter(this, experimentsSubscribed);
+        adapterSubscribed = new ExperimentListAdapter(this, experimentsSubscribed, experiment -> {
+            // What to do when experiment is clicked
+            Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
+        });
         experimentRecyclerView.setAdapter(adapterSubscribed);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -105,9 +113,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:
-
-
-
                     DataManager.publishExperiment(experimentsOwned.get(position), (experiment) -> {
                         Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
                     }, (e) -> {
