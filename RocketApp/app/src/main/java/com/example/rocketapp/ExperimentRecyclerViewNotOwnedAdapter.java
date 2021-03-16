@@ -52,11 +52,8 @@ public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<
                     Log.d(TAG, "Could not be subscribed.");
                 });
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-                Intent expViewintent = new Intent(v.getContext(), ExperimentView.class);
-                expViewintent.putExtra("type", experiments.get(position).getType());
-                expViewintent.putExtra("description", experiments.get(position).info.getDescription());
-                context.startActivity(expViewintent);
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
+                notifyDataSetChanged();
             }
         });
     }

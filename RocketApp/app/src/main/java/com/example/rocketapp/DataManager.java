@@ -333,21 +333,36 @@ public class DataManager {
     }
 
     /**
-     * Gets all experiments not owned by current user
+     * Gets all experiments not subscribed by current user
      * @return
      *      list of not owned experiments
      */
     public static ArrayList<Experiment> getNotOwnedExperimentsArrayList() {
+        ArrayList<Experiment> unfilteredExperiments = new ArrayList<>();
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
+        for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
+            for (Experiment experiment : experimentArrayList) {
+                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
+                    unfilteredExperiments.add(experiment);
+                }
+            }
+        }
+
         for (Experiment experiment : experimentArrayList) {
-            if (experiment.isValid() && (experiment.getOwnerId().equals(user.getId()))==false)
+            int found = 0;
+            for(Experiment subscribed : unfilteredExperiments){
+                if(experiment.isValid() && (experiment==subscribed)){
+                    found = found + 1;
+                }
+            }
+            if(found==0){
                 filteredExperiments.add(experiment);
+            }
         }
 
         return filteredExperiments;
     }
-
 
     /**
      * Gets all experiments subscribed to by current user

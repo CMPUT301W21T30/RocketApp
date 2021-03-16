@@ -254,7 +254,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="19dp"
-            android:text="SHOW NOT OWNED EXPERIMENTS"
+            android:text="BROWSE NOT SUBSCRIBED EXPERIMENTS"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
