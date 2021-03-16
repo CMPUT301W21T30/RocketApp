@@ -42,13 +42,17 @@ public class ExperimentsListActivity extends AppCompatActivity{
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
-
-//            DataManager.publishExperiment(new CountExperiment("2nd Experiment", "BC", 20, true), (s) -> {}, (e) -> {});
-
         });
 
         addNewExperiment = findViewById(R.id.createExpBtn);
         addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
+
+        DataManager.setUpdateCallback(()->{
+            experimentsOwned.clear();
+            experimentsOwned.addAll(DataManager.getOwnedExperimentsArrayList());
+            experimentsSubscribed.clear();
+            experimentsSubscribed.addAll(DataManager.getSubscribedExperimentArrayList());
+        });
     }
 
     /**

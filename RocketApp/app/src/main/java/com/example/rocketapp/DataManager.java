@@ -30,12 +30,11 @@ public class DataManager {
     private static CollectionReference usersRef;
     private static ListenerRegistration subscriptionsListener, usersListener, experimentsListener;
     private static ArrayList<ListenerRegistration> experimentListeners = new ArrayList<>();
+    private static Callback updateCallback;
 
     // Collection names
     private static final String SUBSCRIPTIONS = "Subscriptions";
     private static final String EXPERIMENTS = "Experiments";
-    private static final String QUESTIONS = "Questions";
-    private static final String ANSWERS = "Answers";
     private static final String COMMENTS = "Comments";
     private static final String USERS = "Users";
     private static final String TRIALS = "Trials";
@@ -259,6 +258,15 @@ public class DataManager {
 
 
     /**
+     * Set callback for when Experiments are updated from firestore. Should use to update listviews of experiments.
+     * @param callback
+     *      Callback for when experiments are updated from firestore.
+     */
+    public static void setUpdateCallback(Callback callback) {
+        updateCallback = callback;
+    }
+
+    /**
      * Get the current logged in user
      * @return
      *      The current user
@@ -480,7 +488,7 @@ public class DataManager {
             Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot);
             if (updatedExperiment != null) experiment.info = updatedExperiment.info;
-            else Log.e(TAG, "classType null in listen");
+            else Log.e("DataManager", "classType null in listen");
 
             onUpdate.callBack(experiment);
         }));
@@ -489,31 +497,15 @@ public class DataManager {
         CollectionReference trialsRef = experimentsRef.document(documentId).collection(TRIALS);
         experimentListeners.add(trialsRef.addSnapshotListener((snapshots, e) -> {
             parseTrialsSnapshot(experiment, snapshots);
-            Log.d(TAG, "Pulled Trials: " + snapshots.size());
+            Log.d("DataManager", "Experiment Trials Updated: " + experiment.getTrials().size());
             onUpdate.callBack(experiment);
         }));
-
-//        // Listen for changes in Questions
-//        CollectionReference questionsRef = experimentsRef.document(documentId).collection(QUESTIONS);
-//        experimentListeners.add(questionsRef.addSnapshotListener((snapshots, e) -> {
-//            parseQuestionsSnapshot(experiment, snapshots);
-//            Log.d(TAG, "Pulled Questions: " + snapshots.size());
-//            onUpdate.callBack(experiment);
-//        }));
-//
-//        // Listen for changes in Questions
-//        CollectionReference answersRef = experimentsRef.document(documentId).collection(ANSWERS);
-//        experimentListeners.add(answersRef.addSnapshotListener((snapshots, e) -> {
-//            parseAnswersSnapshot(experiment, snapshots);
-//            Log.d(TAG, "Pulled Questions: " + snapshots.size());
-//        }));
 
         // Listen for changes in Questions
         CollectionReference commentsRef = experimentsRef.document(documentId).collection(COMMENTS);
         experimentListeners.add(commentsRef.addSnapshotListener((snapshots, e) -> {
-            Log.d(TAG, "Parsing Comments: " + snapshots.size());
             parseCommentsSnapshot(experiment, snapshots);
-            Log.d(TAG, "Experiment Questions: " + experiment.getQuestions().size());
+            Log.d("DataManager", "Experiment Questions Updated: " + experiment.getQuestions().size());
             onUpdate.callBack(experiment);
         }));
 
@@ -531,28 +523,30 @@ public class DataManager {
      */
     public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
-            Log.d(TAG, "Failed to subscribe. User must be logged in to subscribe to an experiment.");
+            Log.d("DataManager", "Failed to subscribe. User must be logged in to subscribe to an experiment.");
             if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. User must be logged in to subscribe to an experiment."));
             return;
         }
 
         if (experiment == null || !experiment.isValid()) {
-            Log.d(TAG, "Failed to subscribe. Experiment does not have id.");
+            Log.d("DataManager", "Failed to subscribe. Experiment does not have id.");
             if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. Experiment does not have id."));
             return;
         }
 
         if (subscriptions.contains(experiment.getId())) {
-            Log.d(TAG, "Already subscribed to this experiment.");
+            Log.d("DataManager", "Already subscribed to this experiment.");
             if (onFailure != null) onFailure.callBack(new Exception("Already subscribed to this experiment."));
             return;
         }
 
         usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).add(experiment.getId())
                 .addOnSuccessListener(task -> {
-                    if (onSuccess != null) onSuccess.callBack();
+                    Log.d("DataManager", "Subscribed to experiment: " + experiment.getId().toString());
+                    onSuccess.callBack();
                 }).addOnFailureListener(e -> {
-                    if (onFailure != null) onFailure.callBack(e);
+                    Log.e("DataManager", "Subscribe failed: " + e.toString());
+                    onFailure.callBack(e);
                 });
     }
 
@@ -583,6 +577,7 @@ public class DataManager {
     public static void createUser(String userName, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
+                Log.e("DataManager", "CreateUser failed: Username not available");
                 onFailure.callBack(new Exception("Username not available"));
             } else {
                 push(new User(userName), (user) -> {
@@ -591,7 +586,8 @@ public class DataManager {
                 }, onFailure);
             }
         }).addOnFailureListener(e -> {
-            if (onFailure != null) onFailure.callBack(e);
+            Log.e("DataManager", "CreateUser failed: " + e.toString());
+            onFailure.callBack(e);
         });
     }
 
@@ -614,18 +610,21 @@ public class DataManager {
                         if (user != null) {
                             listen(user);  // Listen to subscriptions
                             pullSubscriptions(()-> {
-                                Log.d(TAG, "Login successful: " + user.toString());
+                                Log.d("DataManager", "Login successful: " + user.toString());
                                 onSuccess.callBack(user);
                                 }, onFailure);
                         }
                         else {
+                            Log.e("DataManager", "Login failed: readFirebaseObjectSnapshot returned null.");
                             onFailure.callBack(new Exception("readFirebaseObjectSnapshot returned null"));
                         }
                     } else {
-                        if (onFailure != null) onFailure.callBack(new Exception("User not found"));
+                        Log.e("DataManager", "Login failed: User not found.");
+                        onFailure.callBack(new Exception("User not found"));
                     }})
-                .addOnFailureListener((exception) -> {
-                    if (onFailure != null) onFailure.callBack(exception);
+                .addOnFailureListener((e) -> {
+                    Log.e("DataManager", "Login failed: " + e.toString());
+                    onFailure.callBack(e);
         });
     }
 
@@ -653,7 +652,7 @@ public class DataManager {
             for (User user : userArrayList)
                 if (user.getId().equals(id))
                     return user;
-        Log.e(TAG, "getUser() User not found.");
+        Log.e("DataManager", "getUser() User not found.");
         return new User();
     }
 
@@ -769,10 +768,23 @@ public class DataManager {
 
 
     //** Private **/
+
+
+    /**
+     * Parses and adds id to FirestoreDocument objects from a firestore snapshot
+     * @param typeClass 
+     *      The type of object to return
+     * @param snapshot
+     *      The snapshot from firestore
+     * @param <ClassType>
+     *     The type of object to return
+     * @return
+     *      Returns an object extending FirestoreDocument of type ClassType
+     */
     private static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
         ClassType object = snapshot.toObject(typeClass);
         if (object != null) ((FirestoreDocument) object).setId(new FirestoreOwnableDocument.DocumentId(snapshot.getId()));
-        else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
+        else Log.e("DataManager", "readFirebaseObjectSnapshot returned null");
         return object;
     }
 
@@ -785,11 +797,17 @@ public class DataManager {
             for (QueryDocumentSnapshot snapshot : task.getResult()) {
                 subscriptions.add(snapshot.getString(field));
             }
-            if (onComplete != null) onComplete.callBack(subscriptions);
+
+            onComplete.callBack(subscriptions);
         });
     }
 
 
+    /**
+     * Sets listener for new user subscriptions and updates the subscriptions list when it's state changes in firestore.
+     * @param user
+     *      User to listen to
+     */
     private static void listen(User user) {
         if (subscriptionsListener != null) subscriptionsListener.remove();
 
@@ -798,11 +816,8 @@ public class DataManager {
             for (QueryDocumentSnapshot snapshot : snapshots)
                 subscriptionsList.add(snapshot.toObject(FirestoreOwnableDocument.DocumentId.class));
             subscriptions = subscriptionsList;
-            System.out.println("subscriptions updated");
-            for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
-                System.out.println(id.key);
-
-            }
+            Log.d("DataManager", "Subscriptions updated");
+            if (updateCallback != null) updateCallback.callBack();
         });
     }
 
@@ -812,7 +827,11 @@ public class DataManager {
     private static void initializeExperiments() {
         experimentArrayList = new ArrayList<>();
         experimentsRef = db.collection(EXPERIMENTS);
-        experimentsListener = experimentsRef.addSnapshotListener((snapshot, e) -> parseExperimentsSnapshot(snapshot));
+        experimentsListener = experimentsRef.addSnapshotListener((snapshot, e) -> {
+            parseExperimentsSnapshot(snapshot);
+            Log.d("DataManager", "Updated Experiments.");
+            if (updateCallback != null) updateCallback.callBack();
+        });
     }
 
     /**
@@ -822,45 +841,73 @@ public class DataManager {
         userArrayList = new ArrayList<>();
         subscriptions = new ArrayList<>();
         usersRef = db.collection(USERS);
-        usersListener = usersRef.addSnapshotListener((snapshot, e) -> parseUsersSnapshot(snapshot));
+        usersListener = usersRef.addSnapshotListener((snapshot, e) -> {
+            parseUsersSnapshot(snapshot);
+            Log.d("DataManager", "Updated Users.");
+            if (updateCallback != null) updateCallback.callBack();
+        });
     }
 
 
-    private static void parseUsersSnapshot(QuerySnapshot userSnapshot) {
+    /**
+     * Parses users list snapshot from firestore and stores them in the userArrayList.
+     * @param userSnapshots
+     *      The snapshot from firestore to parse
+     */
+    private static void parseUsersSnapshot(QuerySnapshot userSnapshots) {
         ArrayList<User> users = new ArrayList<>();
 
-        for (QueryDocumentSnapshot snapshot : userSnapshot)
+        for (QueryDocumentSnapshot snapshot : userSnapshots)
             users.add(readFirebaseObjectSnapshot(User.class, snapshot));
 
         userArrayList = users;
     }
 
-    private static void parseTrialsSnapshot(Experiment experiment, QuerySnapshot userSnapshot) {
+    /**
+     * Parses a trials list snapshot from firestore and adds them to an experiment.
+     * @param experiment
+     *      The experiment the trials belong to
+     * @param userSnapshots
+     *      The snapshot from firestore to parse
+     */
+    private static void parseTrialsSnapshot(Experiment experiment, QuerySnapshot userSnapshots) {
         ArrayList<Trial> array = new ArrayList<>();
 
-        for (QueryDocumentSnapshot snapshot : userSnapshot) {
+        for (QueryDocumentSnapshot snapshot : userSnapshots) {
             Class<? extends Trial> classType = trialClassMap.get(snapshot.getString("type"));
             if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot));
-            else Log.e(TAG, "classType null in updateTrials");
+            else Log.e("DataManager", "classType null in parseTrialsSnapshot.");
         }
 
         experiment.setTrials(array);
     }
 
+    /**
+     * Parses an experiments list snapshot and stores the experiments in experimentArrayList.
+     * @param experimentsSnapshot
+     *      The snapshot from firestore to parse
+     */
     private static void parseExperimentsSnapshot(QuerySnapshot experimentsSnapshot) {
         ArrayList<Experiment> array = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : experimentsSnapshot) {
             Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
             if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot));
-            else Log.e(TAG, "classType null in updateExperiments");
+            else Log.e("DataManager", "classType null in parseExperimentsSnapshot.");
         }
         experimentArrayList = array;
     }
 
+    /**
+     * Parses a comment list snapshot from firestore into questions and answers and adds them to an experiment.
+     * @param experiment
+     *      The experiment the comments are for
+     * @param userSnapshots
+     *      The snapshot from firestore to parse
+     */
     private static void parseCommentsSnapshot(Experiment experiment, QuerySnapshot userSnapshots) {
         ArrayList<Answer> answersArrayList = new ArrayList<>();
         ArrayList<Question> questionsArrayList = new ArrayList<>();
-        System.out.println("CommentSnapshots");
+
         for (QueryDocumentSnapshot snapshot : userSnapshots) {
             System.out.println(snapshot.toString());
             String type = snapshot.getString("type");
@@ -869,7 +916,7 @@ public class DataManager {
             } else if (type.equals(Answer.TYPE)) {
                 answersArrayList.add(readFirebaseObjectSnapshot(Answer.class, snapshot));
             } else {
-                Log.e(TAG, "Bad class.");
+                Log.e("DataManager", "parseCommentsSnapshot: Bad class.");
             }
 
             for (Question question : questionsArrayList) {
@@ -883,7 +930,7 @@ public class DataManager {
                 question.setAnswers(answers);
             }
         }
-        System.out.println("Questions: " + questionsArrayList.size());
+
         experiment.setQuestions(questionsArrayList);
     }
 
@@ -908,8 +955,10 @@ public class DataManager {
             usersRef.add(user)
                     .addOnSuccessListener(u -> {
                         ((FirestoreDocument) user).setId(new FirestoreOwnableDocument.DocumentId(u.getId()));
+                        Log.d("DataManager", "User created.");
                         if (onSuccess != null) onSuccess.callBack(user); })
                     .addOnFailureListener(e -> {
+                        Log.e("DataManager", "Failed to create user: " + e.toString());
                         if (onFailure != null) onFailure.callBack(e);
                     });
         }
@@ -927,19 +976,40 @@ public class DataManager {
     private static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
         FirestoreOwnableDocument.DocumentId id = experiment.getId();
         if (id != null && id.isValid()) {
-            experimentsRef.document(experiment.getId().getKey()).set(experiment);;
+            experimentsRef.document(experiment.getId().getKey()).set(experiment)
+            .addOnSuccessListener((aVoid -> {
+                Log.d("DataManager", "Experiment Updated.");
+                onComplete.callBack(experiment);
+            }))
+            .addOnFailureListener(e->{
+                Log.e("DataManager", "Failed to update experiment experiment: " + e.toString());
+                onFailure.callBack(e);
+            });
         } else {
             experimentsRef.add(experiment)
                     .addOnSuccessListener(task -> {
                         ((FirestoreDocument) experiment).setId(new FirestoreOwnableDocument.DocumentId(task.getId()));
-                        if (onComplete != null) onComplete.callBack(experiment);
+                        Log.d("DataManager", "Experiment Added.");
+                        onComplete.callBack(experiment);
                     })
                     .addOnFailureListener((e -> {
-                        if (onFailure != null) onFailure.callBack(e);
+                        Log.e("DataManager", "Failed add experiment: " + e.toString());
+                        onFailure.callBack(e);
                     }));
         }
     }
 
+    /**
+     * Add or modify a trial on firestore
+     * @param trial
+     *      The trial to add/modify
+     * @param experiment
+     *      The experiment to add the trial to
+     * @param onComplete
+     *      Callback for when trial is added/modified successfully
+     * @param onFailure
+     *      Callback for when trial push fails
+     */
     private static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
         if (user == null || user.getId() == null || !user.getId().isValid()) {
             Log.e(TAG, "Push failed. Must be logged in to push.");
@@ -965,28 +1035,45 @@ public class DataManager {
 
         if (trial.getId() != null) {
             trialsRef.document(trial.getId().getKey()).set(trial).addOnSuccessListener(trialSnapshot -> {
-                if (onComplete != null) onComplete.callBack(trial);
+                Log.d("DataManager", "Trial Updated.");
+                onComplete.callBack(trial);
             }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
+                Log.e("DataManager", "Failed to update Trial.");
+                onFailure.callBack(e);
             });
         } else {
             trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
                 ((FirestoreDocument) trial).setId(new FirestoreOwnableDocument.DocumentId(trialSnapshot.getId()));
-                if (onComplete != null) onComplete.callBack(trial);
+                Log.d("DataManager", "Trial Added.");
+                onComplete.callBack(trial);
             }).addOnFailureListener(e -> {
-                if (onFailure != null) onFailure.callBack(e);
+                Log.e("DataManager", "Failed to add Trial.");
+                onFailure.callBack(e);
             });
         }
     }
 
+    /**
+     * Add or modify a comment on firestore
+     * @param comment
+     *      The comment to sync
+     * @param experiment
+     *      The experiment to comment on
+     * @param onSuccess
+     *      Callback for when comment is pushed successfully
+     * @param onFailure
+     *      Callback for when comment push fails
+     */
     private static void push(Comment comment, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
         if (comment == null || !comment.parentIsValid()) {
+            Log.e("DataManager", "Push failed. Tried to add null or un-parented comment.");
             onFailure.callBack(new Exception("Push failed. Tried to add null or un-parented comment."));
             return;
         }
 
         if (user == null || user.getId() == null || !user.getId().isValid())
         {
+            Log.e("DataManager", "Push failed. Must be logged in to push comment.");
             onFailure.callBack(new Exception("Push failed. Must be logged in to push comment."));
             return;
         }
@@ -996,27 +1083,45 @@ public class DataManager {
 
         if (comment.getId() != null) {
             commentsRef.document(comment.getId().getKey()).set(comment).addOnSuccessListener(questionSnapshot -> {
-                if (onSuccess != null) onSuccess.callBack();
-            }).addOnFailureListener(onFailure::callBack);
+                Log.d("DataManager", "Comment Updated.");
+                onSuccess.callBack();
+            }).addOnFailureListener(e->{
+                Log.e("DataManager", "Failed to update comment: " + e.toString());
+                onFailure.callBack(e);
+            });
         } else {
             commentsRef.add(comment).addOnCompleteListener(task -> {
-                ((FirestoreDocument) comment).setId(new FirestoreOwnableDocument.DocumentId(task.getResult().getId()));
-                if (onSuccess != null) onSuccess.callBack();
-            }).addOnFailureListener(onFailure::callBack);
+                ((FirestoreDocument) comment).setId(new FirestoreDocument.DocumentId(task.getResult().getId()));
+                Log.d("DataManager", "Comment Added.");
+                onSuccess.callBack();
+            }).addOnFailureListener(e->{
+                Log.e("DataManager", "Failed to add comment: " + e.toString());
+                onFailure.callBack(e);
+            });
         }
     }
 
+    /**
+     * Pulls the subscription id's for the current user from firestore.
+     * @param onSuccess
+     *      Callback for when subscriptions are pulled from firestore successfuly
+     * @param onFailure
+     *      Callback for when pullSubscriptions fails
+     */
     private static void pullSubscriptions(Callback onSuccess, ExceptionCallback onFailure) {
         usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
             ArrayList<FirestoreOwnableDocument.DocumentId> subscriptionsList = new ArrayList<>();
             for (QueryDocumentSnapshot sub : subs.getResult())
                 subscriptionsList.add(sub.toObject(FirestoreOwnableDocument.DocumentId.class));
             subscriptions = subscriptionsList;
-            System.out.println("subscriptions updated");
+            Log.d("DataManager", "Subscriptions Updated.");
             for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
                 System.out.println(id.key);
             }
             onSuccess.callBack();
-        }).addOnFailureListener(onFailure::callBack);
+        }).addOnFailureListener(e->{
+            Log.e("DataManager", "Failed to update subscriptions: " + e.toString());
+            onFailure.callBack(e);
+        });
     }
 }
