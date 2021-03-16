@@ -1,7 +1,14 @@
 # March 5th, 2021 Meeting Note
 
 * Question for TA:
-    * What is our issues for our UML diagram for GUI, and how can we improve it. 
+    * What is our issues for our UML diagram for GUI, and how can we improve it.
+
+* Mar 15, 2021
+    * Saif and Archit: Participate Experiment Activity
+    * Mike and Aryan: Subscribed to Experiment Search, Home Screen Search Bar, StoryBoard
+    * Trevor and Saji: Owner Activity
+    * Option: Result Screen
+    * Next Meeting: March 16th, 2021 8:30pm MST
 
 * Mar 12, 2021
     * Aryan: Fix the Storyboard design
