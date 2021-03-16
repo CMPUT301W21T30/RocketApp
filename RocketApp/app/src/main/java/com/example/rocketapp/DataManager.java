@@ -331,6 +331,22 @@ public class DataManager {
         return filteredExperiments;
     }
 
+    /**
+     * Gets all experiments not owned by current user
+     * @return
+     *      list of not owned experiments
+     */
+    public static ArrayList<Experiment> getNotOwnedExperimentsArrayList() {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
+            if (experiment.isValid() && (experiment.getOwnerId().equals(user.getId()))==false)
+                filteredExperiments.add(experiment);
+        }
+
+        return filteredExperiments;
+    }
+
 
     /**
      * Gets all experiments subscribed to by current user

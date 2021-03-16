@@ -22,6 +22,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
     private static final String TAG = "ExperimentsListActivity";
     public ImageButton profileBtn;
     public Button addNewExperiment;
+    public Button showAllExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
     ExperimentRecyclerViewOwnedAdapter adapterOwned;
@@ -42,6 +43,11 @@ public class ExperimentsListActivity extends AppCompatActivity{
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
+        });
+        showAllExperiment = findViewById(R.id.showAllExp);
+        showAllExperiment.setOnClickListener(v -> {
+            Intent allExpIntent = new Intent(getApplicationContext(), AllExperiments.class);
+            startActivity(allExpIntent);
         });
 
         addNewExperiment = findViewById(R.id.createExpBtn);
