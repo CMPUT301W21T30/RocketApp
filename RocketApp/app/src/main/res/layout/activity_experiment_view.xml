@@ -18,7 +18,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/exp_type"
+                android:id="@+id/cexp_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -35,7 +35,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
             <TextView
-                android:id="@+id/exp_desc"
+                android:id="@+id/cexp_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

@@ -46,7 +46,7 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-                Intent expViewintent = new Intent(v.getContext(), ExperimentView.class);
+                Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
                 expViewintent.putExtra("id", experiments.get(position).getId().toString());
                 context.startActivity(expViewintent);
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
