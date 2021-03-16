@@ -19,8 +19,6 @@ public class ExperimentInfo {
         this.geoLocationEnabled = geoLocationEnabled;
     }
 
-//    public DataManager.FirestoreObject.ID getOwner() { return ownerId; }
-
     /**
      * getter for experiment description
      * @return description of experiment        - String
@@ -53,10 +51,6 @@ public class ExperimentInfo {
         return geoLocationEnabled;
     }
 
-//    public void setOwner(DataManager.ID id) {
-//        ownerId = id;
-//    }
-
     /**
      * setter for description of experiment
      * @param owner
@@ -65,7 +59,6 @@ public class ExperimentInfo {
      *          String description
      */
     public void setDescription(User owner, String description) {
-//        if (hasPermission(owner))
             this.description = description;
     }
 
@@ -77,7 +70,6 @@ public class ExperimentInfo {
      *          String region
      */
     public void setRegion(User owner, String region) {
-//        if (hasPermission(owner))
             this.region = region;
     }
 
@@ -89,7 +81,6 @@ public class ExperimentInfo {
      *          integer minTrials
      */
     public void setMinTrials(User owner, int minTrials) {
-//        if (hasPermission(owner))
             this.minTrials = minTrials;
     }
 
@@ -101,18 +92,9 @@ public class ExperimentInfo {
      *          set True if geoLocation is to be enabled, false otherwise
      */
     public void setGeoLocationEnabled(User owner, boolean geoLocationEnabled) {
-//        if (hasPermission(owner))
             this.geoLocationEnabled = geoLocationEnabled;
     }
 
-//    public boolean hasPermission(User owner) {
-//        boolean permission = this.get.equals(owner.getId());
-//        if (permission)
-//            return true;
-//        else
-//            Log.d(TAG, "Error: Tried to set property without permission");
-//        return false;
-//    }
 
     /**
      * Used for searching purposes
@@ -133,13 +115,10 @@ public class ExperimentInfo {
     @Override
     public String toString() {
         return "ExperimentInfo{" +
-//                "owner=" + ownerId +
-                ", description='" + description + '\'' +
+                "description='" + description + '\'' +
                 ", region='" + region + '\'' +
                 ", minTrials=" + minTrials +
                 ", geoLocationEnabled=" + geoLocationEnabled +
                 '}';
     }
-
-
 }

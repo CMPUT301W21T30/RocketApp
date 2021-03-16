@@ -11,6 +11,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
@@ -22,12 +23,11 @@ import static android.content.ContentValues.TAG;
 public class DataManager {
     private static User user;
     private static ArrayList<User> userArrayList;
-    private static ArrayList<FirestoreOwnableDocument.DocumentId> subscriptions;
+    private static ArrayList<FirestoreDocument.DocumentId> subscriptions;
     private static ArrayList<Experiment> experimentArrayList;
 
     private static final FirebaseFirestore db;
-    private static CollectionReference experimentsRef;
-    private static CollectionReference usersRef;
+    private static CollectionReference experimentsRef, usersRef;
     private static ListenerRegistration subscriptionsListener, usersListener, experimentsListener;
     private static ArrayList<ListenerRegistration> experimentListeners = new ArrayList<>();
     private static Callback updateCallback;
@@ -70,15 +70,22 @@ public class DataManager {
      */
     public abstract static class FirestoreDocument  {
         /**
-         * ID represents a documentId in firestore for finding and referencing documents.
-         * ID class, Creates "Friend" like functionality so function calls requiring a new ID can only be called
-         * from this class to make sure updates will be synced with firestore.
+         * DocumentId represents a documentId in firestore for finding and referencing documents.
+         * Private class creates "Friend" like functionality so function calls requiring a new ID can only be called
+         * from DataManager to make sure updates will be synced with firestore.
          */
-        final public static class DocumentId {
+        final private static class DocumentId {
             private String key;
 
+            /**
+             * Default constructor only used for interface with Firestore.
+             */
             public DocumentId() {}
 
+            /**
+             * Generates a new DocumentId. Private so new documentId's can only be created by DataManager.
+             * @param id documentId string from firestore
+             */
             private DocumentId(String id) {
                 this.key = id;
             }
@@ -99,6 +106,10 @@ public class DataManager {
                 return key;
             }
 
+            /**
+             * @param o object to compare
+             * @return true if keys match
+             */
             @Override
             public boolean equals(Object o) {
                 if (this == o) return true;
@@ -108,7 +119,7 @@ public class DataManager {
             }
         }
 
-        private FirestoreOwnableDocument.DocumentId id;          // The firestore documentId for this object
+        private FirestoreDocument.DocumentId id;          // The firestore documentId for this object
 
         /**
          * @return firestore documentId for this object
@@ -134,17 +145,30 @@ public class DataManager {
         public boolean isValid() {
             return id != null && id.isValid();
         }
+
+        /**
+         * @param o object to compare
+         * @return true if documentId's match
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FirestoreDocument that = (FirestoreDocument) o;
+            return id.equals(that.id);
+        }
+
     }
 
 
     public abstract static class FirestoreOwnableDocument extends FirestoreDocument {
 
-        private DocumentId ownerId;     // The firestore documentId for this objects owner
+        private FirestoreDocument.DocumentId ownerId;     // The firestore documentId for this objects owner
 
         /**
          * @return firestore documentId for this objects owner
          */
-        public DocumentId getOwnerId() {
+        public FirestoreDocument.DocumentId getOwnerId() {
             return ownerId;
         }
 
@@ -152,11 +176,20 @@ public class DataManager {
          * Set the ownerDocumentId for this object. Use when creating objects in subcollections of an object in firestore.
          * @param id owner documentId for this object.
          */
-        private void setOwnerId(DocumentId id) {
+        private void setOwnerId(FirestoreDocument.DocumentId id) {
             if (id == null || !id.isValid())
                 Log.d(TAG, "Tried to call setOwnerId with invalid id.");
             else
                 ownerId = id;
+        }
+
+
+        /**
+         * @return The User that owns this object. null if user not found.
+         */
+        @Exclude
+        public User getOwner() {
+            return getUser(ownerId);
         }
 
         /**
@@ -178,16 +211,16 @@ public class DataManager {
     }
 
     public abstract static class FirestoreNestableDocument extends FirestoreOwnableDocument {
-        private DocumentId parentId;
+        private FirestoreDocument.DocumentId parentId;
 
         /**
          * @return firestore documentId for this objects parent
          */
-        public DocumentId getParentId() {
+        public FirestoreDocument.DocumentId getParentId() {
             return parentId;
         }
 
-        private void setParent(DocumentId id) {
+        private void setParent(FirestoreDocument.DocumentId id) {
             if (id == null || !id.isValid())
                 Log.d(TAG, "Tried to call setParent with invalid id.");
             parentId = id;
@@ -256,6 +289,10 @@ public class DataManager {
         void callBack(User user);
     }
 
+    public interface ExperimentSearch {
+        boolean match(Experiment experiment);
+    }
+
 
     /**
      * Set callback for when Experiments are updated from firestore. Should use to update listviews of experiments.
@@ -304,10 +341,21 @@ public class DataManager {
      *      filtered list of experiments
      */
     public static ArrayList<Experiment> getExperimentArrayList(String filter) {
+        return getExperimentArrayList(experiment -> experiment.toString().toLowerCase().contains(filter.toLowerCase()));
+    }
+
+    /**
+     * Get a filtered list of all experiments
+     * @param find
+     *      Lambda for matching an experiment
+     * @return
+     *      filtered list of experiments
+     */
+    public static ArrayList<Experiment> getExperimentArrayList(ExperimentSearch find) {
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
         for (Experiment experiment : experimentArrayList) {
-            if (experiment.info.containsString(filter))
+            if (find.match(experiment))
                 filteredExperiments.add(experiment);
         }
 
@@ -340,7 +388,7 @@ public class DataManager {
     public static ArrayList<Experiment> getSubscribedExperimentArrayList() {
         ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
-        for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
+        for (FirestoreDocument.DocumentId id : subscriptions) {
             for (Experiment experiment : experimentArrayList) {
                 if (experiment.isValid() && experiment.getId().getKey().equals(id.toString())) {
                     filteredExperiments.add(experiment);
@@ -361,7 +409,7 @@ public class DataManager {
      * @return
      *      Returns the experiment object matching the ID
      */
-    public static Experiment getExperiment(FirestoreOwnableDocument.DocumentId id) {
+    public static Experiment getExperiment(FirestoreDocument.DocumentId id) {
         for (Experiment experiment : experimentArrayList)
             if (experiment.isValid() && experiment.getId().equals(id))
                 return experiment;
@@ -393,7 +441,7 @@ public class DataManager {
         }
 
         ((FirestoreOwnableDocument) experiment).setOwnerId(user.getId());
-        experiment.setState(user.getId(), Experiment.State.PUBLISHED);
+        experiment.setState(Experiment.State.PUBLISHED);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -426,7 +474,7 @@ public class DataManager {
             return;
         }
 
-        experiment.setState(user.getId(), Experiment.State.UNPUBLISHED);
+        experiment.setState(Experiment.State.UNPUBLISHED);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -459,7 +507,7 @@ public class DataManager {
             return;
         }
 
-        experiment.setState(user.getId(), Experiment.State.ENDED);
+        experiment.setState(Experiment.State.ENDED);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -648,12 +696,12 @@ public class DataManager {
      * @return
      *      User object matching id
      */
-    public static User getUser(FirestoreOwnableDocument.DocumentId id) {
+    public static User getUser(FirestoreDocument.DocumentId id) {
             for (User user : userArrayList)
                 if (user.getId().equals(id))
                     return user;
         Log.e("DataManager", "getUser() User not found.");
-        return new User();
+        return new User("User not found.");
     }
 
 
@@ -783,7 +831,7 @@ public class DataManager {
      */
     private static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
         ClassType object = snapshot.toObject(typeClass);
-        if (object != null) ((FirestoreDocument) object).setId(new FirestoreOwnableDocument.DocumentId(snapshot.getId()));
+        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.DocumentId(snapshot.getId()));
         else Log.e("DataManager", "readFirebaseObjectSnapshot returned null");
         return object;
     }
@@ -812,9 +860,9 @@ public class DataManager {
         if (subscriptionsListener != null) subscriptionsListener.remove();
 
         subscriptionsListener = usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).addSnapshotListener((snapshots, e) -> {
-            ArrayList<FirestoreOwnableDocument.DocumentId> subscriptionsList = new ArrayList<>();
+            ArrayList<FirestoreDocument.DocumentId> subscriptionsList = new ArrayList<>();
             for (QueryDocumentSnapshot snapshot : snapshots)
-                subscriptionsList.add(snapshot.toObject(FirestoreOwnableDocument.DocumentId.class));
+                subscriptionsList.add(snapshot.toObject(FirestoreDocument.DocumentId.class));
             subscriptions = subscriptionsList;
             Log.d("DataManager", "Subscriptions updated");
             if (updateCallback != null) updateCallback.callBack();
@@ -954,7 +1002,7 @@ public class DataManager {
         } else {
             usersRef.add(user)
                     .addOnSuccessListener(u -> {
-                        ((FirestoreDocument) user).setId(new FirestoreOwnableDocument.DocumentId(u.getId()));
+                        ((FirestoreDocument) user).setId(new FirestoreDocument.DocumentId(u.getId()));
                         Log.d("DataManager", "User created.");
                         if (onSuccess != null) onSuccess.callBack(user); })
                     .addOnFailureListener(e -> {
@@ -974,7 +1022,7 @@ public class DataManager {
      *      Callback for when push fails
      */
     private static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
-        FirestoreOwnableDocument.DocumentId id = experiment.getId();
+        FirestoreDocument.DocumentId id = experiment.getId();
         if (id != null && id.isValid()) {
             experimentsRef.document(experiment.getId().getKey()).set(experiment)
             .addOnSuccessListener((aVoid -> {
@@ -988,7 +1036,7 @@ public class DataManager {
         } else {
             experimentsRef.add(experiment)
                     .addOnSuccessListener(task -> {
-                        ((FirestoreDocument) experiment).setId(new FirestoreOwnableDocument.DocumentId(task.getId()));
+                        ((FirestoreDocument) experiment).setId(new FirestoreDocument.DocumentId(task.getId()));
                         Log.d("DataManager", "Experiment Added.");
                         onComplete.callBack(experiment);
                     })
@@ -1043,7 +1091,7 @@ public class DataManager {
             });
         } else {
             trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
-                ((FirestoreDocument) trial).setId(new FirestoreOwnableDocument.DocumentId(trialSnapshot.getId()));
+                ((FirestoreDocument) trial).setId(new FirestoreDocument.DocumentId(trialSnapshot.getId()));
                 Log.d("DataManager", "Trial Added.");
                 onComplete.callBack(trial);
             }).addOnFailureListener(e -> {
@@ -1110,12 +1158,12 @@ public class DataManager {
      */
     private static void pullSubscriptions(Callback onSuccess, ExceptionCallback onFailure) {
         usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
-            ArrayList<FirestoreOwnableDocument.DocumentId> subscriptionsList = new ArrayList<>();
+            ArrayList<FirestoreDocument.DocumentId> subscriptionsList = new ArrayList<>();
             for (QueryDocumentSnapshot sub : subs.getResult())
-                subscriptionsList.add(sub.toObject(FirestoreOwnableDocument.DocumentId.class));
+                subscriptionsList.add(sub.toObject(FirestoreDocument.DocumentId.class));
             subscriptions = subscriptionsList;
             Log.d("DataManager", "Subscriptions Updated.");
-            for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
+            for (FirestoreDocument.DocumentId id : subscriptions) {
                 System.out.println(id.key);
             }
             onSuccess.callBack();
