@@ -355,11 +355,22 @@ public class DataManager {
      * @return
      *      filtered list of experiments
      */
-    public static ArrayList<Experiment> getExperimentArrayList(String searchWords) {
+    public static ArrayList<Experiment> getExperimentArrayList(String searchWords, boolean includeSubscribed, boolean includeOwned) {
         String[] words = searchWords.split(" ");
+        ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
+        if (!includeSubscribed)
+            ignored.addAll(subscriptions);
+
         return getExperimentArrayList(experiment -> {
+            if (ignored.contains(experiment.getId())) return false;
+            System.out.println(experiment.getOwnerId().key + " " + user.getId().key);
+            if (!includeOwned && experiment.getOwnerId().equals(user.getId())) {
+                System.out.println("false");
+                return false;
+            }
+
             for (String word : words)
-                if (!experiment.toString().toLowerCase().contains(word.toLowerCase()))
+                if (!experiment.searchString().toLowerCase().contains(word.toLowerCase()))
                     return false;
             return true;
         });

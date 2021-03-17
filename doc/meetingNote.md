@@ -8,6 +8,7 @@
     * Polish code for submition
     * Write Test cases for your code (Unit testing and GUI)
     * Mike: Make sure data on firestore are realistic
+    * Aryan: Make sure the backlog, storyboard, and UML Diagram is updated
 
 * Mar 15, 2021
     * Saif and Archit: Participate Experiment Activity
