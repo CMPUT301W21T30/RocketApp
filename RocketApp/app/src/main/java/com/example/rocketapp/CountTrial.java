@@ -41,6 +41,11 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
         numberCounted = numberCounted + 1;
     }
 
+    /**
+     * Setter for count
+     * @param count
+     *          Value to initialize count with
+     */
     public void setCount(int count){
         numberCounted = count;
     }

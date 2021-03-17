@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +40,12 @@ public class LogInActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(v -> {
             EditText usernameEditText = findViewById(R.id.usernameEditText);
             String username = usernameEditText.getText().toString();
+            if(username.length()>3){
             loginOrCreateUser(username);
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Username must have more than 3 characters", Toast.LENGTH_SHORT).show();
+            }
         });
 
 

@@ -59,6 +59,11 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
         return posCount;
     }
 
+    /**
+     * Setter for pos
+     * @param value
+     *          Value to initialize pos with
+     */
     public void setPCount(int value){
         posCount = value;
     }
