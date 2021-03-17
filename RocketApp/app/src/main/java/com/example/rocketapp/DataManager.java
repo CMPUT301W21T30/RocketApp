@@ -1,4 +1,5 @@
 package com.example.rocketapp;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableMap;
@@ -331,6 +332,37 @@ public class DataManager {
         return filteredExperiments;
     }
 
+    /**
+     * Gets all experiments not subscribed by current user
+     * @return
+     *      list of not owned experiments
+     */
+    public static ArrayList<Experiment> getNotOwnedExperimentsArrayList() {
+        ArrayList<Experiment> unfilteredExperiments = new ArrayList<>();
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
+            for (Experiment experiment : experimentArrayList) {
+                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
+                    unfilteredExperiments.add(experiment);
+                }
+            }
+        }
+
+        for (Experiment experiment : experimentArrayList) {
+            int found = 0;
+            for(Experiment subscribed : unfilteredExperiments){
+                if(experiment.isValid() && (experiment==subscribed)){
+                    found = found + 1;
+                }
+            }
+            if(found==0){
+                filteredExperiments.add(experiment);
+            }
+        }
+
+        return filteredExperiments;
+    }
 
     /**
      * Gets all experiments subscribed to by current user
@@ -342,9 +374,8 @@ public class DataManager {
 
         for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
             for (Experiment experiment : experimentArrayList) {
-                if (experiment.isValid() && experiment.getId().getKey().equals(id.toString())) {
+                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
                     filteredExperiments.add(experiment);
-                    break;
                 }
             }
         }
@@ -364,6 +395,14 @@ public class DataManager {
     public static Experiment getExperiment(FirestoreOwnableDocument.DocumentId id) {
         for (Experiment experiment : experimentArrayList)
             if (experiment.isValid() && experiment.getId().equals(id))
+                return experiment;
+        Log.e(TAG, "getExperiment() Experiment not found");
+        return null;
+    }
+
+    public static Experiment getExperiment(String id) {
+        for (Experiment experiment : experimentArrayList)
+            if (experiment.isValid() && experiment.getId().toString().equals(id))
                 return experiment;
         Log.e(TAG, "getExperiment() Experiment not found");
         return null;
@@ -521,6 +560,7 @@ public class DataManager {
      * @param onFailure
      *      Callback for when subscribing fails
      */
+
     public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
         if (user == null || !user.isValid()) {
             Log.d("DataManager", "Failed to subscribe. User must be logged in to subscribe to an experiment.");
