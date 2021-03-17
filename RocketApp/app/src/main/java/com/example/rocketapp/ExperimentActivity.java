@@ -26,6 +26,7 @@ public class ExperimentActivity extends AppCompatActivity {
         medianView  = findViewById(R.id.medianValue);
         stdDevView  = findViewById(R.id.stdDevVal);
         regionView  = findViewById(R.id.regionView);
+        minTrialsView = findViewById(R.id.minTrialsView);
 
         TextView meanText = findViewById(R.id.meanText);
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
@@ -35,7 +36,7 @@ public class ExperimentActivity extends AppCompatActivity {
         minTrialsView.setText(minTrialsString);
 
         if (experiment.getType().equals("Binomial")) {
-            meanText.setText("Success Ratio - x");
+            meanText.setText("Success Ratio - ");
         }
 //        getMean(experiment, meanView);
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
