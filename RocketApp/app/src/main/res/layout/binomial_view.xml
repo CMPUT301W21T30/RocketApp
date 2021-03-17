@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/dark_background"
     android:visibility="visible"
     tools:context=".ExperimentView">
 
@@ -14,10 +15,18 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="126dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
             android:background="@color/dark_green"
-            app:cardBackgroundColor="@android:color/holo_green_light"
+            app:cardBackgroundColor="@color/green_soft"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
             <TextView
@@ -32,7 +41,15 @@
             android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@android:color/holo_blue_light"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            app:cardBackgroundColor="@color/dark_yellow"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -40,6 +57,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:padding="4dp"
+                android:fontFamily="@font/nunito_bold"
                 android:text="TextView"
                 android:textSize="40sp" />
         </androidx.cardview.widget.CardView>
@@ -48,38 +67,50 @@
             android:id="@+id/addTrialButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="16dp"
             android:text="Add Trial"
+            app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView3"
+            app:rippleColor="@color/dark_pink" />
 
         <Button
             android:id="@+id/failBinomial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:layout_marginEnd="100dp"
-            android:layout_marginRight="100dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginEnd="64dp"
+            android:layout_marginRight="64dp"
             android:text="FAIL"
             android:visibility="invisible"
+            app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/addTrial" />
 
         <Button
             android:id="@+id/successBinomial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="83dp"
-            android:layout_marginEnd="60dp"
-            android:layout_marginRight="60dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginLeft="64dp"
+            android:layout_marginTop="16dp"
             android:text="PASS"
             android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/failBinomial"
+            app:backgroundTint="@color/dark_pink"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/addTrial" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_round_menu_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
