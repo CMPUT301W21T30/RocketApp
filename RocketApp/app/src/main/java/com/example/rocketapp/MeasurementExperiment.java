@@ -49,12 +49,13 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     public float getMedian(){
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getMeasurement() + trials.get((length / 2) / 2).getMeasurement() / 2);
+            median = (trials.get((length / 2) - 1).getMeasurement() + trials.get(length / 2).getMeasurement() / 2);
         } else {
-            median = (trials.get((length / 2)+1).getMeasurement());
+            median = (trials.get((length / 2)).getMeasurement());
         }
         return median;
     }
@@ -68,7 +69,11 @@ public class MeasurementExperiment extends Experiment {
     @Override
     public float getMean() {
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         float sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getMeasurement();
         }
@@ -86,6 +91,7 @@ public class MeasurementExperiment extends Experiment {
     public float getStdDev() {
         //TODO
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         float mean = getMean();
         float squareSum = 0;
         float meanDif = 0;
@@ -107,6 +113,7 @@ public class MeasurementExperiment extends Experiment {
     public float getTopQuartile() {
         float quart;
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
@@ -134,6 +141,7 @@ public class MeasurementExperiment extends Experiment {
     public float getBottomQuartile() {
         float quart;
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):

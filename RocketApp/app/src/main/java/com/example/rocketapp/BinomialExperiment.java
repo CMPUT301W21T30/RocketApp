@@ -26,6 +26,7 @@ public class BinomialExperiment extends Experiment {
      */
     public BinomialExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(description, region, minTrials, geoLocationEnabled);
+
     }
 
     /**
@@ -37,11 +38,18 @@ public class BinomialExperiment extends Experiment {
         return TYPE;
     }
 
+    /**
+     * Get Median of Binomial Experiment.
+     * @return median of Binomial Experiment
+     */
     @Exclude
     @Override
     public float getMedian() {
-        //TODO
-        return 0;
+        if (getMean() < 0.5) {
+            return 0;
+        } else if (getMean() == 0.5) {
+            return (float) 0.5;
+        } else return 1;
     }
 
     /**
@@ -52,18 +60,18 @@ public class BinomialExperiment extends Experiment {
     @Override
     public float getMean() {
         ArrayList<BinomialTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         int length = trials.size();
+        if(length==0){
+            return 0;
+        }
         int success = 0;
-        int failure = 0;
         for(int i=0; i<length; i++){
-            if(trials.get(i).isValue()){
-                success = success+1;
-            }
-            else{
-                failure = failure+1;
+            if(trials.get(i).isValue()) {
+                success = success + 1;
             }
         }
-        return (float) ((success/(failure+success))*1.0);
+        return  ((float) success)/((float)trials.size());
     }
 
     /**

@@ -8,9 +8,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * View for unsubscribed experiments
+ * TODO use it inside actual code
+ */
 public class ExperimentView extends AppCompatActivity {
 
     private ArrayList<Trial> trials;
+
+    /**
+     * Set up experiment view for unsubscribed users
+     * Display type, region, description and minTrials
+     * Does not have functionality to add trial
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
