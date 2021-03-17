@@ -53,21 +53,18 @@ public class BinomialExperiment extends Experiment {
     @Override
     public float getMean() {
         ArrayList<BinomialTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         int length = trials.size();
         if(length==0){
             return 0;
         }
         int success = 0;
-        int failure = 0;
         for(int i=0; i<length; i++){
-            if(trials.get(i).isValue()){
-                success = success+1;
-            }
-            else{
-                failure = failure+1;
+            if(trials.get(i).isValue()) {
+                success = success + 1;
             }
         }
-        return (float) ((success/(failure+success))*1.0);
+        return  ((float) success)/((float)trials.size());
     }
 
     /**

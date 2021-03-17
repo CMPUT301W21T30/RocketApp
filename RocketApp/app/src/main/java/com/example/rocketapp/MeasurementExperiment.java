@@ -49,6 +49,7 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     public float getMedian(){
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         int length = trials.size();
         float median;
         if(length%2==0) {
@@ -68,6 +69,7 @@ public class MeasurementExperiment extends Experiment {
     @Override
     public float getMean() {
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         float sum = 0;
         if(trials.size()==0){
             return 0;
@@ -89,6 +91,7 @@ public class MeasurementExperiment extends Experiment {
     public float getStdDev() {
         //TODO
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         float mean = getMean();
         float squareSum = 0;
         float meanDif = 0;
@@ -110,6 +113,7 @@ public class MeasurementExperiment extends Experiment {
     public float getTopQuartile() {
         float quart;
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
@@ -137,6 +141,7 @@ public class MeasurementExperiment extends Experiment {
     public float getBottomQuartile() {
         float quart;
         ArrayList<MeasurementTrial> trials = getTrials();
+        if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):

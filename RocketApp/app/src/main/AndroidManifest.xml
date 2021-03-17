@@ -10,20 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RocketApp">
         <activity android:name=".ExperimentActivity" android:parentActivityName=".ExperimentsListActivity"></activity>
-        <activity
-            android:name=".BinomialView"
-            android:parentActivityName=".ExperimentsListActivity" />
-        <activity
-            android:name=".CountExperimentView"
-            android:parentActivityName=".ExperimentsListActivity" />
-        <activity
-            android:name=".IntCountExperimentView"
-            android:parentActivityName=".ExperimentsListActivity" />
-        <activity
-            android:name=".MeasurementExperimentView"
-            android:parentActivityName=".ExperimentsListActivity" />
         <activity android:name=".ExperimentView" />
-        <activity android:name=".AllExperiments" />
+        <activity android:name=".AllExperiments" android:parentActivityName=".ExperimentsListActivity"/>
         <activity android:name=".LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
