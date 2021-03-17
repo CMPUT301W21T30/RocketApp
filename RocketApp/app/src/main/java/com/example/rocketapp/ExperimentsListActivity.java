@@ -28,7 +28,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
     ExperimentListAdapter adapterOwned;
     ExperimentListAdapter adapterSubscribed;
 
-
+    /**
+     * - Contains Navigation to the profile
+     * - inits for the subscribed and owned experiment recycler views are called within
+     * - callback to update list of experiments
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +75,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
         initRecyclerViewSubscribed();
     }
 
+    /**
+     * set adapter to the recyclerView and populate it with
+     * the list of Owned experiments
+     */
     private void initRecyclerViewOwned() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
@@ -90,7 +99,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
         itemTouchHelperOwned.attachToRecyclerView(experimentRecyclerView);
     }
 
-
+    /**
+     * set adapter to the recyclerView and populate it with
+     * the list of Owned experiments
+     */
     private void initRecyclerViewSubscribed(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);

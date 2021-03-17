@@ -13,19 +13,24 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
     ArrayList<Experiment> experiments;
     private OnClickListener onClickListener;
 
-
-    public void updateList(ArrayList<Experiment> experiments_updated){
-        experiments = experiments_updated;
-        notifyDataSetChanged();
-
-
-    }
-
+    /**
+     * ExperimentListAdapter is the custom adapter for the recyclerView that displays searched experiments
+     * @param experiments
+     * @param onClickListener
+     */
     public ExperimentListAdapter(ArrayList<Experiment> experiments, OnClickListener onClickListener) {
         this.experiments = experiments;
         this.onClickListener = onClickListener;
     }
 
+    /**
+     * Viewholder for experiment_recycler_view_item.
+     * Multiple views can be populated into the holder.
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,7 +38,11 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
         return new ViewHolder(view);
     }
 
-
+    /**
+     * OnClick for the items in the holder implemented
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Experiment experiment = experiments.get(position);
@@ -47,6 +56,11 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
         void onClick(Experiment experiment);
     }
 
+    /**
+     * Populating the ViewHolder with experiments.
+     * Populating the items with relevant information regarding experiments
+     * @return
+     */
     @Override
     public int getItemCount() {
         return experiments.size();
