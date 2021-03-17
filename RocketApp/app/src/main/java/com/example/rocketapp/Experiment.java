@@ -150,6 +150,13 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
     }
 
     /**
+     * @return string containing owner name, all info and state for searching
+     */
+    public String searchString() {
+        return getOwner().getName() + info.toString() + state;
+    }
+
+    /**
      * getter for type of experiment
      * @return type of experiment       - "Binomial" or "Count" or "IntCount" or "Measurement"
      */
