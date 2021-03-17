@@ -9,26 +9,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 public class ExperimentActivity extends AppCompatActivity {
 
     private Experiment experiment;
+    private TextView meanView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
-        TextView meanView = findViewById(R.id.meanView);
+        meanView = findViewById(R.id.meanView);
         TextView meanText = findViewById(R.id.meanText);
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
         if (experiment.getType().equals("Binomial")) {
-            meanText.setText("Success Ratio - ");
+            meanText.setText("Success Ratio - x");
         }
-        DataManager.listen(experiment, updatedExperiment -> {
-            meanView.setText(String.valueOf(updatedExperiment.getMean()));
-        });
-        System.out.println(experiment.getTrials());
+//        getMean(experiment, meanView);
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
         experimentType.setText(experiment.getType());
 
@@ -47,5 +43,18 @@ public class ExperimentActivity extends AppCompatActivity {
                 });
             }).show(getSupportFragmentManager(), "ADD_TRIAL");
         });
+
+        DataManager.listen(experiment, this::update);
+    }
+
+    void update(Experiment experiment) {
+        // Could add all updates here
+        try {
+            // TODO getMean() and other stats functions will try to divide by zero, need to fix those functions to return a default case when no trials exist, then we don't need this to be in a try catch
+            meanView.setText(String.valueOf(experiment.getMean()));
+        } catch (Exception e) {
+            meanView.setText("0.0");
+        }
+
     }
 }
