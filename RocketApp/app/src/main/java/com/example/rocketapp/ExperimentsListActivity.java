@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -42,7 +41,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         initRecyclerViewSubscribed();
 
-        ImageButton profileBtn = findViewById(R.id.profile_button);
+        ImageButton profileBtn = findViewById(R.id.experiment_options);
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
