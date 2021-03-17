@@ -8,19 +8,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 
+/**
+ * Adapter for displaying experiments list in a recycler view.
+ */
 public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAdapter.ViewHolder> {
-    //private static ArrayList<Experiment> experiments;
-    ArrayList<Experiment> experiments;
-    private OnClickListener onClickListener;
+    private ArrayList<Experiment> experiments;
+    private DataManager.ExperimentCallback onClickListener;
 
     /**
      * ExperimentListAdapter is the custom adapter for the recyclerView that displays searched experiments
-     * @param experiments
+     * @param experiments the initial experiment list
      * @param onClickListener
      */
-    public ExperimentListAdapter(ArrayList<Experiment> experiments, OnClickListener onClickListener) {
+    public ExperimentListAdapter(ArrayList<Experiment> experiments, DataManager.ExperimentCallback onClickListener) {
         this.experiments = experiments;
         this.onClickListener = onClickListener;
+    }
+
+    /**
+     * @param experiments new list of experiments
+     */
+    public void updateList(ArrayList<Experiment> experiments) {
+        this.experiments.clear();
+        this.experiments.addAll(experiments);
     }
 
     /**
@@ -48,32 +58,34 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
         Experiment experiment = experiments.get(position);
 
         holder.set(experiment, view -> {
-            onClickListener.onClick(experiment);
+            onClickListener.callBack(experiment);
         });
     }
 
-    interface OnClickListener {
-        void onClick(Experiment experiment);
-    }
 
     /**
-     * Populating the ViewHolder with experiments.
-     * Populating the items with relevant information regarding experiments
-     * @return
+     * @return number of experiments in the list
      */
     @Override
     public int getItemCount() {
         return experiments.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
+    /**
+     * The ViewHolder to populate with experiment information for each experiment.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView experimentNameTextView;
         private final TextView regionTextView;
         private final TextView statusTextView;
         private final TextView ownerTextView;
         private final MaterialCardView experimentListItemLayout;
 
+        /**
+         * Sets all fields according to the experiment input
+         * @param experiment The experiment to populate the viewholder with
+         * @param onClick The click behaviour
+         */
         public void set(Experiment experiment, View.OnClickListener onClick) {
             experimentNameTextView.setText(experiment.info.getDescription());
             regionTextView.setText(experiment.info.getRegion());
