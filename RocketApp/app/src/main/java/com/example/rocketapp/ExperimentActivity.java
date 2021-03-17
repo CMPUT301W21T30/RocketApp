@@ -17,11 +17,17 @@ public class ExperimentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
-
+        TextView meanView = findViewById(R.id.meanView);
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
         DataManager.listen(experiment, updatedExperiment -> {
-            // What to do on update?
-        });
+            if(updatedExperiment.getType()=="Count"){
+                float mean = 0;
+                for(int j=0; j<updatedExperiment.getTrials().size(); j++){
+                    CountTrial t = (CountTrial) updatedExperiment.getTrials().get(j);
+                    System.out.println(t.getCount());
+                }
+                meanView.setText(String.valueOf(mean/updatedExperiment.getTrials().size()));
+        }});
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
         experimentType.setText(experiment.getType());
 
