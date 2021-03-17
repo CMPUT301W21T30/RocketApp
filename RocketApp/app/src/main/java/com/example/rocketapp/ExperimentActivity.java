@@ -46,11 +46,6 @@ public class ExperimentActivity extends AppCompatActivity {
 
         TextView meanText = findViewById(R.id.meanText);
         experimentOptions = findViewById(R.id.experiment_options);
-//        experimentOptions.setOnClickListener(v -> {
-//
-//
-//        });
-
 
 
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
