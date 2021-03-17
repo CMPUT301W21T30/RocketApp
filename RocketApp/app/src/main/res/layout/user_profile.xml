@@ -59,10 +59,11 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_save_alt_24"
+        app:srcCompat="@drawable/ic_baseline_save_alt_24"
         android:tint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="TODO" />
 
     <TextView
         android:id="@+id/textView3"
