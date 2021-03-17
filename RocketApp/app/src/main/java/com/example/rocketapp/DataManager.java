@@ -1,4 +1,5 @@
 package com.example.rocketapp;
+import android.app.Activity;
 import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.common.collect.ImmutableMap;
@@ -9,6 +10,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -38,7 +41,7 @@ public class DataManager {
     private static final String TRIALS = "Trials";
 
     // TODO Add any new Experiment types to this map
-    private static final ImmutableMap<String, Class<? extends Experiment>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment>>builder()
+    static final ImmutableMap<String, Class<? extends Experiment>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment>>builder()
             .put(IntCountExperiment.TYPE, IntCountExperiment.class)
             .put(CountExperiment.TYPE, CountExperiment.class)
             .put(BinomialExperiment.TYPE, BinomialExperiment.class)
@@ -46,11 +49,19 @@ public class DataManager {
             .build();
 
     // TODO Add any new Experiment types to this map
-    private static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
+    static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
             .put(IntCountTrial.TYPE, IntCountTrial.class)
             .put(MeasurementTrial.TYPE, MeasurementTrial.class)
             .put(BinomialTrial.TYPE, BinomialTrial.class)
             .put(CountTrial.TYPE, CountTrial.class)
+            .build();
+
+    // TODO Add any new Experiment types to this map
+    static final ImmutableMap<String, Class<? extends Activity>> activityClassMap = ImmutableMap.<String, Class<? extends Activity>>builder()
+            .put(IntCountTrial.TYPE, IntCountExperimentView.class)
+            .put(MeasurementTrial.TYPE, MeasurementExperimentView.class)
+            .put(BinomialTrial.TYPE, BinomialView.class)
+            .put(CountTrial.TYPE, CountExperimentView.class)
             .build();
 
 
@@ -72,7 +83,7 @@ public class DataManager {
          * Private class creates "Friend" like functionality so function calls requiring a new ID can only be called
          * from DataManager to make sure updates will be synced with firestore.
          */
-        final private static class Id {
+        final private static class Id implements Serializable {
             private String key;
 
             /**
@@ -393,33 +404,10 @@ public class DataManager {
     /**
      * Gets all experiments not subscribed by current user
      * @return
-     *      list of not owned experiments
+     *      list of not subscribed
      */
-    public static ArrayList<Experiment> getNotOwnedExperimentsArrayList() {
-        ArrayList<Experiment> unfilteredExperiments = new ArrayList<>();
-        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
-
-        for (FirestoreOwnableDocument.DocumentId id : subscriptions) {
-            for (Experiment experiment : experimentArrayList) {
-                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
-                    unfilteredExperiments.add(experiment);
-                }
-            }
-        }
-
-        for (Experiment experiment : experimentArrayList) {
-            int found = 0;
-            for(Experiment subscribed : unfilteredExperiments){
-                if(experiment.isValid() && (experiment==subscribed)){
-                    found = found + 1;
-                }
-            }
-            if(found==0){
-                filteredExperiments.add(experiment);
-            }
-        }
-
-        return filteredExperiments;
+    public static ArrayList<Experiment> getNotSubscribedExperimentsArrayList() {
+        return getExperimentArrayList(experiment -> !subscriptions.contains(experiment.getId()));
     }
 
     /**
@@ -442,15 +430,24 @@ public class DataManager {
     }
 
 
-    /**
-     * Retrieves an experiment from the list of experiments.
-     * Should pass an ID through an intent and use this to get an experiment in ExperimentActivity.
-     * @param id
-     *      ID of the experiment to retrieve
-     * @return
-     *      Returns the experiment object matching the ID
-     */
-    public static Experiment getExperiment(FirestoreDocument.Id id) {
+//    /**
+//     * Retrieves an experiment from the list of experiments.
+//     * Should pass an ID through an intent and use this to get an experiment in ExperimentActivity.
+//     * @param id
+//     *      ID of the experiment to retrieve
+//     * @return
+//     *      Returns the experiment object matching the ID
+//     */
+//    public static Experiment getExperiment(FirestoreDocument.Id id) {
+//        for (Experiment experiment : experimentArrayList)
+//            if (experiment.isValid() && experiment.getId().equals(id))
+//                return experiment;
+//        Log.e(TAG, "getExperiment() Experiment not found");
+//        return null;
+//    }
+
+    public static Experiment getExperiment(Object id) {
+//        FirestoreDocument.Id documentId = (FirestoreDocument.Id) id;
         for (Experiment experiment : experimentArrayList)
             if (experiment.isValid() && experiment.getId().equals(id))
                 return experiment;
@@ -465,6 +462,7 @@ public class DataManager {
         Log.e(TAG, "getExperiment() Experiment not found");
         return null;
     }
+
 
 
     /**

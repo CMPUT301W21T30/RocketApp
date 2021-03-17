@@ -1,21 +1,17 @@
 package com.example.rocketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
 public class AllExperiments extends AppCompatActivity {
-
     private static final String TAG = "AllExperimentsActivity";
-    ArrayList<Experiment> experimentsNotOwned;
-    ExperimentRecyclerViewNotOwnedAdapter adapterNotOwned;
+    private ArrayList<Experiment> experimentsNotOwned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +25,16 @@ public class AllExperiments extends AppCompatActivity {
 
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewNonOwner);
 
-        experimentsNotOwned = DataManager.getNotOwnedExperimentsArrayList();
-        adapterNotOwned = new ExperimentRecyclerViewNotOwnedAdapter(this, experimentsNotOwned);
-        experimentRecyclerView.setAdapter(adapterNotOwned);
+        experimentsNotOwned = DataManager.getNotSubscribedExperimentsArrayList();
+
+        experimentRecyclerView.setAdapter(new ExperimentListAdapter(experimentsNotOwned, experiment -> {
+            DataManager.subscribe(experiment,() -> {
+                Log.d(TAG, "Subscribed");
+                finish();
+            } ,exception -> {
+                Log.d(TAG, "Could not be subscribed.");
+            });
+        }));
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }

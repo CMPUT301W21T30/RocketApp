@@ -25,8 +25,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
     public Button showAllExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
-//    ExperimentRecyclerViewOwnedAdapter adapterOwned;
-//    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
     ExperimentListAdapter adapterOwned;
     ExperimentListAdapter adapterSubscribed;
 
@@ -39,7 +37,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
         initRecyclerViewOwned();
 
         initRecyclerViewSubscribed();
-
 
         profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
@@ -80,10 +77,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
-            // What to do when experiment is clicked
-            Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
+            intent.putExtra("id", experiment.getId());
+            startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterOwned);
+
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Set up Swipe Gesture for Published and UnPublished
@@ -97,8 +96,9 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
-            // What to do when experiment is clicked
-            Toast.makeText(this, experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
+            intent.putExtra("id", experiment.getId());
+            startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterSubscribed);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -123,7 +123,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
                     }, (e) -> {
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     });
-
+                    adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;
                 case ItemTouchHelper.RIGHT:
@@ -132,7 +132,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
                     }, (e) -> {
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     });
-
+                    adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;
             }

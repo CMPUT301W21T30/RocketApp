@@ -24,7 +24,7 @@ public class MeasurementExperimentView extends AppCompatActivity {
         setContentView(R.layout.measurement_experiment_view);
         Intent i = getIntent();
         String id = i.getStringExtra("id");
-        Experiment experiment = DataManager.getExperiment(id);
+        Experiment experiment = DataManager.getExperiment(i.getSerializableExtra("id"));
         TextView expType = findViewById(R.id.mexp_type);
         TextView expDescription = findViewById(R.id.mexp_desc);
         expType.setText(experiment.getType());
