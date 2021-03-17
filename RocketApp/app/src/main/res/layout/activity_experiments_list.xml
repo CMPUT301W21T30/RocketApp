@@ -21,10 +21,11 @@
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_baseline_account_circle_24"
+            app:srcCompat="@drawable/ic_baseline_account_circle_24"
             android:tint="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/textView"
-            app:layout_constraintTop_toTopOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            android:contentDescription="TODO" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -119,7 +120,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_round_filter_list_24"
+                    app:srcCompat="@drawable/ic_round_filter_list_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -152,7 +153,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="12dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_round_search_24"
+                    app:srcCompat="@drawable/ic_round_search_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

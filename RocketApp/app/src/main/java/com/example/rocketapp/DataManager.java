@@ -56,15 +56,6 @@ public class DataManager {
             .put(CountTrial.TYPE, CountTrial.class)
             .build();
 
-    // TODO Add any new ExperimentActivity types to this map
-    static final ImmutableMap<String, Class<? extends Activity>> activityClassMap = ImmutableMap.<String, Class<? extends Activity>>builder()
-            .put(IntCountTrial.TYPE, IntCountExperimentView.class)
-            .put(MeasurementTrial.TYPE, MeasurementExperimentView.class)
-            .put(BinomialTrial.TYPE, BinomialView.class)
-            .put(CountTrial.TYPE, CountExperimentView.class)
-            .build();
-
-
     static {
         db = FirebaseFirestore.getInstance();
         initializeExperiments();
