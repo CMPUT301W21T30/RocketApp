@@ -2,10 +2,13 @@ package com.example.rocketapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +16,8 @@ public class ExperimentActivity extends AppCompatActivity {
 
     private Experiment experiment;
     private TextView meanView;
+    private ImageButton experimentOptions;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +25,14 @@ public class ExperimentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_experiment);
         meanView = findViewById(R.id.meanView);
         TextView meanText = findViewById(R.id.meanText);
+        experimentOptions = findViewById(R.id.experiment_options);
+//        experimentOptions.setOnClickListener(v -> {
+//
+//
+//        });
+
+
+
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
         if (experiment.getType().equals("Binomial")) {
             meanText.setText("Success Ratio - x");
