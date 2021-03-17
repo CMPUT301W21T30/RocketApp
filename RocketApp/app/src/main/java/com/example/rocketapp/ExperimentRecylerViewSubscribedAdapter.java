@@ -45,27 +45,27 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
         holder.experimentListItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-                if(experiments.get(position).getType()=="Count") {
-                    Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="Binomial"){
-                    Intent expViewintent = new Intent(v.getContext(), BinomialView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="IntCount"){
-                    Intent expViewintent = new Intent(v.getContext(),  IntCountExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="Measurement"){
-                    Intent expViewintent = new Intent(v.getContext(),  MeasurementExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
+//                Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
+//                if(experiments.get(position).getType()=="Count") {
+//                    Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
+//                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+//                    context.startActivity(expViewintent);
+//                }
+//                if(experiments.get(position).getType()=="Binomial"){
+//                    Intent expViewintent = new Intent(v.getContext(), BinomialView.class);
+//                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+//                    context.startActivity(expViewintent);
+//                }
+//                if(experiments.get(position).getType()=="IntCount"){
+//                    Intent expViewintent = new Intent(v.getContext(), IntCountExperimentView.class);
+//                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+//                    context.startActivity(expViewintent);
+//                }
+//                if(experiments.get(position).getType()=="Measurement"){
+//                    Intent expViewintent = new Intent(v.getContext(),  MeasurementExperimentView.class);
+//                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+//                    context.startActivity(expViewintent);
+//                }
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
             }
         });

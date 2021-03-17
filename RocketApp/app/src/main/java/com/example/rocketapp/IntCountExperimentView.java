@@ -24,7 +24,7 @@ public class IntCountExperimentView extends AppCompatActivity {
         setContentView(R.layout.int_count_experiment_view);
         Intent i = getIntent();
         String id = i.getStringExtra("id");
-        Experiment experiment = DataManager.getExperiment(id);
+        Experiment experiment = DataManager.getExperiment(i.getSerializableExtra("id"));
         TextView expType = findViewById(R.id.icexp_type);
         TextView expDescription = findViewById(R.id.icexp_desc);
         expType.setText(experiment.getType());

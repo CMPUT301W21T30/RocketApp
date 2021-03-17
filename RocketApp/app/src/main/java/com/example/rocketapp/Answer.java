@@ -30,4 +30,16 @@ public class Answer extends Comment {
     public String getType() {
         return TYPE;
     }
+
+    /**
+     * describes display behavior of answer comment
+     * @return a String detailing about question, answers and column headings.
+     */
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "owner=" + getOwner().getName() +
+                "text=" + getText() +
+                '}';
+    }
 }

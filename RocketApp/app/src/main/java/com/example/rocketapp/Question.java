@@ -58,7 +58,8 @@ public class Question extends Comment {
     @Override
     public String toString() {
         return "Question{" +
-                "text" + getText() +
+                "owner=" + getOwner().getName() +
+                "text=" + getText() +
                 "answersArrayList=" + answersArrayList +
                 '}';
     }
