@@ -39,11 +39,15 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.firebase:firebase-firestore:22.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.android.support:multidex:1.0.3'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2' //Source: https://forums.bignerdranch.com/t/cannot-resolve-symbol-activitytestrule-solved/14720
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    testImplementation 'org.mockito:mockito-core:2.23.0'
 
     def lottieVersion = "3.4.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
