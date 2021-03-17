@@ -9,8 +9,17 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 
 public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAdapter.ViewHolder> {
-    private ArrayList<Experiment> experiments;
+    //private static ArrayList<Experiment> experiments;
+    ArrayList<Experiment> experiments;
     private OnClickListener onClickListener;
+
+
+    public void updateList(ArrayList<Experiment> experiments_updated){
+        experiments = experiments_updated;
+        notifyDataSetChanged();
+
+
+    }
 
     public ExperimentListAdapter(ArrayList<Experiment> experiments, OnClickListener onClickListener) {
         this.experiments = experiments;
@@ -67,5 +76,10 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
             ownerTextView = itemView.findViewById(R.id.ownerTextView);
             experimentListItemLayout = itemView.findViewById(R.id.experimentListItemLayout);
         }
+
+
     }
+
+
+
 }
