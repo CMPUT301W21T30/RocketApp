@@ -11,7 +11,7 @@
         android:theme="@style/Theme.RocketApp">
         <activity android:name=".ExperimentActivity" android:parentActivityName=".ExperimentsListActivity"></activity>
         <activity android:name=".ExperimentView" />
-        <activity android:name=".AllExperiments" />
+        <activity android:name=".AllExperiments" android:parentActivityName=".ExperimentsListActivity"/>
         <activity android:name=".LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
