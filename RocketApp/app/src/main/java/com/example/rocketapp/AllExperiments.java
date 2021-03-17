@@ -17,6 +17,7 @@ public class AllExperiments extends AppCompatActivity {
     ArrayList<Experiment> experimentsNotOwned;
     ExperimentRecyclerViewNotOwnedAdapter adapterNotOwned;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
