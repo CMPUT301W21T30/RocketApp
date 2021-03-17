@@ -1,0 +1,119 @@
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@color/dark_background\"\r\n    tools:context=\".LogInActivity\">\r\n\r\n    <EditText\r\n        android:id=\"@+id/usernameEditText\"\r\n        android:layout_width=\"200dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:hint=\"Username\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.497\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.438\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/loginBtn\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:text=\"LogIn\"\r\n        app:backgroundTint=\"@color/dark_pink\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/usernameEditText\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_login.xml	(revision 255148c058a972c69cd2f5776a8cecbedf0297e4)
++++ app/src/main/res/layout/activity_login.xml	(date 1616011715659)
+@@ -24,7 +24,7 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="16dp"
+-        android:text="LogIn"
++        android:text="LOGIN"
+         app:backgroundTint="@color/dark_pink"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.498"
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//apply plugin: 'com.google.gms.google-services'\r\n\r\nplugins {\r\n    id 'com.android.application'\r\n    id 'com.google.gms.google-services'\r\n}\r\n\r\nandroid {\r\n    compileSdkVersion 29\r\n    buildToolsVersion \"30.0.3\"\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.rocketapp\"\r\n        minSdkVersion 16\r\n        targetSdkVersion 29\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        multiDexEnabled true\r\n        android.defaultConfig.vectorDrawables.useSupportLibrary = true\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation 'com.google.android.material:material:1.3.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'\r\n    implementation 'com.google.firebase:firebase-firestore:22.1.0'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    testImplementation 'junit:junit:4.+'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.2'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\r\n    implementation platform('com.google.firebase:firebase-bom:26.5.0')\r\n    implementation 'com.android.support:multidex:1.0.3'\r\n\r\n    def lottieVersion = \"3.4.0\"\r\n    implementation \"com.airbnb.android:lottie:$lottieVersion\"\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 255148c058a972c69cd2f5776a8cecbedf0297e4)
++++ app/build.gradle	(date 1616010808966)
+@@ -39,11 +39,15 @@
+     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+     implementation 'com.google.firebase:firebase-firestore:22.1.0'
+     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+-    testImplementation 'junit:junit:4.+'
++    testImplementation 'junit:junit:4.13'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+     implementation platform('com.google.firebase:firebase-bom:26.5.0')
+     implementation 'com.android.support:multidex:1.0.3'
++    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
++    androidTestImplementation 'com.android.support.test:rules:1.0.2' //Source: https://forums.bignerdranch.com/t/cannot-resolve-symbol-activitytestrule-solved/14720
++    androidTestImplementation 'com.android.support.test:runner:1.0.2'
++    testImplementation 'org.mockito:mockito-core:2.23.0'
+ 
+     def lottieVersion = "3.4.0"
+     implementation "com.airbnb.android:lottie:$lottieVersion"
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nbuildscript {\r\n    repositories {\r\n        google()\r\n        jcenter()\r\n    }\r\n    dependencies {\r\n        classpath \"com.android.tools.build:gradle:4.1.2\"\r\n\r\n        // NOTE: Do not place your application dependencies here; they belong\r\n        // in the individual module build.gradle files\r\n        classpath 'com.google.gms:google-services:4.3.5'\r\n    }\r\n}\r\n\r\nallprojects {\r\n    repositories {\r\n        google()\r\n        jcenter()\r\n    }\r\n}\r\n\r\ntask clean(type: Delete) {\r\n    delete rootProject.buildDir\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision 255148c058a972c69cd2f5776a8cecbedf0297e4)
++++ build.gradle	(date 1616007898660)
+@@ -10,6 +10,7 @@
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+         classpath 'com.google.gms:google-services:4.3.5'
++
+     }
+ }
+ 
+Index: ../.idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_6\" assert-keyword=\"true\" jdk-15=\"true\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../.idea/misc.xml	(revision 255148c058a972c69cd2f5776a8cecbedf0297e4)
++++ ../.idea/misc.xml	(date 1615915471370)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" />
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" project-jdk-name="Android API 29 Platform" project-jdk-type="Android SDK" />
+ </project>
+\ No newline at end of file
+Index: app/src/androidTest/java/com/example/rocketapp/GeneralAppTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/androidTest/java/com/example/rocketapp/GeneralAppTest.java	(date 1616011715668)
++++ app/src/androidTest/java/com/example/rocketapp/GeneralAppTest.java	(date 1616011715668)
+@@ -0,0 +1,34 @@
++package com.example.rocketapp;
++
++import android.widget.EditText;
++
++import androidx.test.platform.app.InstrumentationRegistry;
++import androidx.test.rule.ActivityTestRule;
++
++import com.robotium.solo.Solo;
++
++import org.junit.Before;
++import org.junit.Rule;
++import org.junit.Test;
++
++public class GeneralAppTest {
++    private Solo solo;
++
++    @Rule
++    public ActivityTestRule <LogInActivity> rule = new ActivityTestRule <LogInActivity>(LogInActivity.class, true, true);
++
++    @Before
++    public void setup() {
++        solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
++    }
++
++    @Test
++    public void checkLogin(){
++        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
++        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
++        solo.clickOnButton("LOGIN");
++        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
++    }
++
++
++}
