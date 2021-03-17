@@ -8,7 +8,7 @@ import com.google.firebase.firestore.Exclude;
     *Inherits from abstract class Experiment.
     */
 public class BinomialExperiment extends Experiment {
-    public static String TYPE = "Binomial";     //Type of experiment
+    public static final String TYPE = "Binomial";     //Type of experiment
 
     public BinomialExperiment() {
         //TODO

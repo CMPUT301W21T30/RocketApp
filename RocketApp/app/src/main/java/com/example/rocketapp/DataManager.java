@@ -48,7 +48,7 @@ public class DataManager {
             .put(MeasurementExperiment.TYPE, MeasurementExperiment.class)
             .build();
 
-    // TODO Add any new Experiment types to this map
+    // TODO Add any new Trial types to this map
     static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
             .put(IntCountTrial.TYPE, IntCountTrial.class)
             .put(MeasurementTrial.TYPE, MeasurementTrial.class)
@@ -56,7 +56,7 @@ public class DataManager {
             .put(CountTrial.TYPE, CountTrial.class)
             .build();
 
-    // TODO Add any new Experiment types to this map
+    // TODO Add any new ExperimentActivity types to this map
     static final ImmutableMap<String, Class<? extends Activity>> activityClassMap = ImmutableMap.<String, Class<? extends Activity>>builder()
             .put(IntCountTrial.TYPE, IntCountExperimentView.class)
             .put(MeasurementTrial.TYPE, MeasurementExperimentView.class)

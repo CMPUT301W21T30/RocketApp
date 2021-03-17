@@ -16,7 +16,7 @@ import static java.lang.Math.sqrt;
  * Inherits from abstract class Experiment.
  */
 public class CountExperiment extends Experiment {
-    public static String TYPE = "Count";
+    public static final String TYPE = "Count";
 
 
     public CountExperiment() {

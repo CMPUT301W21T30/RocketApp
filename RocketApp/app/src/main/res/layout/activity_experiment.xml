@@ -5,24 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
-    tools:context=".ExperimentView">
+    tools:context=".ExperimentActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/editCountTrial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="81dp"
-            android:ems="10"
-            android:hint="Enter Count"
-            android:inputType="number"
-            android:numeric="integer"
-            android:visibility="invisible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
@@ -58,24 +45,13 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/addCountTrial"
+            android:id="@+id/addTrialButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
             android:text="Add Trial"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
-
-        <Button
-            android:id="@+id/submitTrial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:text="SUBMIT"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editCountTrial"
             app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

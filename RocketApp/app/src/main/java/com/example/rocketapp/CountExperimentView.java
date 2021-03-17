@@ -11,8 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class CountExperimentView extends AppCompatActivity {
@@ -26,8 +24,8 @@ public class CountExperimentView extends AppCompatActivity {
         String id = i.getStringExtra("id");
 //        Experiment experiment = DataManager.getExperiment(id);
         Experiment experiment = DataManager.getExperiment(i.getSerializableExtra("id"));
-        TextView expType = findViewById(R.id.cexp_type);
-        TextView expDescription = findViewById(R.id.cexp_desc);
+        TextView expType = findViewById(R.id.experimentTypeTextView);
+        TextView expDescription = findViewById(R.id.descriptionTextView);
         expType.setText(experiment.getType());
         expDescription.setText(experiment.info.getDescription());
         Button addTrial = findViewById(R.id.addCountTrial);
