@@ -9,12 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RocketApp">
-        <activity android:name=".BinomialView"></activity>
-        <activity android:name=".CountExperimentView"></activity>
-        <activity android:name=".IntCountExperimentView"></activity>
-        <activity android:name=".MeasurementExperimentView"></activity>
+        <activity android:name=".ExperimentActivity" android:parentActivityName=".ExperimentsListActivity"></activity>
         <activity android:name=".ExperimentView" />
-        <activity android:name=".AllExperiments" />
+        <activity android:name=".AllExperiments" android:parentActivityName=".ExperimentsListActivity"/>
         <activity android:name=".LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,8 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileActivity" />
-        <activity android:name=".ExperimentsListActivity" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:parentActivityName=".ExperimentsListActivity" />
+        <activity
+            android:name=".ExperimentsListActivity"
+            android:parentActivityName=".LogInActivity" />
     </application>
 
 </manifest>

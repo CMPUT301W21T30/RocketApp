@@ -23,7 +23,7 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
      *          value is set as the value of this trial.
      */
     public MeasurementTrial(float value){
-        measurement = value;
+        setMeasurement(value);
     }
 
     /**
@@ -50,5 +50,9 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
      */
     public float getMeasurement(){
         return measurement;
+    }
+
+    public void setMeasurement(float value){
+        measurement = value;
     }
 }
