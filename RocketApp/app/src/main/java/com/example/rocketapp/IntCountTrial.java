@@ -24,7 +24,7 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
      *          value is set as the value of this trial.
      */
     public IntCountTrial(int value) {
-        posCount = value;
+        setIntCount(value);
     }
 
     /**
@@ -57,5 +57,9 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
      */
     public int getPCount(){
         return posCount;
+    }
+
+    public void setIntCount(int value){
+        posCount = value;
     }
 }

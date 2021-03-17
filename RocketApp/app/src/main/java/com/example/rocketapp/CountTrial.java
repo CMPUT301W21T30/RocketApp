@@ -23,7 +23,7 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
      *          number is set as the value of this trial.
      */
     public CountTrial(int number){
-        numberCounted = number;
+        setCount(number);
     }
 
     /**
@@ -39,6 +39,10 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
      */
     public void addCount(){
         numberCounted = numberCounted + 1;
+    }
+
+    public void setCount(int count){
+        numberCounted = count;
     }
 
     /**
