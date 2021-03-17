@@ -13,16 +13,30 @@ public class ExperimentActivity extends AppCompatActivity {
 
     private Experiment experiment;
     private TextView meanView;
+    private TextView medianView;
+    private TextView stdDevView;
+    private TextView regionView;
+    private TextView minTrialsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
         meanView = findViewById(R.id.meanView);
+        medianView  = findViewById(R.id.medianValue);
+        stdDevView  = findViewById(R.id.stdDevVal);
+        regionView  = findViewById(R.id.regionView);
+        minTrialsView = findViewById(R.id.minTrialsView);
+
         TextView meanText = findViewById(R.id.meanText);
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+
+        regionView.setText(experiment.info.getRegion());
+        String minTrialsString = "Min Trials - " + String.valueOf(experiment.info.getMinTrials());
+        minTrialsView.setText(minTrialsString);
+
         if (experiment.getType().equals("Binomial")) {
-            meanText.setText("Success Ratio - x");
+            meanText.setText("Success Ratio - ");
         }
 //        getMean(experiment, meanView);
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
@@ -49,12 +63,10 @@ public class ExperimentActivity extends AppCompatActivity {
 
     void update(Experiment experiment) {
         // Could add all updates here
-        try {
-            // TODO getMean() and other stats functions will try to divide by zero, need to fix those functions to return a default case when no trials exist, then we don't need this to be in a try catch
-            meanView.setText(String.valueOf(experiment.getMean()));
-        } catch (Exception e) {
-            meanView.setText("0.0");
-        }
+        meanView.setText(String.valueOf(experiment.getMean()));
+        medianView.setText(String.valueOf(experiment.getMedian()));
+        stdDevView.setText(String.valueOf(experiment.getStdDev()));
+
 
     }
 }
