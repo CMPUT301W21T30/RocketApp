@@ -46,17 +46,6 @@ public class User extends DataManager.FirestoreDocument {
     }
 
     /**
-     * Comparison between two User objects if they are the same
-     * @param user
-     *          Object of class User which this object is to be compared with
-     * @return
-     *          True if both objects have the same unique UserID, false otherwise
-     */
-    public boolean equals(User user) {
-        return user.getId().equals(getId());
-    }
-
-    /**
      * Display function of User
      * @return String describing a display for User object with username, name and userID
      */

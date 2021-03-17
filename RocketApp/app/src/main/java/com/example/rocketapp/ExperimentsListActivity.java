@@ -25,8 +25,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
     public Button showAllExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
-    ExperimentRecyclerViewOwnedAdapter adapterOwned;
-    ExperimentRecylerViewSubscribedAdapter adapterSubscribed;
+    ExperimentListAdapter adapterOwned;
+    ExperimentListAdapter adapterSubscribed;
 
 
     @Override
@@ -37,7 +37,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
         initRecyclerViewOwned();
 
         initRecyclerViewSubscribed();
-
 
         profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
@@ -77,8 +76,13 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
-        adapterOwned = new ExperimentRecyclerViewOwnedAdapter(this, experimentsOwned);
+        adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
+            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
+            intent.putExtra("id", experiment.getId());
+            startActivity(intent);
+        });
         experimentRecyclerView.setAdapter(adapterOwned);
+
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Set up Swipe Gesture for Published and UnPublished
@@ -91,8 +95,11 @@ public class ExperimentsListActivity extends AppCompatActivity{
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
-        System.out.println(DataManager.getSubscribedExperimentArrayList());
-        adapterSubscribed = new ExperimentRecylerViewSubscribedAdapter(this, experimentsSubscribed);
+        adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
+            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
+            intent.putExtra("id", experiment.getId());
+            startActivity(intent);
+        });
         experimentRecyclerView.setAdapter(adapterSubscribed);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -111,15 +118,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:
-
-
-
                     DataManager.publishExperiment(experimentsOwned.get(position), (experiment) -> {
                         Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
                     }, (e) -> {
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     });
-
+                    adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;
                 case ItemTouchHelper.RIGHT:
@@ -128,7 +132,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
                     }, (e) -> {
                         Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     });
-
+                    adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;
             }

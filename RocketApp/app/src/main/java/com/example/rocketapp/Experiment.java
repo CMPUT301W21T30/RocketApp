@@ -79,13 +79,11 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
 
     /**
      * setter for state of experiment, can be used to modify an already existing experiment's state
-     * @param ownerId
-     *          Owner of experiment
      * @param state
      *          New state of experiment
      *
      */
-    public void setState(DocumentId ownerId, State state) {
+    public void setState(State state) {
         this.state = state;         //state of experiment modified
     }
 
@@ -139,15 +137,15 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
         questionsArrayList = questions;
     }
 
-    /**
-     *
-     * @return String describing how to display an experiment
-     */
     @Override
     public String toString() {
         return "Experiment{" +
-                "id-" + getId() +
+                "id=" + getId() +
+                "owner=" + getOwner().getName() +
                 "info=" + info +
+                ", state=" + state +
+                ", trialsArrayList=" + trialsArrayList +
+                ", questionsArrayList=" + questionsArrayList +
                 '}';
     }
 
