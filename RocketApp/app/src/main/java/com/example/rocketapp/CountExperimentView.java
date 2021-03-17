@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -50,6 +51,10 @@ public class CountExperimentView extends AppCompatActivity {
                     }, exception -> {
                         Log.d("EXCEPTION", "Exception");
                     });
+                    count.setVisibility(View.INVISIBLE);
+                    addTrial.setVisibility(View.VISIBLE);
+                    submit.setVisibility(View.INVISIBLE);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
                 }
             }
         });

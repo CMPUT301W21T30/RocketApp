@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -48,6 +49,10 @@ public class BinomialView extends AppCompatActivity {
                 } , exception -> {
                     Log.d("EXCEPTION", "Exception");
                 });
+                success.setVisibility(View.INVISIBLE);
+                addTrial.setVisibility(View.VISIBLE);
+                fail.setVisibility(View.INVISIBLE);
+                Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
             }
         });
         success.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +65,10 @@ public class BinomialView extends AppCompatActivity {
                 } , exception -> {
                     Log.d("EXCEPTION", "Exception");
                 });
+                success.setVisibility(View.INVISIBLE);
+                addTrial.setVisibility(View.VISIBLE);
+                fail.setVisibility(View.INVISIBLE);
+                Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
             }
         });
     }}
