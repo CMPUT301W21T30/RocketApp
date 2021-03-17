@@ -52,6 +52,11 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
         return measurement;
     }
 
+    /**
+     * setter for measurement
+     * @param value
+     *          Initialize the measurement with value
+     */
     public void setMeasurement(float value){
         measurement = value;
     }

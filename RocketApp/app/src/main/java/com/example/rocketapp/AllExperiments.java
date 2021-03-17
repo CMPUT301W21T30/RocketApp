@@ -13,6 +13,9 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
+/**
+ * Display unsubscribed experiments on a new activity.
+ */
 public class AllExperiments extends AppCompatActivity {
     private static final String TAG = "AllExperimentsActivity";
     private ArrayList<Experiment> experimentList;

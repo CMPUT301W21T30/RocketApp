@@ -38,6 +38,10 @@ public class BinomialExperiment extends Experiment {
         return TYPE;
     }
 
+    /**
+     * Get Median of Binomial Experiment.
+     * @return median of Binomial Experiment
+     */
     @Exclude
     @Override
     public float getMedian() {

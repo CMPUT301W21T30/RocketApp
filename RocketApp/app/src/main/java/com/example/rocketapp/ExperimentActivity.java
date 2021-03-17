@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Display view for Experiment
+ */
 public class ExperimentActivity extends AppCompatActivity {
 
     private Experiment experiment;
@@ -18,6 +21,13 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView regionView;
     private TextView minTrialsView;
 
+    /**
+     * Setup the view for Experiment
+     * Display type, description, region and Minimum Trials.
+     * Button to add trials
+     * @param savedInstanceState
+     *          passed state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +71,11 @@ public class ExperimentActivity extends AppCompatActivity {
         DataManager.listen(experiment, this::update);
     }
 
+    /**
+     * Update and display experiment statistics.
+     * @param experiment
+     *          Experiment of current view
+     */
     void update(Experiment experiment) {
         // Could add all updates here
         meanView.setText(String.valueOf(experiment.getMean()));

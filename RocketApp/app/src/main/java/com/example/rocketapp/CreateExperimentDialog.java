@@ -22,6 +22,11 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Objects;
 
+/**
+ * A dialog box to create a new Experiment
+ * User selects type of experiment and enters details of experiment
+ */
+
 public class CreateExperimentDialog extends DialogFragment {
 
     //Forces implementing class to create a function that handles experiment returned from fragment
@@ -98,6 +103,7 @@ public class CreateExperimentDialog extends DialogFragment {
         expType.setAdapter(myAdapter);                                  //set experiment type from selected item inside dropdown
     }
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -108,6 +114,10 @@ public class CreateExperimentDialog extends DialogFragment {
         }
     }
 
+    /**
+     * Exception handler which checks if Experiment is valid and published or not
+     * @param newExperiment Experiment to be published.
+     */
     public void returnExperiment(Experiment newExperiment){ ;
         DataManager.publishExperiment(newExperiment, experiment -> {
             Log.d(TAG, "Experiment published");
