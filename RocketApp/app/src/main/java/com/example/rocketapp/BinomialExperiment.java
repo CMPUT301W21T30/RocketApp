@@ -41,8 +41,11 @@ public class BinomialExperiment extends Experiment {
     @Exclude
     @Override
     public float getMedian() {
-        //TODO
-        return 0;
+        if (getMean() < 0.5) {
+            return 0;
+        } else if (getMean() == 0.5) {
+            return (float) 0.5;
+        } else return 1;
     }
 
     /**

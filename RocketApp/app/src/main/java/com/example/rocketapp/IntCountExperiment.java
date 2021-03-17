@@ -48,14 +48,15 @@ public class IntCountExperiment extends Experiment {
     @Exclude
     public float getMedian(){
         ArrayList<IntCountTrial> trials = getTrials();
+        Collections.sort(trials);
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getPCount() + trials.get((length / 2) / 2).getPCount())/2;
+            median = ((float)(trials.get((length / 2) -1).getPCount() + trials.get((length / 2)).getPCount()))/2;
         }
         else {
-            median = (trials.get((length / 2)+1).getPCount());
+            median = (trials.get((length / 2)).getPCount());
         }
         return median;
     }

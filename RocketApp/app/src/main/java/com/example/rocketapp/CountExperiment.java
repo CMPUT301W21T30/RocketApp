@@ -57,10 +57,10 @@ public class CountExperiment extends Experiment {
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) + 1).getCount() + trials.get((length / 2) / 2).getCount())/2;
+            median = (trials.get((length / 2) - 1).getCount() + trials.get(length / 2).getCount())/2;
         }
         else {
-            median = (trials.get((length / 2)+1).getCount());
+            median = (trials.get((length / 2)).getCount());
         }
         return median;
     }
