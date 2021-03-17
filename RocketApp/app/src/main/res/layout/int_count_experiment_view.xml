@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/editCountTrial"
+            android:id="@+id/editIntCountTrial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="81dp"
@@ -34,7 +34,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
             <TextView
-                android:id="@+id/cexp_desc"
+                android:id="@+id/icexp_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -49,7 +49,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/cexp_type"
+                android:id="@+id/icexp_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -58,7 +58,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/addCountTrial"
+            android:id="@+id/addIntCountTrial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
@@ -71,7 +71,9 @@
             android:id="@+id/submitTrial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="76dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginRight="36dp"
             android:text="SUBMIT"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"

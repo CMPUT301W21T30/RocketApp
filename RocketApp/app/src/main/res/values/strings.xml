@@ -8,6 +8,8 @@
     <string name="publish">Publish</string>
     <string name="cancel">Cancel</string>
     <string name="dropdown_prompt">Select Experiment Type</string>
+    <string name="fail">Fail</string>
+    <string name="pass">pass</string>
     <string-array name="experiments">
         <item>Binomial Experiment</item>
         <item>Count Experiment</item>

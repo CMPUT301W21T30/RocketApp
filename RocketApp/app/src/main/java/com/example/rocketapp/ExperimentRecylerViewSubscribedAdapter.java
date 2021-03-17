@@ -56,6 +56,16 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
                     expViewintent.putExtra("id", experiments.get(position).getId().toString());
                     context.startActivity(expViewintent);
                 }
+                if(experiments.get(position).getType()=="IntCount"){
+                    Intent expViewintent = new Intent(v.getContext(),  IntCountExperimentView.class);
+                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+                    context.startActivity(expViewintent);
+                }
+                if(experiments.get(position).getType()=="Measurement"){
+                    Intent expViewintent = new Intent(v.getContext(),  MeasurementExperimentView.class);
+                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
+                    context.startActivity(expViewintent);
+                }
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
             }
         });

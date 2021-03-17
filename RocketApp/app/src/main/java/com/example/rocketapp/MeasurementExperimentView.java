@@ -14,27 +14,27 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class CountExperimentView extends AppCompatActivity {
+public class MeasurementExperimentView extends AppCompatActivity {
 
     private ArrayList<Trial> trials;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.count_experiment_view);
+        setContentView(R.layout.measurement_experiment_view);
         Intent i = getIntent();
         String id = i.getStringExtra("id");
         Experiment experiment = DataManager.getExperiment(id);
-        TextView expType = findViewById(R.id.cexp_type);
-        TextView expDescription = findViewById(R.id.cexp_desc);
+        TextView expType = findViewById(R.id.mexp_type);
+        TextView expDescription = findViewById(R.id.mexp_desc);
         expType.setText(experiment.getType());
         expDescription.setText(experiment.info.getDescription());
-        Button addTrial = findViewById(R.id.addCountTrial);
+        Button addTrial = findViewById(R.id.addMeasuermentTrial);
         Button submit = findViewById(R.id.submitTrial);
-        TextView count = findViewById(R.id.editCountTrial);
+        TextView measurement = findViewById(R.id.editMeasurementTrial);
         addTrial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                count.setVisibility(View.VISIBLE);
+                measurement.setVisibility(View.VISIBLE);
                 addTrial.setVisibility(View.INVISIBLE);
                 submit.setVisibility(View.VISIBLE);
             }
@@ -42,9 +42,9 @@ public class CountExperimentView extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Validate.lengthInRange((EditText)count, 1, Integer.MAX_VALUE, true)) {
-                    Integer value = Integer.parseInt(count.getText().toString());
-                    Trial newTrial = new CountTrial(value);
+                if(Validate.lengthInRange((EditText)measurement, 1, Integer.MAX_VALUE, true)) {
+                    float value = Float.parseFloat(measurement.getText().toString());
+                    Trial newTrial = new MeasurementTrial(value);
                     DataManager.addTrial(newTrial, experiment, trial -> {
                         Log.d("TRIAL", "Trial exception");
                     }, exception -> {
