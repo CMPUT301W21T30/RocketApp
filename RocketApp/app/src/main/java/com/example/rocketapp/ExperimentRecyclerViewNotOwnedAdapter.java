@@ -16,14 +16,14 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
-public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter<ExperimentRecylerViewSubscribedAdapter.ViewHolder> {
+public class ExperimentRecyclerViewNotOwnedAdapter extends RecyclerView.Adapter<ExperimentRecyclerViewNotOwnedAdapter.ViewHolder> {
 
-    private static final String TAG = "ExperimentRecylerViewAd";
+    private static final String TAG = "ExpRecNOAdp";
 
     private ArrayList<Experiment> experiments;
     private Context context;
 
-    public ExperimentRecylerViewSubscribedAdapter(Context context, ArrayList<Experiment> experiments) {
+    public ExperimentRecyclerViewNotOwnedAdapter(Context context, ArrayList<Experiment> experiments) {
         this.experiments = experiments;
         this.context = context;
     }
@@ -35,6 +35,7 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
@@ -45,28 +46,14 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
         holder.experimentListItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DataManager.subscribe(experiments.get(position),() -> {
+                    Log.d(TAG, "Subscribed");
+                } ,exception -> {
+                    Log.d(TAG, "Could not be subscribed.");
+                });
                 Log.d(TAG, "onClick: clicked on: " + experiments.get(position).info.getDescription());
-                if(experiments.get(position).getType()=="Count") {
-                    Intent expViewintent = new Intent(v.getContext(), CountExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="Binomial"){
-                    Intent expViewintent = new Intent(v.getContext(), BinomialView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="IntCount"){
-                    Intent expViewintent = new Intent(v.getContext(),  IntCountExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
-                if(experiments.get(position).getType()=="Measurement"){
-                    Intent expViewintent = new Intent(v.getContext(),  MeasurementExperimentView.class);
-                    expViewintent.putExtra("id", experiments.get(position).getId().toString());
-                    context.startActivity(expViewintent);
-                }
                 Toast.makeText(context, experiments.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
+                notifyDataSetChanged();
             }
         });
     }
@@ -90,3 +77,4 @@ public class ExperimentRecylerViewSubscribedAdapter extends RecyclerView.Adapter
         }
     }
 }
+

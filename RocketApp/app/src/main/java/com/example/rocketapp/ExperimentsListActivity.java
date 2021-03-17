@@ -22,6 +22,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
     private static final String TAG = "ExperimentsListActivity";
     public ImageButton profileBtn;
     public Button addNewExperiment;
+    public Button showAllExperiment;
     ArrayList<Experiment> experimentsOwned;
     ArrayList<Experiment> experimentsSubscribed;
 //    ExperimentRecyclerViewOwnedAdapter adapterOwned;
@@ -44,6 +45,11 @@ public class ExperimentsListActivity extends AppCompatActivity{
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
+        });
+        showAllExperiment = findViewById(R.id.showAllExp);
+        showAllExperiment.setOnClickListener(v -> {
+            Intent allExpIntent = new Intent(getApplicationContext(), AllExperiments.class);
+            startActivity(allExpIntent);
         });
 
         addNewExperiment = findViewById(R.id.createExpBtn);
@@ -89,7 +95,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
     private void initRecyclerViewSubscribed(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
-
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
             // What to do when experiment is clicked

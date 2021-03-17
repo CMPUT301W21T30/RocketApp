@@ -156,7 +156,7 @@ public class CreateExperimentDialog extends DialogFragment {
      *      False if user input is invalid
      */
     private boolean checkInputsValid() {
-        return  Validate.lengthInRange(descriptionET, 1, 40, true) &&
+        return  Validate.lengthInRange(descriptionET, 1, 100, true) &&
                 Validate.intInRange(minTrialsET, 0, Integer.MAX_VALUE, true) &&
                 Validate.lengthInRange(regionET, 1, 40, true)
                 ;

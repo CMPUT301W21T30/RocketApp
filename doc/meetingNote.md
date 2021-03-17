@@ -3,6 +3,12 @@
 * Question for TA:
     * What is our issues for our UML diagram for GUI, and how can we improve it.
 
+* Mar 16, 2021
+    * Finished task from last meeting
+    * Polish code for submition
+    * Write Test cases for your code (Unit testing and GUI)
+    * Mike: Make sure data on firestore are realistic
+
 * Mar 15, 2021
     * Saif and Archit: Participate Experiment Activity
     * Mike and Aryan: Subscribed to Experiment Search, Home Screen Search Bar, StoryBoard
