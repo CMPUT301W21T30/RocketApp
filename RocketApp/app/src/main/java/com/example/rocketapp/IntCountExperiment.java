@@ -69,6 +69,9 @@ public class IntCountExperiment extends Experiment {
     public float getMean() {
         ArrayList<IntCountTrial> trials = getTrials();
         int sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getPCount();
         }

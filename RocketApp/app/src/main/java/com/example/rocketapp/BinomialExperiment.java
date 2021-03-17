@@ -26,6 +26,7 @@ public class BinomialExperiment extends Experiment {
      */
     public BinomialExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(description, region, minTrials, geoLocationEnabled);
+
     }
 
     /**
@@ -53,6 +54,9 @@ public class BinomialExperiment extends Experiment {
     public float getMean() {
         ArrayList<BinomialTrial> trials = getTrials();
         int length = trials.size();
+        if(length==0){
+            return 0;
+        }
         int success = 0;
         int failure = 0;
         for(int i=0; i<length; i++){
