@@ -84,12 +84,12 @@
             android:id="@+id/meanView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="204dp"
-            android:layout_marginLeft="204dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="43dp"
             android:text="TextView"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/meanText"
             app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
         <TextView
@@ -108,12 +108,12 @@
             android:id="@+id/medianValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="76dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="80dp"
             android:text="MedianValue"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.693"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/medianText"
             app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
         <TextView
@@ -131,12 +131,12 @@
             android:id="@+id/stdDevVal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="204dp"
-            android:layout_marginLeft="204dp"
-            android:layout_marginTop="172dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="116dp"
             android:text="value"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintStart_toEndOf="@+id/stdDevText"
+            app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
         <TextView
             android:id="@+id/regionView"
@@ -146,6 +146,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:background="#DFF44336"
+            android:padding="5dp"
             android:text="Region"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -159,6 +160,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginRight="12dp"
             android:background="#FFC107"
+            android:padding="5dp"
             android:text="Target trials - "
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView3" />
