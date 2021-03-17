@@ -52,7 +52,7 @@ public class BinomialView extends AppCompatActivity {
                 success.setVisibility(View.INVISIBLE);
                 addTrial.setVisibility(View.VISIBLE);
                 fail.setVisibility(View.INVISIBLE);
-                Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
+                Toast.makeText(getApplicationContext(), "Trial added", Toast.LENGTH_SHORT).show();
             }
         });
         success.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +68,7 @@ public class BinomialView extends AppCompatActivity {
                 success.setVisibility(View.INVISIBLE);
                 addTrial.setVisibility(View.VISIBLE);
                 fail.setVisibility(View.INVISIBLE);
-                Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
+                Toast.makeText(getApplicationContext(), "Trial added", Toast.LENGTH_SHORT).show();
             }
         });
     }}

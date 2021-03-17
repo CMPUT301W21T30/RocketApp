@@ -54,7 +54,7 @@ public class MeasurementExperimentView extends AppCompatActivity {
                     measurement.setVisibility(View.INVISIBLE);
                     addTrial.setVisibility(View.VISIBLE);
                     submit.setVisibility(View.INVISIBLE);
-                    Toast toast = Toast.makeText(getApplicationContext(), "Trial added", 100);
+                    Toast.makeText(getApplicationContext(), "Trial added", Toast.LENGTH_SHORT).show();
                 }
             }
         });
