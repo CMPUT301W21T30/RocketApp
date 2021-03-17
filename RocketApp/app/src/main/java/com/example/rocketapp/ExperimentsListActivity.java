@@ -77,7 +77,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
-//            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
             Intent intent = new Intent(this, ExperimentActivity.class);
             intent.putExtra("id", experiment.getId());
             startActivity(intent);
@@ -97,7 +96,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
         experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
-//            Intent intent = new Intent(this, DataManager.activityClassMap.get(experiment.getType()));
             Intent intent = new Intent(this, ExperimentActivity.class);
             intent.putExtra("id", experiment.getId());
             startActivity(intent);
