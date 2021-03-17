@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class AllExperiments extends AppCompatActivity {
     private static final String TAG = "AllExperimentsActivity";
-    private ArrayList<Experiment> experimentsNotOwned;
-    EditText searchExperiments;
-    Button searchButton;
+    private ArrayList<Experiment> experimentList;
+    private EditText searchExperiments;
+    private ExperimentListAdapter adapter;
 
 
     /**
@@ -35,21 +35,16 @@ public class AllExperiments extends AppCompatActivity {
 
         searchExperiments.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //TODO
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //TODO
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
                 filter(s.toString());
             }
         });
-
     }
 
     /**
@@ -61,16 +56,18 @@ public class AllExperiments extends AppCompatActivity {
 
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewNonOwner);
 
-        experimentsNotOwned = DataManager.getNotSubscribedExperimentsArrayList();
+        experimentList = DataManager.getExperimentArrayList("", false, false);
 
-        experimentRecyclerView.setAdapter(new ExperimentListAdapter(experimentsNotOwned, experiment -> {
+        adapter = new ExperimentListAdapter(experimentList, experiment -> {
             DataManager.subscribe(experiment,() -> {
                 Log.d(TAG, "Subscribed");
                 finish();
             } ,exception -> {
                 Log.d(TAG, "Could not be subscribed.");
             });
-        }));
+        });
+
+        experimentRecyclerView.setAdapter(adapter);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
@@ -81,27 +78,9 @@ public class AllExperiments extends AppCompatActivity {
      * @param text
      */
     public void filter(String text){
-        ArrayList<Experiment> list = new ArrayList<Experiment>();
-        for(Experiment e: experimentsNotOwned){
-            if (e.info.getDescription().contains(text)){
-                list.add(e);
-            }
-
-            RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewNonOwner);
-
-            experimentsNotOwned = DataManager.getNotSubscribedExperimentsArrayList();
-
-            experimentRecyclerView.setAdapter(new ExperimentListAdapter(list, experiment -> {
-                DataManager.subscribe(experiment,() -> {
-                    Log.d(TAG, "Subscribed");
-                    finish();
-                } ,exception -> {
-                    Log.d(TAG, "Could not be subscribed.");
-                });
-            }));
-            experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        }
+        experimentList.clear();
+        experimentList.addAll(DataManager.getExperimentArrayList(text, false, false));
+        adapter.notifyDataSetChanged();
     }
 
 
