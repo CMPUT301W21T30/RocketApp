@@ -83,7 +83,7 @@ public class TrialFragment extends DialogFragment {
                             }
                             break;
                         case MeasurementTrial.TYPE:
-                            if (Validate.intInRange(inputEditText, 0, Integer.MAX_VALUE, true)) {
+                            if (Validate.floatInRange(inputEditText, 0.0f, Float.MAX_VALUE, true)) {
                                 callback.callBack(new MeasurementTrial(Float.parseFloat(inputEditText.getText().toString())));
                                 alertDialog.dismiss();
                             }

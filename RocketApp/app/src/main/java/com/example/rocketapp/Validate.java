@@ -36,6 +36,33 @@ public class Validate {
     }
 
     /**
+     * Returns true if integer entered is within the two parametric integers passed
+     * @param editText
+     *          text box with integer value
+     * @param min
+     *          minimum value the integer should have
+     * @param max
+     *          maximum value the integer could have
+     * @param showError
+     *          if showError is true, the error is displayed.
+     * @return
+     */
+    static boolean floatInRange(EditText editText, float min, float max, boolean showError) {
+        boolean isValid = false;
+        try {
+            float value = Float.parseFloat(editText.getText().toString());
+            isValid = value >= min && value <= max;
+        } catch (Exception e) {
+        }
+
+        if (!isValid && showError) {
+            editText.setError("Must be a non-negative float.");
+            editText.requestFocus();
+        }
+        return isValid;
+    }
+
+    /**
      * Returns true if text entered has length within the two parametric integers passed
      * @param editText
      *          text box with some text
