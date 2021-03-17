@@ -16,17 +16,16 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Home page for a user. Displays owned experiments, subscribed experiments, and provides interface to edit profile,
+ * create new experiments, subscribe to experiments, and open experiments.
+ */
 public class ExperimentsListActivity extends AppCompatActivity{
-
-    //use this button to navigate to the profile page of the user
     private static final String TAG = "ExperimentsListActivity";
-    public ImageButton profileBtn;
-    public Button addNewExperiment;
-    public Button showAllExperiment;
-    ArrayList<Experiment> experimentsOwned;
-    ArrayList<Experiment> experimentsSubscribed;
-    ExperimentListAdapter adapterOwned;
-    ExperimentListAdapter adapterSubscribed;
+    private ArrayList<Experiment> experimentsOwned;
+    private ArrayList<Experiment> experimentsSubscribed;
+    private ExperimentListAdapter adapterOwned;
+    private ExperimentListAdapter adapterSubscribed;
 
     /**
      * - Contains Navigation to the profile
@@ -43,25 +42,23 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         initRecyclerViewSubscribed();
 
-        profileBtn = findViewById(R.id.profile_button);
+        ImageButton profileBtn = findViewById(R.id.profile_button);
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
         });
-        showAllExperiment = findViewById(R.id.showAllExp);
+        Button showAllExperiment = findViewById(R.id.showAllExp);
         showAllExperiment.setOnClickListener(v -> {
             Intent allExpIntent = new Intent(getApplicationContext(), AllExperiments.class);
             startActivity(allExpIntent);
         });
 
-        addNewExperiment = findViewById(R.id.createExpBtn);
+        Button addNewExperiment = findViewById(R.id.createExpBtn);
         addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
 
         DataManager.setUpdateCallback(()->{
-            experimentsOwned.clear();
-            experimentsOwned.addAll(DataManager.getOwnedExperimentsArrayList());
-            experimentsSubscribed.clear();
-            experimentsSubscribed.addAll(DataManager.getSubscribedExperimentArrayList());
+            adapterOwned.updateList(DataManager.getOwnedExperimentsArrayList());
+            adapterSubscribed.updateList(DataManager.getSubscribedExperimentArrayList());
         });
     }
 
