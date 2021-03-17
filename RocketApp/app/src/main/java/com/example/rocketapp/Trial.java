@@ -15,4 +15,6 @@ public abstract class Trial extends DataManager.FirestoreNestableDocument implem
      */
     @Override
     public abstract String getType();
+
+    public abstract String getResult();
 }

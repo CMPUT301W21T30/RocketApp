@@ -82,7 +82,9 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
-            Intent intent = new Intent(this, ExperimentActivity.class);
+
+            Log.d("Number of Trials", Integer.toString(experiment.getTrials().size()));
+            Intent intent = new Intent(this, OwnerActivity.class);
             intent.putExtra("id", experiment.getId());
             startActivity(intent);
         });
@@ -147,5 +149,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         }
     };
+
+
 
 }

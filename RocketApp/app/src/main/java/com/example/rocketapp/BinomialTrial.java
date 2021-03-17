@@ -52,4 +52,11 @@ public class BinomialTrial extends Trial {
     public void setValue(boolean value) {
         this.value = value;
     }
+
+
+    /**
+     * @return the value of this trial for the adapter
+     */
+    @Override
+    public String getResult(){ return value ? "True" : "False"; }
 }

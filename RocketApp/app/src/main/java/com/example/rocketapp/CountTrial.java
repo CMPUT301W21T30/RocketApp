@@ -58,6 +58,13 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
     }
 
     /**
+     * @return the value of this trial for the adapter
+     */
+    @Override
+    public String getResult(){return Float.toString(numberCounted); }
+
+
+    /**
      * @param trial
      *          trial parameter is a different object of CountTrial class which gets compared to this trial based on their value
      * @return the difference in (this object's trial value - passed object's trial value)

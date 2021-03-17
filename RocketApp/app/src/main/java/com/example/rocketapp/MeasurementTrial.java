@@ -46,6 +46,12 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
     }
 
     /**
+     * @return the value of this trial for the adapter
+     */
+    @Override
+    public String getResult(){return Float.toString(measurement); }
+
+    /**
      * @return the value of this trial
      */
     public float getMeasurement(){
