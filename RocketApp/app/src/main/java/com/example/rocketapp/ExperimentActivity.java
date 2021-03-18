@@ -65,7 +65,12 @@ public class ExperimentActivity extends AppCompatActivity {
         experimentDescription.setText(experiment.info.getDescription());
 
         Button addTrial = findViewById(R.id.addTrialButton);
-        addTrial.setVisibility(View.VISIBLE);
+        if(experiment.getState().equals(Experiment.State.ENDED)){
+            addTrial.setVisibility(View.GONE);
+        }
+        else {
+            addTrial.setVisibility(View.VISIBLE);
+        }
 
         addTrial.setOnClickListener(view -> {
             new TrialFragment(experiment.getType(), newTrial -> {
