@@ -31,6 +31,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
     public void updateList(ArrayList<Experiment> experiments) {
         this.experiments.clear();
         this.experiments.addAll(experiments);
+        notifyDataSetChanged();
     }
 
     /**

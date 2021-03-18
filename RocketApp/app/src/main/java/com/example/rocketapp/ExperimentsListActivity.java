@@ -46,6 +46,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             startActivity(userProfileIntent);
         });
+
         Button showAllExperiment = findViewById(R.id.showAllExp);
         showAllExperiment.setOnClickListener(v -> {
             Intent allExpIntent = new Intent(getApplicationContext(), AllExperiments.class);
@@ -57,9 +58,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         DataManager.setUpdateCallback(()->{
             adapterOwned.updateList(DataManager.getOwnedExperimentsArrayList());
-            adapterOwned.notifyDataSetChanged();
             adapterSubscribed.updateList(DataManager.getSubscribedExperimentArrayList());
-            adapterSubscribed.notifyDataSetChanged();
         });
     }
 
@@ -84,8 +83,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
-
-            Log.d("Number of Trials", Integer.toString(experiment.getTrials().size()));
             Intent intent = new Intent(this, OwnerActivity.class);
             intent.putExtra("id", experiment.getId());
             startActivity(intent);
