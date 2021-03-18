@@ -8,6 +8,8 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
 
+import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,6 +17,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GeneralAppTest {
@@ -46,23 +49,44 @@ public class GeneralAppTest {
         int initialSize = array.size();
         solo.clickOnButton("NEW");
         //TODO: figure out how to check if dialog fragment was opened
-        //TODO: press on dropdown menu to specify experiment type (defaults to binomial)
-        solo.enterText((EditText) solo.getView(R.id.description_input), "automated test");
+        solo.pressSpinnerItem(0, 0);
+        solo.enterText((EditText) solo.getView(R.id.description_input), "Toss a coin, record SUCCESS if it lands on head, FAIL if it lands on fail");
         solo.enterText((EditText) solo.getView(R.id.region_input), "AB");
         solo.enterText((EditText) solo.getView(R.id.min_trial), "10");
-        //TODO: figure out how to tick checkbox
+        solo.clickOnCheckBox(0);
         solo.clickOnButton("PUBLISH");
-        //TODO: STARTING FROM HERE TILL LINE BEGINNING WITH END AFTER TODO
-        Espresso.pressBack();
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-        //TODO: END - these lines are not necessary for testing if owned subscriptions list is updated immediately,
-        //TODO: these lines log the user out then log them back in to update the list to make sure list updates
         array = DataManager.getOwnedExperimentsArrayList();
         int finalSize = array.size();
-        assertTrue(finalSize == (initialSize + 1));
+        assertTrue(solo.waitForText("Toss a coin, record SUCCESS if it lands on head, FAIL if it lands on fail", 1, 1000));
         //TODO: delete experiment from database then check size again
+    }
+
+    @Test
+    public void checkSubscribed() throws InterruptedException {
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
+        solo.clickOnButton("LOGIN");
+        solo.clickOnButton("SUBSCRIBE");
+        solo.clickOnText("Toss a coin");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        assertTrue(solo.waitForText("Toss a coin", 1, 1000));
+    }
+
+    @Test
+    public void checkAddTrial() throws InterruptedException {
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
+        solo.clickOnButton("LOGIN");
+        if (!solo.searchText("Toss a coin", 1)) {
+            solo.clickOnButton("SUBSCRIBE");
+            solo.clickOnText("Toss a coin");
+            solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+            assertTrue(solo.waitForText("Toss a coin", 1, 1000));
+        }
+        solo.clickOnText("Toss a coin");
+        solo.clickOnButton("Add Trial");
+        solo.clickOnButton("Success");
+        //TODO check if trial was added
     }
 
     @After

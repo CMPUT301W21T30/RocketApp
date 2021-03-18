@@ -57,7 +57,9 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         DataManager.setUpdateCallback(()->{
             adapterOwned.updateList(DataManager.getOwnedExperimentsArrayList());
+            adapterOwned.notifyDataSetChanged();
             adapterSubscribed.updateList(DataManager.getSubscribedExperimentArrayList());
+            adapterSubscribed.notifyDataSetChanged();
         });
     }
 
