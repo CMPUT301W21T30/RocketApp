@@ -351,6 +351,11 @@ public class DataManager {
         ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
         if (!includeSubscribed)
             ignored.addAll(subscriptions);
+        for(Experiment experiment: experimentArrayList){
+            if (experiment.getState().equals(Experiment.State.UNPUBLISHED)) {
+                ignored.add(experiment.getId());
+            }
+        }
 
         return getExperimentArrayList(experiment -> {
             if (ignored.contains(experiment.getId())) return false;
@@ -423,7 +428,9 @@ public class DataManager {
         for (FirestoreDocument.Id id : subscriptions) {
             for (Experiment experiment : experimentArrayList) {
                 if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
-                    filteredExperiments.add(experiment);
+                    if(!(experiment.getState().equals(Experiment.State.UNPUBLISHED))) {
+                        filteredExperiments.add(experiment);
+                    }
                 }
             }
         }
