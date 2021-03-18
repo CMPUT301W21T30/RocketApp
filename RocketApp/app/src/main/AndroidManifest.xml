@@ -9,8 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RocketApp">
-        <activity android:name=".ExperimentActivity" android:parentActivityName=".ExperimentsListActivity"></activity>
-        <activity android:name=".AllExperiments" android:parentActivityName=".ExperimentsListActivity"/>
+        <activity android:name=".OwnerActivity"></activity>
+        <activity
+            android:name=".ExperimentActivity"
+            android:parentActivityName=".ExperimentsListActivity" />
+        <activity
+            android:name=".AllExperiments"
+            android:parentActivityName=".ExperimentsListActivity" />
         <activity android:name=".LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

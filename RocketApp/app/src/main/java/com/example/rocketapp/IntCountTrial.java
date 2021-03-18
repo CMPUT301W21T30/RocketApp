@@ -59,6 +59,14 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
         return posCount;
     }
 
+
+    /**
+     * @return the value of this trial for the adapter
+     */
+    @Override
+    public String getResult(){return Float.toString(posCount); }
+
+
     /**
      * Setter for pos
      * @param value
