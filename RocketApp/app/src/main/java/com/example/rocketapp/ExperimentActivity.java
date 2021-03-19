@@ -51,11 +51,11 @@ public class ExperimentActivity extends AppCompatActivity {
         experimentOptions = findViewById(R.id.experiment_options);
 
         regionView.setText(experiment.info.getRegion());
-        String minTrialsString = "Min Trials - " + String.valueOf(experiment.info.getMinTrials());
+        String minTrialsString = "" + String.valueOf(experiment.info.getMinTrials());
         minTrialsView.setText(minTrialsString);
 
         if (experiment.getType().equals("Binomial")) {
-            meanText.setText("Success Ratio - ");
+            meanText.setText("Success Ratio");
         }
 //        getMean(experiment, meanView);
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
