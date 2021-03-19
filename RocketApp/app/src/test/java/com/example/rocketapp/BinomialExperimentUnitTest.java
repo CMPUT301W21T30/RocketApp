@@ -29,4 +29,10 @@ public class BinomialExperimentUnitTest {
         Experiment experiment = createMockExperiment();
         assertEquals(experiment.getMedian(), 1, 0.1);
     }
+
+    @Test
+    public void checkStdDev() {
+        Experiment experiment = createMockExperiment();
+        assertEquals(0.75, experiment.getStdDev(),0.1);
+    }
 }
