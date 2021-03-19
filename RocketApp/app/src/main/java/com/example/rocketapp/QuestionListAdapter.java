@@ -1,6 +1,7 @@
 package com.example.rocketapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,8 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
         holder.answerRecyclerView.setLayoutManager(layoutManager);
         holder.answerRecyclerView.setAdapter(new AnswersListAdapter(question.getAnswers(), answer -> {
             // TODO not implemented for anything, needs more setup to work
+//            Intent userProfileIntent = new Intent(context, UserProfileActivity.class);
+//            context.startActivity(userProfileIntent);
         }, onClickUser));
         holder.answerRecyclerView.setRecycledViewPool(holder.viewPool);
         holder.answerRecyclerView.addItemDecoration(new DividerItemDecoration(holder.answerRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
