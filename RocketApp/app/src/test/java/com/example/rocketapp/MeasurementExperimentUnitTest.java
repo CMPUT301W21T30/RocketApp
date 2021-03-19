@@ -25,10 +25,17 @@ public class MeasurementExperimentUnitTest {
         assertEquals(15.0, experiment.getMean(), 0.1);
     }
 
-    // TODO Median seems to be returning incorrect result
-//    @Test
-//    public void checkMedian() {
-//        Experiment experiment = createMockExperiment();
-//        assertEquals(15.0, experiment.getMedian(),0.1);
-//    }
+    @Test
+    public void checkMedian() {
+        Experiment experiment = createMockExperiment();
+        System.out.println(experiment.getMedian());
+        assertEquals(15.0, experiment.getMedian(),0.1);
+    }
+
+    @Test
+    public void checkStdDev() {
+        Experiment experiment = createMockExperiment();
+        assertEquals(3.54, experiment.getStdDev(),0.1);
+    }
+
 }

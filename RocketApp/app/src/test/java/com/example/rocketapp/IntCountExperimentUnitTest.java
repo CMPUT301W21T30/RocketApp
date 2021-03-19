@@ -32,4 +32,10 @@ public class IntCountExperimentUnitTest {
         assertEquals(15.0, experiment.getMedian(),0.1);
     }
 
+    @Test
+    public void checkStdDev() {
+        Experiment experiment = createMockExperiment();
+        assertEquals(3.54, experiment.getStdDev(),0.1);
+    }
+
 }

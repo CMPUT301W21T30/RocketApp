@@ -49,11 +49,12 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     public float getMedian(){
         ArrayList<MeasurementTrial> trials = getTrials();
+        Collections.sort(trials);
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
         float median;
         if(length%2==0) {
-            median = (trials.get((length / 2) - 1).getMeasurement() + trials.get(length / 2).getMeasurement() / 2);
+            median = ((trials.get((length / 2) - 1).getMeasurement() + trials.get(length / 2).getMeasurement()) / 2);
         } else {
             median = (trials.get((length / 2)).getMeasurement());
         }

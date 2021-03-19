@@ -53,6 +53,7 @@ public class CountExperiment extends Experiment {
     @Exclude
     public float getMedian(){
         ArrayList<CountTrial> trials = getTrials();
+        Collections.sort(trials);
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
         float median;
