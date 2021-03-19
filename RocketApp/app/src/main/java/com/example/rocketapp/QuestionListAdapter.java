@@ -15,17 +15,18 @@ import java.util.ArrayList;
 
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder>  {
     private final ArrayList<Question> questions;
-    private final DataManager.QuestionCallback onClickListener;
+    private final DataManager.QuestionCallback onClickRespond;
+    private final DataManager.UserCallback onClickUser;
     private final Context context;
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param questions the initial questions list
-     * @param onClickListener
      */
-    public QuestionListAdapter(Context context, ArrayList<Question> questions, DataManager.QuestionCallback onClickListener) {
+    public QuestionListAdapter(Context context, ArrayList<Question> questions, DataManager.QuestionCallback onClickRespond, DataManager.UserCallback onClickUser) {
         this.context = context;
         this.questions = questions;
-        this.onClickListener = onClickListener;
+        this.onClickRespond = onClickRespond;
+        this.onClickUser = onClickUser;
     }
 
     /**
@@ -65,16 +66,14 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
         LinearLayoutManager layoutManager = new LinearLayoutManager(holder.answerRecyclerView.getContext(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setInitialPrefetchItemCount(question.getAnswers().size());
 
-        AnswersListAdapter adapter = new AnswersListAdapter(question.getAnswers(), answer -> {
-        });
         holder.answerRecyclerView.setLayoutManager(layoutManager);
-        holder.answerRecyclerView.setAdapter(adapter);
+        holder.answerRecyclerView.setAdapter(new AnswersListAdapter(question.getAnswers(), answer -> {
+            // TODO not implemented for anything, needs more setup to work
+        }, onClickUser));
         holder.answerRecyclerView.setRecycledViewPool(holder.viewPool);
         holder.answerRecyclerView.addItemDecoration(new DividerItemDecoration(holder.answerRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-        holder.set(question, view -> {
-            onClickListener.callBack(question);
-        });
+        holder.set(question, view -> onClickRespond.callBack(question), view -> onClickUser.callBack(question.getOwner()));
     }
 
     /**
@@ -99,13 +98,14 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
         /**
          * Sets all fields according to the experiment input
          * @param question The question to populate the viewholder with
-         * @param onClick The click behaviour
+         * @param onClickRespond The click behaviour
          */
-        public void set(Question question, View.OnClickListener onClick) {
+        public void set(Question question, View.OnClickListener onClickRespond, View.OnClickListener onClickUser) {
             commentTitleTextView.setText(question.getType());
             ownerUsernameTextView.setText(question.getOwner().getName());
             dialogueTextView.setText(question.getText());
-            respondButton.setOnClickListener(onClick);
+            respondButton.setOnClickListener(onClickRespond);
+            ownerUsernameTextView.setOnClickListener(onClickUser);
         }
 
         public ViewHolder(@NonNull View itemView) {
