@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,16 +13,18 @@ import java.util.ArrayList;
 
 public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.ViewHolder> {
     private final ArrayList<Answer> answers;
-    private final DataManager.AnswerCallback onClickListener;
+    private final DataManager.AnswerCallback onClickAnswer;
+    private final DataManager.UserCallback onClickUser;
 
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param answers the initial questions list
      * @param onClickListener
      */
-    public AnswersListAdapter(ArrayList<Answer> answers, DataManager.AnswerCallback onClickListener) {
+    public AnswersListAdapter(ArrayList<Answer> answers, DataManager.AnswerCallback onClickListener, DataManager.UserCallback onClickUser) {
         this.answers = answers;
-        this.onClickListener = onClickListener;
+        this.onClickAnswer = onClickListener;
+        this.onClickUser = onClickUser;
     }
 
     /**
@@ -59,9 +60,7 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
     public void onBindViewHolder(@NonNull AnswersListAdapter.ViewHolder holder, int position) {
         Answer answer = answers.get(position);
 
-        holder.set(answer, view -> {
-            onClickListener.callBack(answer);
-        });
+        holder.set(answer, view -> onClickAnswer.callBack(answer), view-> onClickUser.callBack(answer.getOwner()));
     }
 
     /**
@@ -83,11 +82,13 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
         /**
          * Sets all fields according to the experiment input
          * @param answer The question to populate the viewholder with
-         * @param onClick The click behaviour
+         * @param onClickUser The click behaviour when the user name is clicked
+         * @param onClickAnswer The click behaviour when the answer is clicked
          */
-        public void set(Answer answer, View.OnClickListener onClick) {
+        public void set(Answer answer, View.OnClickListener onClickAnswer, View.OnClickListener onClickUser) {
             ownerUsernameTextView.setText(answer.getOwner().getName());
             dialogueTextView.setText(answer.getText());
+            ownerUsernameTextView.setOnClickListener(onClickUser);
         }
 
         public ViewHolder(@NonNull View itemView) {

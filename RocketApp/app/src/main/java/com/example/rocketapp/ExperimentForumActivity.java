@@ -45,6 +45,8 @@ public class ExperimentForumActivity extends AppCompatActivity {
             commentMode = CommentMode.ANSWER;
             currentQuestion = question;
             toggleKeyboard(true);
+        }, user -> {
+                    // TODO put whatever you want to do when user is clicked here.
         });
         questionsRecyclerView.setAdapter(adapter);
         questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
