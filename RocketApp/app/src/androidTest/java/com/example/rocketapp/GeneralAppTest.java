@@ -3,13 +3,10 @@ package com.example.rocketapp;
 import android.view.View;
 import android.widget.EditText;
 
-import androidx.test.espresso.Espresso;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -177,7 +174,7 @@ public class GeneralAppTest {
 
         // Check owned experiment
         solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
         assertTrue(solo.searchText("Measurement"));
     }
 
@@ -192,7 +189,7 @@ public class GeneralAppTest {
 
         // Check owned experiment
         solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
         assertTrue(solo.searchText("Measurement"));
         // check if the trial exists
         assertTrue(solo.searchText("1234.0"));
@@ -233,7 +230,7 @@ public class GeneralAppTest {
 
         // Check owned experiment
         solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
 
         // check if the trial exists
         solo.clickOnView(solo.getView(R.id.EndExperimentBtn));

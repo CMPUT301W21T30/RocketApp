@@ -1,5 +1,6 @@
 package com.example.rocketapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 /**
  * Display unsubscribed experiments on a new activity.
  */
-public class AllExperiments extends AppCompatActivity {
+public class ExperimentSearchActivity extends AppCompatActivity {
     private static final String TAG = "AllExperimentsActivity";
     private ArrayList<Experiment> experimentList;
     private ExperimentListAdapter adapter;
@@ -45,6 +47,20 @@ public class AllExperiments extends AppCompatActivity {
                 filter(s.toString());
             }
         });
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
