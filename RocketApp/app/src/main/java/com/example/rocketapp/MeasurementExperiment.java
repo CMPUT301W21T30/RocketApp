@@ -13,10 +13,10 @@ import static java.lang.Math.sqrt;
  */
 
 public class MeasurementExperiment extends Experiment {
-    public static String TYPE = "Measurement";
+    public static final String TYPE = "Measurement";
 
     public MeasurementExperiment() {
-        //TODO
+        // Don't need anything here, but default constructor is necessary for firestore serialization
     }
 
     /**Constructor for MeasurementExperiment

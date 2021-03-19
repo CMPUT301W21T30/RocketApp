@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 public class AllExperiments extends AppCompatActivity {
     private static final String TAG = "AllExperimentsActivity";
     private ArrayList<Experiment> experimentList;
-    private EditText searchExperiments;
     private ExperimentListAdapter adapter;
 
 
@@ -32,10 +30,9 @@ public class AllExperiments extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_experiments);
-        initRecyclerViewNotOwned();
+        initRecyclerView();
 
-        searchExperiments = findViewById(R.id.search_for_experiments);
-
+        EditText searchExperiments = findViewById(R.id.search_for_experiments);
         searchExperiments.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -54,12 +51,10 @@ public class AllExperiments extends AppCompatActivity {
      * initialize/ update recycler view with the list of given experiments
      * or the updated list depending on the searched keyword
      */
-    private void initRecyclerViewNotOwned() {
+    private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
-        RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewNonOwner);
-
-        experimentList = DataManager.getExperimentArrayList("", false, false);
+        experimentList = DataManager.getExperimentArrayList("", false, true);
 
         adapter = new ExperimentListAdapter(experimentList, experiment -> {
             DataManager.subscribe(experiment,() -> {
@@ -70,9 +65,9 @@ public class AllExperiments extends AppCompatActivity {
             });
         });
 
+        RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewNonOwner);
         experimentRecyclerView.setAdapter(adapter);
         experimentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
 
     /**
@@ -81,11 +76,7 @@ public class AllExperiments extends AppCompatActivity {
      * @param text
      */
     public void filter(String text){
-        experimentList.clear();
-        experimentList.addAll(DataManager.getExperimentArrayList(text, false, false));
-        adapter.notifyDataSetChanged();
+        adapter.updateList(DataManager.getExperimentArrayList(text, false, true));
     }
-
-
-
+    
 }

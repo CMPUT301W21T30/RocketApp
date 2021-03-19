@@ -1,5 +1,7 @@
 package com.example.rocketapp;
 
+import com.google.firebase.firestore.Exclude;
+
 /**
  * Abstract class Trial
  * Classes derived from this are - "BinomialTrial", "CountTrial", "IntCountTrial" and "MeasurementTrial"
@@ -7,6 +9,9 @@ package com.example.rocketapp;
  */
 public abstract class Trial extends DataManager.FirestoreNestableDocument implements DataManager.Type {
 
+    /**
+     * Default constructor for firestore serialization. Do not use.
+     */
     public Trial() { }
 
     /**
@@ -16,5 +21,9 @@ public abstract class Trial extends DataManager.FirestoreNestableDocument implem
     @Override
     public abstract String getType();
 
-    public abstract String getResult();
+    /**
+     * @return string representation of trial value
+     */
+    @Exclude
+    public abstract String getValueString();
 }

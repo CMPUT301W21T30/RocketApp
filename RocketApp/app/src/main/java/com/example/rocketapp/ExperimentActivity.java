@@ -38,6 +38,9 @@ public class ExperimentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
+
+        experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+
         meanView = findViewById(R.id.meanView);
         medianView  = findViewById(R.id.medianValue);
         stdDevView  = findViewById(R.id.stdDevVal);
@@ -46,9 +49,6 @@ public class ExperimentActivity extends AppCompatActivity {
 
         TextView meanText = findViewById(R.id.meanText);
         experimentOptions = findViewById(R.id.experiment_options);
-
-
-        experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
 
         regionView.setText(experiment.info.getRegion());
         String minTrialsString = "Min Trials - " + String.valueOf(experiment.info.getMinTrials());

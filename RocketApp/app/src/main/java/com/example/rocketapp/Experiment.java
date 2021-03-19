@@ -27,6 +27,9 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
         UNPUBLISHED     //Experiment is not visible
     }
 
+    /**
+     * Default constructor for firestore serialization.
+     */
     public Experiment(){}
 
     /**
@@ -150,10 +153,10 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
     }
 
     /**
-     * @return string containing owner name, all info and state for searching
+     * @return String for search querying
      */
-    public String searchString() {
-        return getOwner().getName() + info.toString() + state;
+    public String toSearchString() {
+        return getOwner().getName() + info.toSearchString() + state;
     }
 
     /**

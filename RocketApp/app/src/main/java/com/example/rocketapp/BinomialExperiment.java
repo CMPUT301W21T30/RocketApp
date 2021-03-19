@@ -10,9 +10,10 @@ import com.google.firebase.firestore.Exclude;
 public class BinomialExperiment extends Experiment {
     public static final String TYPE = "Binomial";     //Type of experiment
 
-    public BinomialExperiment() {
-        //TODO
-    }
+    /**
+     * Default constructor for firestore serialization. Do not use.
+     */
+    public BinomialExperiment() {}
 
     /**Constructor for BinomialExperiment
      * @param description   - String
@@ -26,7 +27,6 @@ public class BinomialExperiment extends Experiment {
      */
     public BinomialExperiment(String description, String region, int minTrials, boolean geoLocationEnabled) {
         super(description, region, minTrials, geoLocationEnabled);
-
     }
 
     /**

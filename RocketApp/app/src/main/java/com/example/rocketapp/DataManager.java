@@ -1,6 +1,4 @@
 package com.example.rocketapp;
-import android.app.Activity;
-import android.provider.ContactsContract;
 import android.util.Log;
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
@@ -366,7 +364,7 @@ public class DataManager {
             }
 
             for (String word : words)
-                if (!experiment.searchString().toLowerCase().contains(word.toLowerCase()))
+                if (!experiment.toSearchString().toLowerCase().contains(word.toLowerCase()))
                     return false;
             return true;
         });
@@ -685,10 +683,7 @@ public class DataManager {
                 Log.e(TAG, "CreateUser failed: Username not available");
                 onFailure.callBack(new Exception("Username not available"));
             } else {
-                push(new User(userName), (user) -> {
-                    listen(user);
-                    onSuccess.callBack(user);
-                }, onFailure);
+                push(new User(userName), (user) -> login(userName, onSuccess, onFailure), onFailure);
             }
         }).addOnFailureListener(e -> {
             Log.e(TAG, "CreateUser failed: " + e.toString());

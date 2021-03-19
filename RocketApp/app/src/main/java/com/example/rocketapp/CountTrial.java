@@ -8,22 +8,20 @@ import com.google.firebase.firestore.Exclude;
 public class CountTrial extends Trial implements Comparable<CountTrial>{
     public static final String TYPE = "Count";      //Type of trial
 
-    private int numberCounted;      //value of trial
+    private int count;      //value of trial
 
     /**
-     * Constructor for CountTrial initialized with 0 if no value is passed
+     * Default constructor for firestore serialization. Do not use.
      */
-    public CountTrial() {
-        numberCounted = 0;
-    }
+    public CountTrial() {}
 
     /**
      * Constructor for CountTrial where a value for count is passed.
-     * @param number
-     *          number is set as the value of this trial.
+     * @param count
+     *          the count for this trial.
      */
-    public CountTrial(int number){
-        setCount(number);
+    public CountTrial(int count){
+        this.count = count;
     }
 
     /**
@@ -35,43 +33,34 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
     }
 
     /**
-     * Increment a value already present in a trial by 1
-     */
-    public void addCount(){
-        numberCounted = numberCounted + 1;
-    }
-
-    /**
      * Setter for count
-     * @param count
-     *          Value to initialize count with
+     * @param count Value to initialize count with
      */
     public void setCount(int count){
-        numberCounted = count;
+        this.count = count;
     }
 
     /**
      * @return the value of this trial
      */
     public int getCount(){
-        return numberCounted;
+        return count;
     }
 
     /**
-     * @return the value of this trial for the adapter
+     * @return string representation of trial value
      */
+    @Exclude
     @Override
-    public String getResult(){return Float.toString(numberCounted); }
-
+    public String getValueString(){return Float.toString(count); }
 
     /**
-     * @param trial
-     *          trial parameter is a different object of CountTrial class which gets compared to this trial based on their value
+     * @param trial trial to compare to
      * @return the difference in (this object's trial value - passed object's trial value)
      */
     @Override
     public int compareTo(CountTrial trial) {//references: https://www.geeksforgeeks.org/how-to-sort-an-arraylist-of-objects-by-property-in-java/
-        int compareCount = ((CountTrial)trial).getCount();
+        int compareCount = trial.getCount();
         return this.getCount() - compareCount;
     }
 }

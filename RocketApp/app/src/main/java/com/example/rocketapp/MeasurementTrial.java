@@ -1,4 +1,5 @@
 package com.example.rocketapp;
+import com.google.firebase.firestore.Exclude;
 import static java.lang.Math.ceil;
 
 /**
@@ -7,7 +8,6 @@ import static java.lang.Math.ceil;
  */
 public class MeasurementTrial extends Trial implements Comparable<MeasurementTrial>{
     public static final String TYPE = "Measurement";
-
     private float measurement;
 
     /**
@@ -33,7 +33,7 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
      */
     @Override
     public int compareTo(MeasurementTrial trial) {
-        float compareCount = ((MeasurementTrial)trial).getMeasurement();
+        float compareCount = trial.getMeasurement();
         return (int) ceil((this.getMeasurement() - compareCount));
     }
 
@@ -46,10 +46,11 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
     }
 
     /**
-     * @return the value of this trial for the adapter
+     * @return string representation of trial value
      */
+    @Exclude
     @Override
-    public String getResult(){return Float.toString(measurement); }
+    public String getValueString() { return Float.toString(measurement); }
 
     /**
      * @return the value of this trial

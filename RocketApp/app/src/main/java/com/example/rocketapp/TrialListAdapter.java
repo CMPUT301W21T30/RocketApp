@@ -1,14 +1,11 @@
 package com.example.rocketapp;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,15 +15,22 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 
 public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.ViewHolder> {
-
     private static final String TAG = "ExperimentRecylerViewAd";
-
-    private ArrayList<? extends Trial> trials;
+    private ArrayList<Trial> trials;
     private Context context;
 
-    public TrialListAdapter(Context context, ArrayList<? extends Trial> trials) {
+    public TrialListAdapter(Context context, ArrayList<Trial> trials) {
         this.trials = trials;
         this.context = context;
+    }
+
+    /**
+     * @param trials new list of trials
+     */
+    public void updateList(ArrayList<Trial> trials) {
+        this.trials.clear();
+        this.trials.addAll(trials);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -42,7 +46,7 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
         Log.d(TAG, "onBindViewHolder: called");
 
         // setting the textView as the trial
-        holder.trialTextView.setText(String.valueOf(trials.get(position).getResult()));
+        holder.trialTextView.setText(String.valueOf(trials.get(position).getValueString()));
 
     }
 
