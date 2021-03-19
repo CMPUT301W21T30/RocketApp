@@ -1,5 +1,6 @@
 package com.example.rocketapp;
 
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.test.espresso.Espresso;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class GeneralAppTest {
     private Solo solo;
@@ -87,6 +89,155 @@ public class GeneralAppTest {
         solo.clickOnButton("Add Trial");
         solo.clickOnButton("Success");
         //TODO check if trial was added
+    }
+
+
+    @Test
+    public void checkPublished() {
+        // Login
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+
+        // Slide Experiment to published
+        int fromX, toX, fromY, toY;
+        int[] location = new int[2];
+
+        View row = solo.getText("Coin flip experiment");
+        row.getLocationInWindow(location);
+
+        // fail if the view with text cannot be located in the window
+        if (location.length == 0) {
+            fail("Could not find text: " + "Throw distance experiment");
+        }
+
+        fromX = location[0] + 100;
+        fromY = location[1];
+
+        toX = location[0];
+        toY = fromY;
+
+        solo.drag(fromX, toX, fromY, toY, 10);
+
+        // check published
+        assertTrue(solo.searchText("PUBLISHED"));;
+    }
+
+    @Test
+    public void checkUnPublished() {
+        // Login
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+
+        // Slide Experiment to published
+        int fromX, toX, fromY, toY;
+        int[] location = new int[2];
+
+        View row = solo.getText("Coin flip experiment");
+        row.getLocationInWindow(location);
+
+        // fail if the view with text cannot be located in the window
+        if (location.length == 0) {
+            fail("Could not find text: " + "Throw distance experiment");
+        }
+
+        fromX = location[0];
+        fromY = location[1];
+
+        toX = location[0] + 100;
+        toY = fromY;
+
+        solo.drag(fromX, toX, fromY, toY, 10);
+
+        // check published
+        assertTrue(solo.searchText("UNPUBLISHED"));;
+
+        // Reset to publish activity by default
+        fromX = location[0] + 100;
+        fromY = location[1];
+
+        toX = location[0];
+        toY = fromY;
+
+        solo.drag(fromX, toX, fromY, toY, 10);
+        assertTrue(solo.searchText("PUBLISHED"));;
+    }
+
+
+    @Test
+    public void testOwnerActivity() {
+        // Login
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+
+        // Check owned experiment
+        solo.clickOnText("Throw distance experiment");
+        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+        assertTrue(solo.searchText("Measurement"));
+    }
+
+
+    @Test
+    public void testOwnerActivityTrial() {
+        // Login
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+
+        // Check owned experiment
+        solo.clickOnText("Throw distance experiment");
+        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+        assertTrue(solo.searchText("Measurement"));
+        // check if the trial exists
+        assertTrue(solo.searchText("1234.0"));
+    }
+
+    @Test
+    public void testOwnerActivityEndExperiment() {
+        // Login
+        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.clickOnButton("LOGIN");
+        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+
+        // Pushed the experiment
+        // Slide Experiment to published
+        int fromX, toX, fromY, toY;
+        int[] location = new int[2];
+
+        View row = solo.getText("Throw distance experiment");
+        row.getLocationInWindow(location);
+
+        // fail if the view with text cannot be located in the window
+        if (location.length == 0) {
+            fail("Could not find text: " + "Throw distance experiment");
+        }
+
+        fromX = location[0] + 100;
+        fromY = location[1];
+
+        toX = location[0];
+        toY = fromY;
+
+        solo.drag(fromX, toX, fromY, toY, 10);
+
+        // check published
+        assertTrue(solo.searchText("PUBLISHED"));;
+
+
+        // Check owned experiment
+        solo.clickOnText("Throw distance experiment");
+        solo.assertCurrentActivity("Wrong Activity", OwnerActivity.class);
+
+        // check if the trial exists
+        solo.clickOnView(solo.getView(R.id.EndExperimentBtn));
+        assertTrue(solo.searchText("ENDED"));
     }
 
     @After
