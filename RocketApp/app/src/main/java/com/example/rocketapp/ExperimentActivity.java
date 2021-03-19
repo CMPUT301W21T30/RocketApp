@@ -67,7 +67,7 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton = findViewById(R.id.addTrialButton);
         statusTextView = findViewById(R.id.endedTextView);
 
-        if(!experiment.getOwner().getName().equals(DataManager.getUser().getName())){
+        if(!experiment.getOwner().equals(DataManager.getUser())){
             endExperimentButton.setVisibility(View.GONE);
             unpublishExperimentButton.setVisibility(View.GONE);
         } else {
@@ -89,6 +89,7 @@ public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (experiment.getOwner().equals(DataManager.getUser()))
         getMenuInflater().inflate(R.menu.experiment_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
