@@ -8,13 +8,12 @@ import com.google.firebase.firestore.Exclude;
  * Users are added to firestore database upon creation
  */
 public class User extends DataManager.FirestoreDocument {
-    private String name;        //username
-    private String email;       //user email
-    private String phone_number;        //user phone number
-    // TODO add contact info
+    private String name;
+    private String email;
+    private String phone_number;
 
     /**
-     * Constructor without any username passed
+     * Default constructor for firestore serialization. Do not use.
      */
     public User(){}
 
@@ -24,7 +23,7 @@ public class User extends DataManager.FirestoreDocument {
      *         username of User
      */
     public User(String name) {
-        setName(name);
+        this.name = name;
     }
 
     /**

@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * Adapter for displaying experiments list in a recycler view.
  */
 public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAdapter.ViewHolder> {
-    private ArrayList<Experiment> experiments;
-    private DataManager.ExperimentCallback onClickListener;
+    private final ArrayList<Experiment> experiments;
+    private final DataManager.ExperimentCallback onClickListener;
 
     /**
      * ExperimentListAdapter is the custom adapter for the recyclerView that displays searched experiments

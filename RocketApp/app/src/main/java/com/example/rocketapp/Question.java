@@ -12,7 +12,7 @@ public class Question extends Comment {
     private ArrayList<Answer> answersArrayList = new ArrayList<>();
 
     /**
-     * Constructor without any parameters passed.
+     * Default constructor for firestore serialization. Do not use.
      */
     public Question() {}
 

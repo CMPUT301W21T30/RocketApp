@@ -58,40 +58,34 @@ public class ExperimentInfo {
      * @param description
      *          String description
      */
-    public void setDescription(User owner, String description) {
+    public void setDescription(String description) {
             this.description = description;
     }
 
     /**
      * setter for region of experiment
-     * @param owner
-     *          object of User class, the creator of this experiment
      * @param region
      *          String region
      */
-    public void setRegion(User owner, String region) {
+    public void setRegion(String region) {
             this.region = region;
     }
 
     /**
      * setter for minimum trials required for experiment to end
-     * @param owner
-     *          object of User class, the creator of this experiment
      * @param minTrials
      *          integer minTrials
      */
-    public void setMinTrials(User owner, int minTrials) {
+    public void setMinTrials(int minTrials) {
             this.minTrials = minTrials;
     }
 
     /**
      * setter for geo location enability of experiment
-     * @param owner
-     *          object of User class, the creator of this experiment
      * @param geoLocationEnabled
      *          set True if geoLocation is to be enabled, false otherwise
      */
-    public void setGeoLocationEnabled(User owner, boolean geoLocationEnabled) {
+    public void setGeoLocationEnabled(boolean geoLocationEnabled) {
             this.geoLocationEnabled = geoLocationEnabled;
     }
 
@@ -120,5 +114,12 @@ public class ExperimentInfo {
                 ", minTrials=" + minTrials +
                 ", geoLocationEnabled=" + geoLocationEnabled +
                 '}';
+    }
+
+    /**
+     * @return String for search querying
+     */
+    public String toSearchString() {
+        return description + region;
     }
 }

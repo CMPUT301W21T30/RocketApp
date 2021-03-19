@@ -8,10 +8,9 @@ public class Answer extends Comment {
     final static String TYPE = "Answer";    //Type of comment.
 
     /**
-     * Constructor without any parameters passed.
+     * Default constructor for firestore serialization. Do not use.
      */
-    public Answer() {
-    }
+    public Answer() {}
 
     /**
      * Constructor with text of comment(Answer) passed.

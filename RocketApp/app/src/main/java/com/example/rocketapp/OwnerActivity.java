@@ -15,39 +15,32 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class OwnerActivity extends AppCompatActivity {
-
-    TextView OwnerExperimentNameTextView;
-    TextView ExperimentTypeTextView;
-    Button EndExperimentBtn;
-    Experiment experiment;
-    ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();
-    TrialListAdapter trialListAdapter;
-
-    private static final String TAG = "TrialsListActivity";
-
+    private static final String TAG = "OwnerActivity";
+    private Experiment experiment;
+    private ArrayList<Trial> trialsArrayList = new ArrayList<>();
+    private TrialListAdapter trialListAdapter;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner);
 
-        OwnerExperimentNameTextView = findViewById(R.id.OwnerExperimentNameTextView);
-        ExperimentTypeTextView = findViewById(R.id.ExperimentTypeTextView);
         experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+        
+        TextView ownerExperimentNameTextView = findViewById(R.id.OwnerExperimentNameTextView);
+        ownerExperimentNameTextView.setText(experiment.info.getDescription());
 
-        OwnerExperimentNameTextView.setText(experiment.info.getDescription());
-        ExperimentTypeTextView.setText(experiment.getType());
+        TextView experimentTypeTextView = findViewById(R.id.ExperimentTypeTextView);
+        experimentTypeTextView.setText(experiment.getType());
 
-        // TODO: End Experiment give error for not the Owner
-        EndExperimentBtn = findViewById(R.id.EndExperimentBtn);
-        EndExperimentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DataManager.endExperiment(experiment, (s) -> {}, (e) -> {});
-                finish();
-            }
-        });
+        Button endExperimentBtn = findViewById(R.id.EndExperimentBtn);
+        endExperimentBtn.setOnClickListener(v ->
+            DataManager.endExperiment(experiment, experiment -> finish(), e -> Log.d(TAG, e.toString()))
+        );
 
         DataManager.listen(experiment, this::update);
+
+        initRecyclerView();
     }
 
     private void initRecyclerView() {
@@ -65,9 +58,7 @@ public class OwnerActivity extends AppCompatActivity {
 
 
     void update(Experiment experiment) {
-        // Could add all updates here
-        trialsArrayList = experiment.getTrials();
-        initRecyclerView();
+        trialListAdapter.updateList((ArrayList<Trial>) experiment.getTrials());
     }
 
 

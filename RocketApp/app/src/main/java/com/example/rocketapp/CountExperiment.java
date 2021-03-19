@@ -18,10 +18,10 @@ import static java.lang.Math.sqrt;
 public class CountExperiment extends Experiment {
     public static final String TYPE = "Count";
 
-
-    public CountExperiment() {
-        //TODO
-    }
+    /**
+     * Default constructor for firestore serialization. Do not use.
+     */
+    public CountExperiment() {}
 
     /**Constructor for CountExperiment
      * @param description   - String

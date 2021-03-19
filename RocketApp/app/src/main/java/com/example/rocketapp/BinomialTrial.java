@@ -1,34 +1,28 @@
 package com.example.rocketapp;
 
+import com.google.firebase.firestore.Exclude;
+
 /**
  * Class for Trials of 'Binomial' type.
  * The trials are either True(Success) or False(Fail)
  */
 public class BinomialTrial extends Trial {
     public static final String TYPE = "Binomial";
-
     private boolean value;
 
     /**
-     *
-     * If an object of this class is created without passing any value, it is assumed to be False.
-     *
+     * Default constructor for firestore serialization. Do not use.
      */
-    public BinomialTrial() {
-        value = false;
-    }
+    public BinomialTrial() {}
 
     /**
-     *
-     * @param success
-     *          True or False depending on the trial Passing or Failing. The interpretation of a Pass/Fail should be described in the experiment description.
+     * @param success True or False depending on the trial Passing or Failing. The interpretation of a Pass/Fail should be described in the experiment description.
      */
     public BinomialTrial(boolean success) {
-        setValue(success);
+        value = success;
     }
 
     /**
-     *
      * @return the type of trial, in this case it would be "Binomial".   - String
      */
     @Override
@@ -37,7 +31,6 @@ public class BinomialTrial extends Trial {
     }
 
     /**
-     *
      * @return the outcome of trial, True if pass, False if fail.    - Boolean
      */
     public boolean isValue() {
@@ -45,18 +38,18 @@ public class BinomialTrial extends Trial {
     }
 
     /**
-     *
-     * @param value
-     *          Setter for the value of this trial.
+     * @param value Setter for the value of this trial.
      */
     public void setValue(boolean value) {
         this.value = value;
     }
 
-
     /**
-     * @return the value of this trial for the adapter
+     * @return string representation of trial value
      */
+    @Exclude
     @Override
-    public String getResult(){ return value ? "True" : "False"; }
+    public String getValueString() {
+        return value ? "True" : "False";
+    }
 }

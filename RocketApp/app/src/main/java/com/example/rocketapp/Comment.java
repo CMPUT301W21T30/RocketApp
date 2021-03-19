@@ -12,29 +12,24 @@ public abstract class Comment extends DataManager.FirestoreNestableDocument impl
     private String text;    // Text of comment
 
     /**
-     * Constructor for an object created of a class that inherits Comment.
-     * No text is passed if this constructor is called.
+     * Default constructor for firestore serialization. Do not use.
      */
     public Comment() {};
 
     /**
-     *
-     * @param text
-     *          User passes the text to be written inside comment box.
+     * @param text User passes the text to be written inside comment box.
      */
     public Comment(String text) {
         this.text = text;
     }
 
     /**
-     *
      * @return the type of Comment.     - "Question", "Answer", or "None".
      */
     @Override
     public abstract String getType();
 
     /**
-     *
      * @return the text of comment.
      */
     public String getText() {
@@ -43,19 +38,11 @@ public abstract class Comment extends DataManager.FirestoreNestableDocument impl
 
     /**
      * Poster can edit comment through this function.
-     *
-     * @param user
-     *          poster of this comment
+
      * @param text
      *          text of the comment
      */
-    public void setText(User user, String text) {
-        if (this.getOwnerId() != user.getId()) {
-            Log.e(TAG, "Owner does not have permission to edit this question");
-            return;
-        }       //Only the poster of comment can edit the comment.
-
+    public void setText(String text) {
         this.text = text;
-        // TODO make this sync with firestore
     }
 }

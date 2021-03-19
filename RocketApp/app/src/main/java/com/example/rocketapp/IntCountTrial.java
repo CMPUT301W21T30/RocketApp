@@ -6,17 +6,15 @@ import com.google.firebase.firestore.Exclude;
  * Class for Trials of 'IntCount' type.
  * The trials are either True(Success) or False(Fail)
  */
-public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
+public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
     public static final String TYPE = "IntCount";
 
-    private int posCount;
+    private int count;
 
     /**
-     * Constructor for IntCountTrial initialized with 0 if no value is passed
+     * Default constructor for firestore serialization. Do not use.
      */
-    public IntCountTrial() {
-        posCount = 0;
-    }
+    public IntCountTrial() {}
 
     /**
      * Constructor for IntCountTrial where a value for count is passed.
@@ -34,7 +32,7 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
      */
     @Override
     public int compareTo(IntCountTrial trial) {
-        int compareCount = ((IntCountTrial)trial).getPCount();
+        int compareCount = trial.getPCount();
         return this.getPCount() - compareCount;
     }
 
@@ -46,26 +44,18 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
     }
 
     /**
-     * Increment a value already present in a trial by 1
-     */
-    public void addPCount(){
-        posCount = posCount + 1;
-    }
-
-    /**
      * @return the value of this trial
      */
     public int getPCount(){
-        return posCount;
+        return count;
     }
 
-
     /**
-     * @return the value of this trial for the adapter
+     * @return string representation of trial value
      */
+    @Exclude
     @Override
-    public String getResult(){return Float.toString(posCount); }
-
+    public String getValueString(){return Integer.toString(count); }
 
     /**
      * Setter for pos
@@ -73,6 +63,6 @@ public class IntCountTrial extends Trial implements Comparable< IntCountTrial >{
      *          Value to initialize pos with
      */
     public void setPCount(int value){
-        posCount = value;
+        count = value;
     }
 }

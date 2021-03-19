@@ -21,9 +21,7 @@ import static android.content.ContentValues.TAG;
  * User logs in with a username
  */
 public class LogInActivity extends AppCompatActivity {
-
-    public Button loginBtn;
-
+    private static final String TAG = "LogInActivity";
     /**
      * Displays a username entry field and a login button
      * Creates or Logs in to an existing user profile accordingly
@@ -36,112 +34,44 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // set up login Button
-        loginBtn = findViewById(R.id.loginBtn);
+        Button loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(v -> {
             EditText usernameEditText = findViewById(R.id.usernameEditText);
-            String username = usernameEditText.getText().toString();
-            if(username.length()>3){
-            loginOrCreateUser(username);
-            }
-            else{
-                Toast.makeText(getApplicationContext(), "Username must have more than 3 characters", Toast.LENGTH_SHORT).show();
+            if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
+                loginOrCreateUser(usernameEditText.getText().toString());
             }
         });
-
-
     }
 
 
     /**
-     * Creates user if username entered does not exist
+     * Creates user if name entered does not exist
      * Logs into existing user's profile if username matches a user inside database
-     * @param username
+     * @param userName
      *          username entered during login in the box.
      */
-    private void loginOrCreateUser(String username) {
-        DataManager.login(username, user -> {           //Username exists and match successful
-            Log.d("Login Succesfully", "Login Successfully");
+    private void loginOrCreateUser(String userName) {
+        DataManager.login(userName, user -> {           //Username exists and match successful
             Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
-        }, loginError -> {
-
-            Log.d("Login Error", "User Doesn't exist");
-            DataManager.createUser(username, user -> {      //Create user if username does not exist
-
-                Log.d("Created New user", "Created New User.");
-                DataManager.login(username, user1 -> {
-
-                    Log.d("Login Succesfully", "Login Successfully");       //Login successful after creating a user
-                    Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
-                    startActivity(ExperimentsListActivityIntent);
-                }, loginErrorAfterCreateUser -> {
-                    Log.e("Can't Login", "User cannot be created and Login.");      //User can either not be created or can not login
-                });
-            }, createUserError -> {
-                Log.e("User cannot be created", "User Can Not be created.");        //User is unable to be created with this username
-            });
-        });
-    }
-
-
-    private void exampleUsageForDataManager() {
-        // Should use the callback lambdas to do work following these methods, since these are asynchronous commands their effects
-        // won't exist until after they synchronize with firebase (they will be synchronized at the point when lambdas are called).
-
-        // Create a new user and login
-//        DataManager.createUser("Marty", user -> {
-//
-//        }, error -> {
-//            Log.e(TAG, error.toString());
-//        });
-
-        DataManager.login("Morty", user -> {
-            // Use this to load the users subscriptions
-//            DataManager.pullSubscriptions(experiments -> {
-//                Log.d(TAG, "Subscribed experiments:");
-//
-//            });
-
-//             Publish a new experiment
-//            DataManager.publishExperiment(
-//                    new IntCountExperiment("Marty's second experiment", "An experiment started by Marty", "Canada", 10, true),
-//                    experiments -> {
-//                Log.d(TAG, "Subscribed experiments:");
-//
-//            });
-//
-            // Pull all experiments from firebase
-//            DataManager.pullAllExperiments(experiments -> {
-//                Log.d(TAG, "All experiments:");
-//                for (Experiment e : experiments) {
-//                    DataManager.subscribe(e, () -> {
-//                        for (Experiment ex : DataManager.getExperimentArrayList()) {
-//                            Log.d(TAG, ex.toString());
-//                        }
-//                    });
-//                }
-//            });
-
-//            // Pull all experiments owned by this user from firebase
-//            DataManager.pullOwnedExperiments(experiments -> {
-//                for (Experiment experiment : experiments) {
-////                    DataManager.push(new Question("Here is a question"), experiment, question -> {});
-//                    DataManager.push(new BinomialTrial("Here is a question"), experiment, trial -> {});
-//                }
-//            });
-//
-//            // Pull all subscriptions by this user from firebase
-//            DataManager.pullSubscriptions(experiments -> {
-//                for (Experiment experiment : experiments)
-//                    DataManager.push(new Question("Here is a question"), experiment, trial -> {});
-//            });
-
         }, e -> {
-            Log.e(TAG, "User not found.");
+            Log.d(TAG, e.toString());
+            createUser(userName);                       //Create user if user name does not exist
         });
     }
 
-
+    /**
+     * Creates a new user and login
+     * @param userName Name of user to create
+     */
+    private void createUser(String userName) {
+        DataManager.createUser(userName, user -> {
+            Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+            startActivity(ExperimentsListActivityIntent);
+        }, e -> {
+            Log.e(TAG, e.toString());        //User is unable to be created with this username
+        });
+    }
 
 }
 
