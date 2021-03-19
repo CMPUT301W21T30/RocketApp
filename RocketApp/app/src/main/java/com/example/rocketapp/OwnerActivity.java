@@ -19,7 +19,11 @@ public class OwnerActivity extends AppCompatActivity {
     private Experiment experiment;
     private ArrayList<Trial> trialsArrayList = new ArrayList<>();
     private TrialListAdapter trialListAdapter;
-    
+
+    /**
+     * Create The Activity by setting the textview, button and using the adapter to display trials
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,9 @@ public class OwnerActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
+    /**
+     * Using the Recycler adapter to display each trials
+     */
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView trialRecyclerView = findViewById(R.id.trialRecyclerView);
@@ -52,11 +59,12 @@ public class OwnerActivity extends AppCompatActivity {
 
         trialRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//         Set up Swipe Gesture for Published and UnPublished
-
     }
 
-
+    /**
+     * Update the list using Data Manager
+     * @param experiment which the trials of the experiment
+     */
     void update(Experiment experiment) {
         trialListAdapter.updateList((ArrayList<Trial>) experiment.getTrials());
     }

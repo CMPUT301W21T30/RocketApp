@@ -14,11 +14,19 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
+/**
+ * The trial list adapter that is used for showing the trials for a given experiment
+ */
 public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.ViewHolder> {
     private static final String TAG = "ExperimentRecylerViewAd";
     private ArrayList<Trial> trials;
     private Context context;
 
+    /**
+     *
+     * @param context context of the given experiment
+     * @param trials trials for the given experiment
+     */
     public TrialListAdapter(Context context, ArrayList<Trial> trials) {
         this.trials = trials;
         this.context = context;
@@ -35,6 +43,11 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
 
     @NonNull
     @Override
+    /**
+     * creating the view holder for the adapter
+     * @param parent parent of the view
+     * @param viewType type of the view
+     */
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.trial_recyclerview_item, parent, false);
         return new ViewHolder(view);
@@ -42,6 +55,11 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
 
 
     @Override
+    /**
+     * binding the view holder for the adapter
+     * @param holder the view holder
+     * @param position position for the item in the list
+     */
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
@@ -51,16 +69,25 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
     }
 
     @Override
+    /**
+     * @return size of the adapter
+     */
     public int getItemCount() {
         return trials.size();
     }
 
+    /**
+     *  The view holder for each item in the recycler view
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView trialTextView;
         MaterialCardView trialListItemLayout;;
 
-
+        /**
+         *  implementing the view holder
+         * @param itemView the item that we are going to view on the list
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             trialTextView = itemView.findViewById(R.id.trialTextView);
