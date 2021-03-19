@@ -1,12 +1,15 @@
 package com.example.rocketapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,7 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class OwnerActivity extends AppCompatActivity {
+public class ExperimentEditActivity extends AppCompatActivity {
     private static final String TAG = "OwnerActivity";
     private Experiment experiment;
     private ArrayList<Trial> trialsArrayList = new ArrayList<>();
@@ -42,9 +45,23 @@ public class OwnerActivity extends AppCompatActivity {
             DataManager.endExperiment(experiment, experiment -> finish(), e -> Log.d(TAG, e.toString()))
         );
 
-        DataManager.listen(experiment, this::update);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         initRecyclerView();
+
+        DataManager.listen(experiment, this::update);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -58,7 +75,6 @@ public class OwnerActivity extends AppCompatActivity {
         trialRecyclerView.setAdapter(trialListAdapter);
 
         trialRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
 
     /**

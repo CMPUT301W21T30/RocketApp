@@ -1,6 +1,7 @@
 package com.example.rocketapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -47,7 +49,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         Button showAllExperiment = findViewById(R.id.showAllExp);
         showAllExperiment.setOnClickListener(v -> {
-            Intent allExpIntent = new Intent(getApplicationContext(), AllExperiments.class);
+            Intent allExpIntent = new Intent(getApplicationContext(), ExperimentSearchActivity.class);
             startActivity(allExpIntent);
         });
 
@@ -58,6 +60,20 @@ public class ExperimentsListActivity extends AppCompatActivity{
             adapterOwned.updateList(DataManager.getOwnedExperimentsArrayList());
             adapterSubscribed.updateList(DataManager.getSubscribedExperimentArrayList());
         });
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -81,7 +97,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         experimentsOwned = DataManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
-            Intent intent = new Intent(this, OwnerActivity.class);
+            Intent intent = new Intent(this, ExperimentActivity.class);
             intent.putExtra("id", experiment.getId());
             startActivity(intent);
         });

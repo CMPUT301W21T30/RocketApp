@@ -13,7 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class ExperimentQuestionsActivity extends AppCompatActivity {
+public class ExperimentForumActivity extends AppCompatActivity {
     private static final String TAG = "QuestionsActivity";
     private Experiment experiment;
     private QuestionListAdapter adapter;
@@ -62,8 +62,7 @@ public class ExperimentQuestionsActivity extends AppCompatActivity {
         });
 
         ActionBar actionBar = getSupportActionBar();
-        // TODO set to a back arrow, I'm not sure how to add to drawable
-        actionBar.setHomeAsUpIndicator(R.drawable.common_full_open_on_phone);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -71,7 +70,7 @@ public class ExperimentQuestionsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);

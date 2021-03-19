@@ -9,19 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RocketApp">
-        <activity android:name=".ExperimentQuestionsActivity"></activity>
+        <activity android:name=".ExperimentForumActivity"></activity>
         <activity
-            android:name=".OwnerActivity"
-            android:parentActivityName=".ExperimentsListActivity" />
+            android:name=".ExperimentEditActivity" />
         <activity
-            android:name=".ExperimentActivity"
-            android:parentActivityName=".ExperimentsListActivity" />
+            android:name=".ExperimentActivity" />
         <activity
-            android:name=".AllExperiments"
-            android:parentActivityName=".ExperimentsListActivity" />
+            android:name=".ExperimentSearchActivity" />
         <activity
-            android:name=".LogInActivity"
-            android:parentActivityName=".ExperimentsListActivity">
+            android:name=".LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,11 +25,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UserProfileActivity"
-            android:parentActivityName=".ExperimentsListActivity" />
+            android:name=".UserProfileActivity"/>
         <activity
-            android:name=".ExperimentsListActivity"
-            android:parentActivityName=".LogInActivity" />
+            android:name=".ExperimentsListActivity" />
     </application>
 
 </manifest>
