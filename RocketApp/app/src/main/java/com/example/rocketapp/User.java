@@ -70,7 +70,7 @@ public class User extends DataManager.FirestoreDocument {
      * @param phone_number
      *          new phone number the User wants to set
      */
-    public void setPhone_number(String phone_number){
+    public void setPhoneNumber(String phone_number){
         this.phone_number = phone_number;
     }
 
@@ -86,7 +86,7 @@ public class User extends DataManager.FirestoreDocument {
      * getter for User phone number
      * @return User phone number
      */
-    public String getPhone_number(){
+    public String getPhoneNumber(){
         return this.phone_number;
     }
 
