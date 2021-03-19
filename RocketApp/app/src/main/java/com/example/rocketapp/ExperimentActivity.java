@@ -82,6 +82,13 @@ public class ExperimentActivity extends AppCompatActivity {
             }).show(getSupportFragmentManager(), "ADD_TRIAL");
         });
 
+        Button forumButton = findViewById(R.id.forumButton);
+        forumButton.setOnClickListener(v->{
+            Intent intent = new Intent(this, ExperimentQuestionsActivity.class);
+            intent.putExtra("id", experiment.getId());
+            startActivity(intent);
+        });
+
         DataManager.listen(experiment, this::update);
     }
 

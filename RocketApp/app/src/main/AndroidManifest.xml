@@ -9,14 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RocketApp">
-        <activity android:name=".OwnerActivity" android:parentActivityName=".ExperimentsListActivity"></activity>
+        <activity android:name=".ExperimentQuestionsActivity"></activity>
+        <activity
+            android:name=".OwnerActivity"
+            android:parentActivityName=".ExperimentsListActivity" />
         <activity
             android:name=".ExperimentActivity"
             android:parentActivityName=".ExperimentsListActivity" />
         <activity
             android:name=".AllExperiments"
             android:parentActivityName=".ExperimentsListActivity" />
-        <activity android:name=".LogInActivity" android:parentActivityName=".ExperimentsListActivity">
+        <activity
+            android:name=".LogInActivity"
+            android:parentActivityName=".ExperimentsListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
