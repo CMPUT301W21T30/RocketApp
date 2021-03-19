@@ -59,8 +59,6 @@ public class OwnerActivity extends AppCompatActivity {
 
         trialRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//         Set up Swipe Gesture for Published and UnPublished
-
     }
 
     /**
