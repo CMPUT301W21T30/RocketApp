@@ -1,7 +1,15 @@
-# March 5th, 2021 Meeting Note
+
+* Mar 23rd, 2021
+   * Saif will work on statistics displays for experiments (histograms etc)
+   * Other members are busy until thursday this week, but can assign themselves tasks on the project board if they have time.
+
+* Mar 18th, 2021
+   * Mike will implement questions/answers forum for experiments, add more test cases and make necessary UML diagram adjustments
+   * Aryan will make necessary changes to storyboard and add some polish to the GUI
+   * Saif will add test more test cases for model
 
 * Question for TA:
-    * What is our issues for our UML diagram for GUI, and how can we improve it.
+    * What is our issues for our UML diagram for GUI, and how can we improve it. - Resolved
 
 * Mar 16, 2021
     * Finished task from last meeting
