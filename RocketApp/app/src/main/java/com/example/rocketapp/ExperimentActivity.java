@@ -1,16 +1,31 @@
 package com.example.rocketapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.Map;
 
 /**
  * Display view for Experiment
@@ -27,6 +42,9 @@ public class ExperimentActivity extends AppCompatActivity {
     private Button addTrialButton;
     private Button endExperimentButton;
     private Button unpublishExperimentButton;
+    private Button map;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private boolean granted = false;
 
     /**
      * Setup the view for Experiment
@@ -64,6 +82,7 @@ public class ExperimentActivity extends AppCompatActivity {
 
         unpublishExperimentButton = findViewById(R.id.unpublishExperimentButton);
         endExperimentButton = findViewById(R.id.endExperimentButton);
+        map = findViewById(R.id.mapbtn);
         addTrialButton = findViewById(R.id.addTrialButton);
         statusTextView = findViewById(R.id.endedTextView);
 
@@ -75,6 +94,12 @@ public class ExperimentActivity extends AppCompatActivity {
             unpublishExperimentButton.setOnClickListener(this::onUnpublishClicked);
         }
 
+        if(experiment.info.isGeoLocationEnabled()) {
+            map.setOnClickListener(this::mapClicked);
+        }
+        else{
+            map.setVisibility(View.GONE);
+        }
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
         findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
@@ -109,6 +134,12 @@ public class ExperimentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    void mapClicked(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("id", experiment.getId());
+        startActivity(intent);
+    }
+
     void onUnpublishClicked(View view) {
         switch(experiment.getState()) {
             case PUBLISHED:
@@ -133,14 +164,51 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
     void onAddTrialClicked(View view) {
-        new TrialFragment(experiment.getType(), newTrial -> {
-            DataManager.addTrial(newTrial, experiment, t -> {
-                Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
-            }, e -> {
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            });
-        }).show(getSupportFragmentManager(), "ADD_TRIAL");
+        if (!experiment.info.isGeoLocationEnabled()) {
+            new TrialFragment(experiment.getType(), newTrial -> {
+                DataManager.addTrial(newTrial, experiment, t -> {
+                    Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
+                }, e -> {
+                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                });
+            }).show(getSupportFragmentManager(), "ADD_TRIAL");
+        }
+        else{
+            Log.d("Tag", "Starting geo");
+            if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+                Log.d("TAG", "Permission granted");
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        System.out.println(task.getResult().getLatitude());
+                        System.out.println(task.getResult().getLongitude());
+                        new TrialFragment(experiment.getType(), newTrial -> {
+                            newTrial.setLatitude(task.getResult().getLatitude());
+                            newTrial.setLongitude(task.getResult().getLongitude());
+                            DataManager.addTrial(newTrial, experiment, t -> {
+                                Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
+                            }, e -> {
+                                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                            });
+                        }).show(getSupportFragmentManager(), "ADD_TRIAL");
+                    }
+                });
+            }
+            else {
+                Toast toast = Toast.makeText(this.getApplicationContext(), "Permission needed for this experiment", Toast.LENGTH_SHORT);
+                toast.show();
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+                if(granted){
+                    System.out.println("HERE");
+                }
+                else{
+                    System.out.println("NOT HERE");
+                }
+            }
+        }
     }
+
 
     void onForumButtonClicked(View view) {
         Intent intent = new Intent(this, ExperimentForumActivity.class);

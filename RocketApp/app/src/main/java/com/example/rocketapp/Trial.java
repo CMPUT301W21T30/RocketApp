@@ -26,4 +26,12 @@ public abstract class Trial extends DataManager.FirestoreNestableDocument implem
      */
     @Exclude
     public abstract String getValueString();
+
+    public abstract double getLatitude();
+
+    public abstract double getLongitude();
+
+    public abstract void setLatitude(double latitude);
+
+    public abstract void setLongitude(double longitude);
 }

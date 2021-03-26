@@ -8,6 +8,8 @@ import com.google.firebase.firestore.Exclude;
  */
 public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
     public static final String TYPE = "IntCount";
+    private double latitude;
+    private double longitude;
 
     private int count;
 
@@ -64,5 +66,23 @@ public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
      */
     public void setPCount(int value){
         count = value;
+    }
+
+    @Override
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

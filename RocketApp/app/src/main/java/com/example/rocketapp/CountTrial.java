@@ -7,6 +7,8 @@ import com.google.firebase.firestore.Exclude;
  */
 public class CountTrial extends Trial implements Comparable<CountTrial>{
     public static final String TYPE = "Count";      //Type of trial
+    private double longitude;
+    private double latitude;
 
     private int count;      //value of trial
 
@@ -62,5 +64,23 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
     public int compareTo(CountTrial trial) {//references: https://www.geeksforgeeks.org/how-to-sort-an-arraylist-of-objects-by-property-in-java/
         int compareCount = trial.getCount();
         return this.getCount() - compareCount;
+    }
+
+    @Override
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

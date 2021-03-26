@@ -288,5 +288,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/forumButton" />
 
+        <Button
+            android:id="@+id/mapbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="136dp"
+            android:drawableLeft="@drawable/maps_icon_gmm"
+            android:text="MAP"
+            app:layout_constraintStart_toEndOf="@+id/endedTextView"
+            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
