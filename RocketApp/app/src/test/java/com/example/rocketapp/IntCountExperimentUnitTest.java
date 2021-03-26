@@ -1,5 +1,9 @@
 package com.example.rocketapp;
 
+import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.experiments.IntCountExperiment;
+import com.example.rocketapp.model.trials.IntCountTrial;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
