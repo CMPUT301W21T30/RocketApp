@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
@@ -17,14 +17,14 @@ import java.util.ArrayList;
  */
 public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAdapter.ViewHolder> {
     private final ArrayList<Experiment> experiments;
-    private final DataManager.ExperimentCallback onClickListener;
+    private final ExperimentManager.ExperimentCallback onClickListener;
 
     /**
      * ExperimentListAdapter is the custom adapter for the recyclerView that displays searched experiments
      * @param experiments the initial experiment list
      * @param onClickListener
      */
-    public ExperimentListAdapter(ArrayList<Experiment> experiments, DataManager.ExperimentCallback onClickListener) {
+    public ExperimentListAdapter(ArrayList<Experiment> experiments, ExperimentManager.ExperimentCallback onClickListener) {
         this.experiments = experiments;
         this.onClickListener = onClickListener;
     }

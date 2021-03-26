@@ -1,12 +1,11 @@
 package com.example.rocketapp.model.comments;
-
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.FirestoreNestableDocument;
 
 /**
  * Comments are posted by Users (Experimenters and Owner alike) to have a discussion regarding the experiment or trial.
  * Generally these will be used in the form of Question & Answer.
  */
-public abstract class Comment extends DataManager.FirestoreNestableDocument implements DataManager.Type {
+public abstract class Comment extends FirestoreNestableDocument {
     private String text;    // Text of comment
 
     /**
@@ -24,7 +23,6 @@ public abstract class Comment extends DataManager.FirestoreNestableDocument impl
     /**
      * @return the type of Comment.     - "Question", "Answer", or "None".
      */
-    @Override
     public abstract String getType();
 
     /**

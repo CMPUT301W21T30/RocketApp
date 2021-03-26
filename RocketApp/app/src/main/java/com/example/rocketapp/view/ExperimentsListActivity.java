@@ -16,7 +16,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
 
 import java.util.ArrayList;
@@ -60,10 +61,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
         Button addNewExperiment = findViewById(R.id.createExpBtn);
         addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
 
-        DataManager.setUpdateCallback(()->{
-            adapterOwned.updateList(DataManager.getOwnedExperimentsArrayList());
-            adapterSubscribed.updateList(DataManager.getSubscribedExperimentArrayList());
-        });
+        ExperimentManager.setUpdateCallback(()-> adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList()));
+        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -99,7 +98,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewOwner);
 
-        experimentsOwned = DataManager.getOwnedExperimentsArrayList();
+        experimentsOwned = ExperimentManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
             intent.putExtra("id", experiment.getId());
@@ -121,7 +120,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
     private void initRecyclerViewSubscribed(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView experimentRecyclerView = findViewById(R.id.experimentRecyclerViewSubscribed);
-        experimentsSubscribed = DataManager.getSubscribedExperimentArrayList();
+        experimentsSubscribed = ExperimentManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
             intent.putExtra("id", experiment.getId());
@@ -145,20 +144,16 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:
-                    DataManager.publishExperiment(experimentsOwned.get(position), (experiment) -> {
-                        Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show();
-                    }, (e) -> {
-                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    });
+                    ExperimentManager.publishExperiment(experimentsOwned.get(position),
+                            experiment -> Toast.makeText(getApplicationContext(), "Published " + experimentsOwned.get(position).info.getDescription(), Toast.LENGTH_SHORT).show(),
+                            e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show());
                     adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;
                 case ItemTouchHelper.RIGHT:
-                    DataManager.unpublishExperiment(experimentsOwned.get(position), (experiment) -> {
-                        Toast.makeText(getApplicationContext(), "UnPublished " + experiment.info.getDescription(), Toast.LENGTH_SHORT).show();
-                    }, (e) -> {
-                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                    });
+                    ExperimentManager.unpublishExperiment(experimentsOwned.get(position),
+                            experiment -> Toast.makeText(getApplicationContext(), "UnPublished " + experiment.info.getDescription(), Toast.LENGTH_SHORT).show(),
+                            e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show());
                     adapterSubscribed.notifyDataSetChanged();
                     adapterOwned.notifyDataSetChanged();
                     break;

@@ -13,7 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.TrialManager;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 
@@ -45,7 +47,7 @@ public class ExperimentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
 
-        experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
 
         meanTextView = findViewById(R.id.meanView);
         medianTextView = findViewById(R.id.medianValue);
@@ -72,7 +74,7 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton = findViewById(R.id.addTrialButton);
         statusTextView = findViewById(R.id.endedTextView);
 
-        if(!experiment.getOwner().equals(DataManager.getUser())){
+        if(!experiment.getOwner().equals(UserManager.getUser())){
             endExperimentButton.setVisibility(View.GONE);
             unpublishExperimentButton.setVisibility(View.GONE);
         } else {
@@ -88,13 +90,14 @@ public class ExperimentActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        DataManager.listen(experiment, this::update);
+        ExperimentManager.listen(experiment, this::update);
+        TrialManager.listen(experiment, this::update);
         update(experiment);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(DataManager.getUser()))
+        if (experiment.getOwner().equals(UserManager.getUser()))
         getMenuInflater().inflate(R.menu.experiment_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -118,7 +121,7 @@ public class ExperimentActivity extends AppCompatActivity {
         switch(experiment.getState()) {
             case PUBLISHED:
             case ENDED:
-                DataManager.unpublishExperiment(experiment, experiment-> {}, e-> {});
+                ExperimentManager.unpublishExperiment(experiment, experiment-> {}, e-> {});
                 break;
             case UNPUBLISHED:
                 break;
@@ -128,18 +131,18 @@ public class ExperimentActivity extends AppCompatActivity {
     void onToggleEndClicked(View view) {
         switch(experiment.getState()) {
             case PUBLISHED:
-                DataManager.endExperiment(experiment, experiment-> {}, e-> {});
+                ExperimentManager.endExperiment(experiment, experiment-> {}, e-> {});
                 break;
             case ENDED:
             case UNPUBLISHED:
-                DataManager.publishExperiment(experiment, experiment-> {}, e-> {});
+                ExperimentManager.publishExperiment(experiment, experiment-> {}, e-> {});
                 break;
         }
     }
 
     void onAddTrialClicked(View view) {
         new TrialFragment(experiment.getType(), newTrial -> {
-            DataManager.addTrial(newTrial, experiment, t -> {
+            TrialManager.addTrial(newTrial, experiment, t -> {
                 Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
             }, e -> {
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -181,7 +184,7 @@ public class ExperimentActivity extends AppCompatActivity {
                 break;
         }
 
-        if (experiment.getOwner().getName().equals(DataManager.getUser().getName())) {
+        if (experiment.getOwner().equals(UserManager.getUser())) {
             switch(experiment.getState()) {
                 case PUBLISHED:
                     unpublishExperimentButton.setVisibility(View.GONE);

@@ -12,8 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.helpers.Validate;
-import com.example.rocketapp.controller.DataManager;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.trials.CountTrial;
@@ -36,9 +36,9 @@ public class TrialFragment extends DialogFragment {
 
     private String type;
     private EditText inputEditText;
-    private DataManager.TrialCallback callback;
+    private TrialManager.TrialCallback callback;
 
-    public TrialFragment(String type, DataManager.TrialCallback callback) {
+    public TrialFragment(String type, TrialManager.TrialCallback callback) {
         this.type = type;
         this.callback = callback;
     }

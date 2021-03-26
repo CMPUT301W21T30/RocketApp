@@ -1,5 +1,5 @@
 package com.example.rocketapp.model.users;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.FirestoreDocument;
 
 /**
  * User are users of this application
@@ -7,7 +7,7 @@ import com.example.rocketapp.controller.DataManager;
  * They can behave as Experimenters by subscribing or participating by submitting trials to an experiment
  * Users are added to firestore database upon creation
  */
-public class User extends DataManager.FirestoreDocument {
+public class User extends FirestoreDocument {
     private String name;
     private String email;
     private String phone_number;

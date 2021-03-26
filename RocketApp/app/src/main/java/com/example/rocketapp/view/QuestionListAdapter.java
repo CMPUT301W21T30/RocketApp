@@ -11,21 +11,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ForumManager;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.comments.Question;
 
 import java.util.ArrayList;
 
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder>  {
     private final ArrayList<Question> questions;
-    private final DataManager.QuestionCallback onClickRespond;
-    private final DataManager.UserCallback onClickUser;
+    private final ForumManager.QuestionCallback onClickRespond;
+    private final UserManager.UserCallback onClickUser;
     private final Context context;
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param questions the initial questions list
      */
-    public QuestionListAdapter(Context context, ArrayList<Question> questions, DataManager.QuestionCallback onClickRespond, DataManager.UserCallback onClickUser) {
+    public QuestionListAdapter(Context context, ArrayList<Question> questions, ForumManager.QuestionCallback onClickRespond, UserManager.UserCallback onClickUser) {
         this.context = context;
         this.questions = questions;
         this.onClickRespond = onClickRespond;

@@ -1,13 +1,14 @@
 package com.example.rocketapp.model.experiments;
 import android.util.Log;
 
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.FirestoreOwnableDocument;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.trials.Trial;
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
-import static android.content.ContentValues.TAG;
 
 /**
  * Abstract class Experiment
@@ -18,7 +19,7 @@ import static android.content.ContentValues.TAG;
  * Provides a toString() to describe display
  * Stores data on Firestore
  */
-public abstract class Experiment extends DataManager.FirestoreOwnableDocument implements DataManager.Type {
+public abstract class Experiment extends FirestoreOwnableDocument {
 
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
     private State state;            //Published, Unpublished or Ended
@@ -117,11 +118,11 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
      * @param onComplete
      *          Callback to DataManager to update Firestore
      */
-    public void update(ExperimentInfo info, DataManager.ExperimentCallback onComplete) {
-        if (DataManager.getUser() == null || this.getOwnerId() != DataManager.getUser().getId()) return;
+    public void update(ExperimentInfo info, ExperimentManager.ExperimentCallback onComplete) {
+        if (!UserManager.isSignedIn() || !this.getOwner().equals(UserManager.getUser())) return;
         this.info = info;
 
-        DataManager.update(this, onComplete, (e) -> {});
+        ExperimentManager.update(this, onComplete, (e) -> {});
     }
 
     /**
@@ -167,7 +168,6 @@ public abstract class Experiment extends DataManager.FirestoreOwnableDocument im
      * getter for type of experiment
      * @return type of experiment       - "Binomial" or "Count" or "IntCount" or "Measurement"
      */
-    @Override
     public abstract String getType();
 
     /**

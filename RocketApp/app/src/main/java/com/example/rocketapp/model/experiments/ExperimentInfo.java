@@ -53,8 +53,6 @@ public class ExperimentInfo {
 
     /**
      * setter for description of experiment
-     * @param owner
-     *          object of User class, the creator of this experiment
      * @param description
      *          String description
      */
