@@ -1,6 +1,7 @@
 package com.example.rocketapp.model.trials;
 
 import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.FirestoreNestableDocument;
 import com.google.firebase.firestore.Exclude;
 
 /**
@@ -8,7 +9,7 @@ import com.google.firebase.firestore.Exclude;
  * Classes derived from this are - "BinomialTrial", "CountTrial", "IntCountTrial" and "MeasurementTrial"
  * Posts the trial information to relevant experiments inside Firestore database
  */
-public abstract class Trial extends DataManager.FirestoreNestableDocument implements DataManager.Type {
+public abstract class Trial extends FirestoreNestableDocument implements DataManager.Type {
     private Boolean isIgnore = false;
 
     /**

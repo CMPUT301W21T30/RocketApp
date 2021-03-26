@@ -2,6 +2,7 @@ package com.example.rocketapp.model.experiments;
 import android.util.Log;
 
 import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.FirestoreOwnableDocument;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.trials.Trial;
 import com.example.rocketapp.model.users.User;
@@ -18,7 +19,7 @@ import static android.content.ContentValues.TAG;
  * Provides a toString() to describe display
  * Stores data on Firestore
  */
-public abstract class Experiment extends DataManager.FirestoreOwnableDocument implements DataManager.Type {
+public abstract class Experiment extends FirestoreOwnableDocument implements DataManager.Type {
 
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
     private State state;            //Published, Unpublished or Ended

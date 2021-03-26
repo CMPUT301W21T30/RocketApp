@@ -75,192 +75,6 @@ public class DataManager {
         initializeUsers();
     }
 
-
-    /**
-     * A class object that will be stored on firestore. Contains information relating to its own documentId, as well
-     * as the documentId of an object that "owns" this object.
-     * Subclassed in DataManager since id's must be retrieved through firestore, and so should only be set in DataManager.
-     */
-    public abstract static class FirestoreDocument  {
-        /**
-         * Id represents a documentId in firestore for finding and referencing documents.
-         * Private class creates "Friend" like functionality so function calls requiring a new ID can only be called
-         * from DataManager to make sure updates will be synced with firestore.
-         */
-        final private static class Id implements Serializable {
-            private String key;
-
-            /**
-             * Default constructor only used for interface with Firestore.
-             */
-            public Id() {}
-
-            /**
-             * Generates a new DocumentId. Private so new documentId's can only be created by DataManager.
-             * @param id documentId string from firestore
-             */
-            private Id(String id) {
-                this.key = id;
-            }
-
-            /**
-             * Returns true if it has a valid key. Will only be true for objects pulled from firestore.
-             * @return true if has valid key (must be set in DataManager to be valid)
-             */
-            @Exclude
-            public boolean isValid() {
-                return key != null;
-            }
-
-            /**
-             * Returns the documentId.
-             */
-            public String getKey() {
-                return key;
-            }
-
-            /**
-             * @param o object to compare
-             * @return true if keys match
-             */
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
-                Id id = (Id) o;
-                return this.key.equals(id.key);
-            }
-        }
-
-        private Id id;          // The firestore documentId for this object
-
-        /**
-         * @return firestore documentId for this object
-         */
-        @Exclude
-        public Id getId() {
-            return id;
-        }
-
-        /**
-         * @param id documentId for this object retrieved from firestore
-         */
-        private void setId(Id id) {
-            if (id == null || !id.isValid())
-                Log.e(TAG, "Tried to call setId with invalid id.");
-            this.id = id;
-        }
-
-        /**
-         * @return true if documentId is valid.
-         */
-        @Exclude
-        public boolean isValid() {
-            return id != null && id.isValid();
-        }
-
-        /**
-         * @param o object to compare
-         * @return true if documentId's match
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            FirestoreDocument that = (FirestoreDocument) o;
-            return id.equals(that.id);
-        }
-
-    }
-
-
-    public abstract static class FirestoreOwnableDocument extends FirestoreDocument {
-
-        private FirestoreDocument.Id ownerId;     // The firestore documentId for this objects owner
-
-        /**
-         * @return firestore documentId for this objects owner
-         */
-        public FirestoreDocument.Id getOwnerId() {
-            return ownerId;
-        }
-
-        /**
-         * Set the ownerDocumentId for this object. Use when creating objects in subcollections of an object in firestore.
-         * @param id owner documentId for this object.
-         */
-        private void setOwnerId(FirestoreDocument.Id id) {
-            if (id == null || !id.isValid())
-                Log.e(TAG, "Tried to call setOwnerId with invalid id.");
-            else
-                ownerId = id;
-        }
-
-
-        /**
-         * @return The User that owns this object. null if user not found.
-         */
-        @Exclude
-        public User getOwner() {
-            return getUser(ownerId);
-        }
-
-        /**
-         * @return true if owner documentId is valid.
-         */
-        @Exclude
-        public boolean ownerIsValid() {
-            return ownerId != null && ownerId.isValid();
-        }
-
-        /**
-         * @return true if documentId and ownerDocumentId are valid.
-         */
-        @Override
-        @Exclude
-        public boolean isValid() {
-            return super.isValid() && ownerIsValid();
-        }
-    }
-
-    public abstract static class FirestoreNestableDocument extends FirestoreOwnableDocument {
-        private FirestoreDocument.Id parentId;
-
-        /**
-         * @return firestore documentId for this objects parent
-         */
-        public FirestoreDocument.Id getParentId() {
-            return parentId;
-        }
-
-        /**
-         * @param id parent Id for nested object
-         */
-        private void setParent(FirestoreDocument.Id id) {
-            if (id == null || !id.isValid())
-                Log.d(TAG, "Tried to call setParent with invalid id.");
-            parentId = id;
-        }
-
-        /**
-         * @return true if id, ownerId, and parentId are valid
-         */
-        @Exclude
-        public boolean parentIsValid() {
-            return parentId != null && parentId.isValid();
-        }
-
-        /**
-         * @return true if documentId, ownerDocumentId, and parentId are valid.
-         */
-        @Override
-        @Exclude
-        public boolean isValid() {
-            return super.isValid() && parentIsValid();
-        }
-    }
-
-
     // Private to prevent instantiation
     private DataManager() { }
 
@@ -372,7 +186,7 @@ public class DataManager {
 
         return getExperimentArrayList(experiment -> {
             if (ignored.contains(experiment.getId())) return false;
-            System.out.println(experiment.getOwnerId().key + " " + user.getId().key);
+            System.out.println(experiment.getOwnerId().getKey() + " " + user.getId().getKey());
             if (!includeOwned && experiment.getOwnerId().equals(user.getId())) {
                 System.out.println("false");
                 return false;
@@ -452,24 +266,7 @@ public class DataManager {
     }
 
 
-//    /**
-//     * Retrieves an experiment from the list of experiments.
-//     * Should pass an ID through an intent and use this to get an experiment in ExperimentActivity.
-//     * @param id
-//     *      ID of the experiment to retrieve
-//     * @return
-//     *      Returns the experiment object matching the ID
-//     */
-//    public static Experiment getExperiment(FirestoreDocument.Id id) {
-//        for (Experiment experiment : experimentArrayList)
-//            if (experiment.isValid() && experiment.getId().equals(id))
-//                return experiment;
-//        Log.e(TAG, "getExperiment() Experiment not found");
-//        return null;
-//    }
-
     public static Experiment getExperiment(Object id) {
-//        FirestoreDocument.Id documentId = (FirestoreDocument.Id) id;
         for (Experiment experiment : experimentArrayList)
             if (experiment.isValid() && experiment.getId().equals(id))
                 return experiment;
@@ -538,7 +335,7 @@ public class DataManager {
         }
 
         if (!experiment.getOwnerId().equals(user.getId())) {
-            Log.e(TAG, "User (" + user.getId().key + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot un-publish.");
+            Log.e(TAG, "User (" + user.getId().getKey() + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot un-publish.");
             onFailure.callBack(new Exception("User does not own this experiment. Cannot un-publish."));
             return;
         }
@@ -571,7 +368,7 @@ public class DataManager {
         }
 
         if (!experiment.getOwnerId().equals(user.getId())) {
-            Log.e(TAG, "User (" + user.getId().key + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot end.");
+            Log.e(TAG, "User (" + user.getId().getKey() + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot end.");
             onFailure.callBack(new Exception("User does not own this experiment. Cannot end."));
             return;
         }
@@ -1231,7 +1028,7 @@ public class DataManager {
             subscriptions = subscriptionsList;
             Log.d(TAG, "Subscriptions Updated.");
             for (FirestoreDocument.Id id : subscriptions) {
-                System.out.println(id.key);
+                System.out.println(id.getKey());
             }
             onSuccess.callBack();
         }).addOnFailureListener(e->{
