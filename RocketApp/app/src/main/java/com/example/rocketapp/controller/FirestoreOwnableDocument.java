@@ -33,7 +33,7 @@ public abstract class FirestoreOwnableDocument extends FirestoreDocument {
      */
     @Exclude
     public User getOwner() {
-        return DataManager.getUser(ownerId);
+        return UserManager.getUser(ownerId);
     }
 
     /**

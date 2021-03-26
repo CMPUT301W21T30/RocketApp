@@ -14,7 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.ForumManager;
 import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.comments.Question;
@@ -40,7 +41,7 @@ public class ExperimentForumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_questions);
 
-        experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
 
         inputEditText = findViewById(R.id.commentInput);
         input = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
@@ -59,7 +60,7 @@ public class ExperimentForumActivity extends AppCompatActivity {
 
         submitButton = findViewById(R.id.submitCommentButton);
         submitButton.setOnClickListener(this::submitComment);
-        DataManager.listen(experiment, this::onUpdate);
+        ForumManager.listen(experiment, this::onUpdate);
         toggleKeyboard(false);
 
         // Add question button
@@ -91,10 +92,10 @@ public class ExperimentForumActivity extends AppCompatActivity {
 
     public void submitComment(View view){
         if (commentMode == CommentMode.ANSWER) {
-            DataManager.addAnswer(new Answer(inputEditText.getText().toString()), currentQuestion, ()-> {}, e->{}
+            ForumManager.addAnswer(new Answer(inputEditText.getText().toString()), currentQuestion, ()-> {}, e->{}
             );
         } else {
-            DataManager.addQuestion(new Question(inputEditText.getText().toString()), experiment, ()-> {}, e-> {});
+            ForumManager.addQuestion(new Question(inputEditText.getText().toString()), experiment, ()-> {}, e-> {});
         }
         toggleKeyboard(false);
     }

@@ -13,7 +13,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
 
 import java.util.ArrayList;
@@ -74,10 +75,10 @@ public class ExperimentSearchActivity extends AppCompatActivity {
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
-        experimentList = DataManager.getExperimentArrayList("", false, true);
+        experimentList = ExperimentManager.getExperimentArrayList("", false, true);
 
         adapter = new ExperimentListAdapter(experimentList, experiment -> {
-            DataManager.subscribe(experiment,() -> {
+            UserManager.subscribe(experiment,() -> {
                 Log.d(TAG, "Subscribed");
                 finish();
             } ,exception -> {
@@ -96,7 +97,7 @@ public class ExperimentSearchActivity extends AppCompatActivity {
      * @param text
      */
     public void filter(String text){
-        adapter.updateList(DataManager.getExperimentArrayList(text, false, true));
+        adapter.updateList(ExperimentManager.getExperimentArrayList(text, false, true));
     }
     
 }

@@ -2,6 +2,7 @@ package com.example.rocketapp.controller;
 
 import android.util.Log;
 
+import com.example.rocketapp.controller.callbacks.ExceptionCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.CountTrial;
@@ -10,14 +11,16 @@ import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
+import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
+/**
+ * Class that handles adding, retrieving, and modifying experiment trials from firestore.
+ */
 public class TrialManager {
     private static final String TAG = "TrialManager";
     private static ListenerRegistration trialsListener;
@@ -34,32 +37,121 @@ public class TrialManager {
             .put(CountTrial.TYPE, CountTrial.class)
             .build();
 
+    /**
+     * Private constructor, should not be instantiated
+     */
+    private TrialManager() {}
+
+    public interface TrialCallback {
+        void callBack(Trial trial);
+    }
 
     /**
-     * Listens to firestore for changes to this experiment. You MUST use this to get the trials and questions for an experiment.
+     * Listens to firestore for changes to this experiment. You MUST use this to get the trials for an experiment.
      * You may want to update the UI in onUpdate.
      * @param experiment
      *      The experiment to listen to.
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment experiment, DataManager.ExperimentCallback onUpdate) {
+    public static void listen(Experiment experiment, ExperimentManager.ExperimentCallback onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
         }
 
-        trialsListener.remove();
-        String documentId = experiment.getId().getKey();
-
         // Listen for changes in Trials
-        CollectionReference trialsRef = db.collection(EXPERIMENTS).document(documentId).collection(TRIALS);
+        CollectionReference trialsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(TRIALS);
+        if (trialsListener != null) trialsListener.remove();
         trialsListener = trialsRef.addSnapshotListener((snapshots, e) -> {
             parseTrialsSnapshot(experiment, snapshots);
             Log.d(TAG, "Experiment Trials Updated: " + experiment.getTrials().size());
             onUpdate.callBack(experiment);
         });
+    }
 
+    /**
+     * Add a new trial for an experiment.
+     * @param trial
+     *      New trial to add.
+     * @param experiment
+     *      Experiment to add trial to.
+     * @param onSuccess
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void addTrial(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+        push(trial, experiment, onSuccess, onFailure);
+    }
+
+    /**
+     * Update a trial for an experiment.
+     * @param trial
+     *      New trial to add.
+     * @param experiment
+     *      Experiment to add trial to.
+     * @param onSuccess
+     *      Callback for when push is successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    public static void update(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+        push(trial, experiment, onSuccess, onFailure);
+    }
+
+    /**
+     * Add or modify a trial on firestore
+     * @param trial
+     *      The trial to add/modify
+     * @param experiment
+     *      The experiment to add the trial to
+     * @param onComplete
+     *      Callback for when trial is added/modified successfully
+     * @param onFailure
+     *      Callback for when trial push fails
+     */
+    private static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
+        if (!UserManager.isSignedIn()) {
+            Log.e(TAG, "Push failed. Must be logged in to push.");
+            onFailure.callBack(new Exception("Push failed. Must be logged in to push."));
+            return;
+        }
+
+        if (experiment == null || !experiment.isValid()) {
+            Log.e(TAG, "Push failed. Tried to add trial to experiment without ID.");
+            onFailure.callBack(new Exception("Push failed. Tried to add trial to experiment without ID."));
+            return;
+        }
+
+        if (trial == null) {
+            Log.e(TAG, "Push failed. Tried to add null trial to experiment.");
+            onFailure.callBack(new Exception("Push failed. Tried to add null trial to experiment."));
+            return;
+        }
+
+        ((FirestoreOwnableDocument) trial).setOwnerId(UserManager.getUser().getId());
+        ((FirestoreNestableDocument) trial).setParent(UserManager.getUser().getId());
+        CollectionReference trialsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(TRIALS);
+
+        if (trial.getId() != null) {
+            trialsRef.document(trial.getId().getKey()).set(trial).addOnSuccessListener(trialSnapshot -> {
+                Log.d(TAG, "Trial Updated.");
+                onComplete.callBack(trial);
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to update Trial.");
+                onFailure.callBack(e);
+            });
+        } else {
+            trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
+                ((FirestoreDocument) trial).setId(new FirestoreDocument.Id(trialSnapshot.getId()));
+                Log.d(TAG, "Trial Added.");
+                onComplete.callBack(trial);
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to add Trial.");
+                onFailure.callBack(e);
+            });
+        }
     }
 
     /**
@@ -74,28 +166,10 @@ public class TrialManager {
 
         for (QueryDocumentSnapshot snapshot : userSnapshots) {
             Class<? extends Trial> classType = trialClassMap.get(snapshot.getString("type"));
-            if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot));
+            if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot, TAG));
             else Log.e(TAG, "classType null in parseTrialsSnapshot.");
         }
 
         experiment.setTrials(array);
-    }
-
-    /**
-     * Parses and adds id to FirestoreDocument objects from a firestore snapshot
-     * @param typeClass
-     *      The type of object to return
-     * @param snapshot
-     *      The snapshot from firestore
-     * @param <ClassType>
-     *     The type of object to return
-     * @return
-     *      Returns an object extending FirestoreDocument of type ClassType
-     */
-    private static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
-        ClassType object = snapshot.toObject(typeClass);
-        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.Id(snapshot.getId()));
-        else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
-        return object;
     }
 }

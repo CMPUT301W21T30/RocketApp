@@ -2,6 +2,7 @@ package com.example.rocketapp.controller;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
@@ -102,6 +103,24 @@ public abstract class FirestoreDocument  {
         if (o == null || getClass() != o.getClass()) return false;
         FirestoreDocument that = (FirestoreDocument) o;
         return id.equals(that.id);
+    }
+
+    /**
+     * Parses and adds id to FirestoreDocument objects from a firestore snapshot
+     * @param typeClass
+     *      The type of object to return
+     * @param snapshot
+     *      The snapshot from firestore
+     * @param <ClassType>
+     *     The type of object to return
+     * @return
+     *      Returns an object extending FirestoreDocument of type ClassType
+     */
+    static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot, String TAG) {
+        ClassType object = snapshot.toObject(typeClass);
+        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.Id(snapshot.getId()));
+        else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
+        return object;
     }
 
 }

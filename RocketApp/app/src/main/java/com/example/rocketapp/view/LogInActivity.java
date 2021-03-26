@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
-import com.example.rocketapp.controller.DataManager;
 
 /**
  * This is the landing screen of RocketApp
@@ -46,7 +46,7 @@ public class LogInActivity extends AppCompatActivity {
      *          username entered during login in the box.
      */
     private void loginOrCreateUser(String userName) {
-        DataManager.login(userName, user -> {           //Username exists and match successful
+        UserManager.login(userName, user -> {           //Username exists and match successful
             Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
         }, e -> {
@@ -60,7 +60,7 @@ public class LogInActivity extends AppCompatActivity {
      * @param userName Name of user to create
      */
     private void createUser(String userName) {
-        DataManager.createUser(userName, user -> {
+        UserManager.createUser(userName, user -> {
             Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
         }, e -> {

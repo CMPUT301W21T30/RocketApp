@@ -2,6 +2,8 @@ package com.example.rocketapp.controller;
 
 import android.util.Log;
 
+import com.example.rocketapp.controller.callbacks.Callback;
+import com.example.rocketapp.controller.callbacks.ExceptionCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.CollectionReference;
@@ -12,7 +14,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
+/**
+ * Handles creating, retrieving, and modifying users as well as signing in to firestore.
+ */
 public class UserManager {
     private static User user;
     private static ArrayList<User> userArrayList;
@@ -24,8 +30,9 @@ public class UserManager {
     private static final String USERS = "Users";
 
     private static CollectionReference usersRef;
-    private static DataManager.Callback updateCallback;
     private static final FirebaseFirestore db;
+    private static Callback updateCallback;
+
 
     static {
         db = FirebaseFirestore.getInstance();
@@ -33,9 +40,27 @@ public class UserManager {
     }
 
 
-    public static Boolean signedIn() {
-        return user != null && user.isValid();
+    /**
+     * Private constructor, should not be instantiated
+     */
+    private UserManager() {}
+
+
+    /**
+     * Callback returning a User
+     */
+    public interface UserCallback {
+        void callBack(User user);
     }
+
+
+    /**
+     * @return the currently signed in user
+     */
+    public static User getUser() {
+        return user;
+    }
+
 
     /**
      * Gets the current list of all users
@@ -46,28 +71,24 @@ public class UserManager {
         return userArrayList;
     }
 
+
+    /**
+     * @return true if a valid user is signed in
+     */
+    public static Boolean isSignedIn() {
+        return user != null && user.isValid();
+    }
+
+
     /**
      * Set callback for when Experiments are updated from firestore. Should use to update listviews of experiments.
      * @param callback
      *      Callback for when experiments are updated from firestore.
      */
-    public static void setUpdateCallback(DataManager.Callback callback) {
+    public static void setUpdateCallback(Callback callback) {
         updateCallback = callback;
     }
 
-    /**
-     * Set listener for new users
-     */
-    private static void initializeUsers() {
-        userArrayList = new ArrayList<>();
-        subscriptions = new ArrayList<>();
-        usersRef = db.collection(USERS);
-        usersListener = usersRef.addSnapshotListener((snapshot, e) -> {
-            parseUsersSnapshot(snapshot);
-            Log.d(TAG, "Updated Users.");
-            if (updateCallback != null) updateCallback.callBack();
-        });
-    }
 
     /**
      * Creates a new user and logs in.
@@ -78,7 +99,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when username already exists fails
      */
-    public static void createUser(String userName, DataManager.UserCallback onSuccess, DataManager.ExceptionCallback onFailure) {
+    public static void createUser(String userName, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
                 Log.e(TAG, "CreateUser failed: Username not available");
@@ -102,12 +123,12 @@ public class UserManager {
      * @param onFailure
      *      Callback for when login fails (username does not exist)
      */
-    public static void login(String userName, DataManager.UserCallback onSuccess, DataManager.ExceptionCallback onFailure) {
+    public static void login(String userName, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get()
                 .addOnSuccessListener(task -> {
                     if (task.getDocuments().size() > 0) {
                         DocumentSnapshot snapshot = task.getDocuments().get(0);
-                        user = readFirebaseObjectSnapshot(User.class, snapshot);
+                        user = readFirebaseObjectSnapshot(User.class, snapshot, TAG);
                         if (user != null) {
                             listen(user);  // Listen to subscriptions
                             pullSubscriptions(()-> {
@@ -137,13 +158,10 @@ public class UserManager {
      * @param onFailure
      *      Callback for when update fails
      */
-    public static void updateUser(DataManager.UserCallback onSuccess, DataManager.ExceptionCallback onFailure) {
+    public static void updateUser(UserCallback onSuccess, ExceptionCallback onFailure) {
         push(user, onSuccess, onFailure);
     }
 
-    public static User getUser() {
-        return user;
-    }
 
     /**
      * Retrieve a user from an ID
@@ -160,108 +178,10 @@ public class UserManager {
         return new User("User not found.");
     }
 
-    /**
-     * Sets listener for new user subscriptions and updates the subscriptions list when it's state changes in firestore.
-     * @param user
-     *      User to listen to
-     */
-    private static void listen(User user) {
-        if (subscriptionsListener != null) subscriptionsListener.remove();
-
-        subscriptionsListener = usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).addSnapshotListener((snapshots, e) -> {
-            ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
-            for (QueryDocumentSnapshot snapshot : snapshots)
-                subscriptionsList.add(snapshot.toObject(FirestoreDocument.Id.class));
-            subscriptions = subscriptionsList;
-            Log.d(TAG, "Subscriptions updated");
-            if (updateCallback != null) updateCallback.callBack();
-        });
-    }
 
     /**
-     * Adds or updates a user in firebase.
-     * @param user
-     *      The user class to update or store in firestore.
-     * @param onSuccess
-     *      Callback for when successful
-     * @param onFailure
-     *      Callback for when push fails
+     * @return list of ids for subscribed experiments
      */
-    private static void push(User user, DataManager.UserCallback onSuccess, DataManager.ExceptionCallback onFailure) {
-        if (user.isValid()) {
-            usersRef.document(user.getId().getKey()).set(user)
-                    .addOnSuccessListener(u -> {
-                        onSuccess.callBack(user);
-                    });
-        } else {
-            usersRef.add(user)
-                    .addOnSuccessListener(u -> {
-                        ((FirestoreDocument) user).setId(new FirestoreDocument.Id(u.getId()));
-                        Log.d(TAG, "User created.");
-                        if (onSuccess != null) onSuccess.callBack(user); })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to create user: " + e.toString());
-                        if (onFailure != null) onFailure.callBack(e);
-                    });
-        }
-    }
-
-    /**
-     * Parses and adds id to FirestoreDocument objects from a firestore snapshot
-     * @param typeClass
-     *      The type of object to return
-     * @param snapshot
-     *      The snapshot from firestore
-     * @param <ClassType>
-     *     The type of object to return
-     * @return
-     *      Returns an object extending FirestoreDocument of type ClassType
-     */
-    private static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot) {
-        ClassType object = snapshot.toObject(typeClass);
-        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.Id(snapshot.getId()));
-        else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
-        return object;
-    }
-
-    /**
-     * Pulls the subscription id's for the current user from firestore.
-     * @param onSuccess
-     *      Callback for when subscriptions are pulled from firestore successfuly
-     * @param onFailure
-     *      Callback for when pullSubscriptions fails
-     */
-    private static void pullSubscriptions(DataManager.Callback onSuccess, DataManager.ExceptionCallback onFailure) {
-        usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
-            ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
-            for (QueryDocumentSnapshot sub : subs.getResult())
-                subscriptionsList.add(sub.toObject(FirestoreDocument.Id.class));
-            subscriptions = subscriptionsList;
-            Log.d(TAG, "Subscriptions Updated.");
-            for (FirestoreDocument.Id id : subscriptions) {
-                System.out.println(id.getKey());
-            }
-            onSuccess.callBack();
-        }).addOnFailureListener(e->{
-            Log.e(TAG, "Failed to update subscriptions: " + e.toString());
-            onFailure.callBack(e);
-        });
-    }
-
-    /**
-     * Parses users list snapshot from firestore and stores them in the userArrayList.
-     * @param userSnapshots
-     *      The snapshot from firestore to parse
-     */
-    private static void parseUsersSnapshot(QuerySnapshot userSnapshots) {
-        ArrayList<User> users = new ArrayList<>();
-
-        for (QueryDocumentSnapshot snapshot : userSnapshots)
-            users.add(readFirebaseObjectSnapshot(User.class, snapshot));
-
-        userArrayList = users;
-    }
-
     public static ArrayList<FirestoreDocument.Id> getSubscriptionsIdList() {
         return subscriptions;
     }
@@ -276,8 +196,8 @@ public class UserManager {
      * @param onFailure
      *      Callback for when subscribing fails
      */
-    public static void subscribe(Experiment experiment, DataManager.Callback onSuccess, DataManager.ExceptionCallback onFailure) {
-        if (user == null || !UserManager.getUser().isValid()) {
+    public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+        if (!isSignedIn()) {
             Log.d(TAG, "Failed to subscribe. User must be logged in to subscribe to an experiment.");
             if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. User must be logged in to subscribe to an experiment."));
             return;
@@ -303,6 +223,109 @@ public class UserManager {
             Log.e(TAG, "Subscribe failed: " + e.toString());
             onFailure.callBack(e);
         });
+    }
+
+
+    /**
+     * Set listener for new users
+     */
+    private static void initializeUsers() {
+        userArrayList = new ArrayList<>();
+        subscriptions = new ArrayList<>();
+        usersRef = db.collection(USERS);
+        usersListener = usersRef.addSnapshotListener((snapshot, e) -> {
+            parseUsersSnapshot(snapshot);
+            Log.d(TAG, "Updated Users.");
+            if (updateCallback != null) updateCallback.callBack();
+        });
+    }
+
+
+    /**
+     * Sets listener for new user subscriptions and updates the subscriptions list when it's state changes in firestore.
+     * @param user
+     *      User to listen to
+     */
+    private static void listen(User user) {
+        if (subscriptionsListener != null) subscriptionsListener.remove();
+
+        subscriptionsListener = usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).addSnapshotListener((snapshots, e) -> {
+            ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
+            for (QueryDocumentSnapshot snapshot : snapshots)
+                subscriptionsList.add(snapshot.toObject(FirestoreDocument.Id.class));
+            subscriptions = subscriptionsList;
+            Log.d(TAG, "Subscriptions updated");
+            if (updateCallback != null) updateCallback.callBack();
+        });
+    }
+
+
+    /**
+     * Adds or updates a user in firebase.
+     * @param user
+     *      The user class to update or store in firestore.
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for when push fails
+     */
+    private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
+        if (user.isValid()) {
+            usersRef.document(user.getId().getKey()).set(user)
+                    .addOnSuccessListener(u -> {
+                        onSuccess.callBack(user);
+                    });
+        } else {
+            usersRef.add(user)
+                    .addOnSuccessListener(u -> {
+                        ((FirestoreDocument) user).setId(new FirestoreDocument.Id(u.getId()));
+                        Log.d(TAG, "User created.");
+                        if (onSuccess != null) onSuccess.callBack(user); })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to create user: " + e.toString());
+                        if (onFailure != null) onFailure.callBack(e);
+                    });
+        }
+    }
+
+
+    /**
+     * Pulls the subscription id's for the current user from firestore.
+     * @param onSuccess
+     *      Callback for when subscriptions are pulled from firestore successfuly
+     * @param onFailure
+     *      Callback for when pullSubscriptions fails
+     */
+    private static void pullSubscriptions(Callback onSuccess, ExceptionCallback onFailure) {
+        usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
+            ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
+            for (QueryDocumentSnapshot sub : subs.getResult())
+                subscriptionsList.add(sub.toObject(FirestoreDocument.Id.class));
+            subscriptions = subscriptionsList;
+            Log.d(TAG, "Subscriptions Updated.");
+            for (FirestoreDocument.Id id : subscriptions) {
+                System.out.println(id.getKey());
+            }
+            onSuccess.callBack();
+        }).addOnFailureListener(e->{
+            Log.e(TAG, "Failed to update subscriptions: " + e.toString());
+            onFailure.callBack(e);
+        });
+    }
+
+
+    /**
+     * Parses users list snapshot from firestore and stores them in the userArrayList.
+     * @param userSnapshots
+     *      The snapshot from firestore to parse
+     */
+    private static void parseUsersSnapshot(QuerySnapshot userSnapshots) {
+        ArrayList<User> users = new ArrayList<>();
+
+        for (QueryDocumentSnapshot snapshot : userSnapshots)
+            users.add(readFirebaseObjectSnapshot(User.class, snapshot, TAG));
+
+        userArrayList = users;
     }
 
 }

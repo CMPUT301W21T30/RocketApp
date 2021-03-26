@@ -12,7 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 
@@ -33,7 +34,7 @@ public class ExperimentEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner);
 
-        experiment = DataManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
         
         TextView ownerExperimentNameTextView = findViewById(R.id.OwnerExperimentNameTextView);
         ownerExperimentNameTextView.setText(experiment.info.getDescription());
@@ -43,7 +44,7 @@ public class ExperimentEditActivity extends AppCompatActivity {
 
         Button endExperimentBtn = findViewById(R.id.EndExperimentBtn);
         endExperimentBtn.setOnClickListener(v ->
-            DataManager.endExperiment(experiment, experiment -> finish(), e -> Log.d(TAG, e.toString()))
+            ExperimentManager.endExperiment(experiment, experiment -> finish(), e -> Log.d(TAG, e.toString()))
         );
 
         ActionBar actionBar = getSupportActionBar();
@@ -52,7 +53,8 @@ public class ExperimentEditActivity extends AppCompatActivity {
 
         initRecyclerView();
 
-        DataManager.listen(experiment, this::update);
+        ExperimentManager.listen(experiment, this::update);
+        TrialManager.listen(experiment, this::update);
     }
 
     @Override

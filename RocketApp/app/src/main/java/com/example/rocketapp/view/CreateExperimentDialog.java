@@ -21,8 +21,8 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.helpers.Validate;
-import com.example.rocketapp.controller.DataManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
@@ -127,12 +127,8 @@ public class CreateExperimentDialog extends DialogFragment {
      * Exception handler which checks if Experiment is valid and published or not
      * @param newExperiment Experiment to be published.
      */
-    public void returnExperiment(Experiment newExperiment){ ;
-        DataManager.publishExperiment(newExperiment, experiment -> {
-            Log.d(TAG, "Experiment published");
-        }, exception -> {
-            Log.d(TAG, "Experiment not published");
-        });
+    public void returnExperiment(Experiment newExperiment){
+        ExperimentManager.publishExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
     }
 
     /**
