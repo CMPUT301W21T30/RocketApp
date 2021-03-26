@@ -1,3 +1,9 @@
+* Mar 26th, 2021
+   * Mike will work on the database addressing the feedback and add extra testing to some of its features
+   * Trevor will add a flagging feature to trials to ignore them (available only to owners)
+   * Saif will update statistics to work with flagging, debug some methods (quartiles), and add some testing
+   * Soni and Saif will work on graphs summarizing statistics in the different ways required
+   * Trevor will work on most featrues involving the QR code
 
 * Mar 23rd, 2021
    * Saif will work on statistics displays for experiments (histograms etc)
