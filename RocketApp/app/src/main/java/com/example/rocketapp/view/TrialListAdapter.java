@@ -1,13 +1,16 @@
 package com.example.rocketapp.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
@@ -67,6 +70,22 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
 
         // setting the textView as the trial
         holder.trialTextView.setText(String.valueOf(trials.get(position).getValueString()));
+        holder.trialListItemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (trials.get(position).getIgnore()) {
+                    trials.get(position).setIgnore(false);
+                    int backgroundColor = ContextCompat.getColor(context, R.color.dark_green);
+                    holder.trialListItemLayout.setCardBackgroundColor(backgroundColor);
+                    Toast.makeText(context, "Include Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
+                } else {
+                    trials.get(position).setIgnore(true);
+                    holder.trialListItemLayout.setCardBackgroundColor(Color.RED);
+                    Toast.makeText(context, "Ignore Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
 
     }
 

@@ -9,11 +9,20 @@ import com.google.firebase.firestore.Exclude;
  * Posts the trial information to relevant experiments inside Firestore database
  */
 public abstract class Trial extends DataManager.FirestoreNestableDocument implements DataManager.Type {
+    private Boolean isIgnore = false;
 
     /**
      * Default constructor for firestore serialization. Do not use.
      */
     public Trial() { }
+
+    public Boolean getIgnore() {
+        return isIgnore;
+    }
+
+    public void setIgnore(Boolean ignore) {
+        isIgnore = ignore;
+    }
 
     /**
      * getter for type of experiment
