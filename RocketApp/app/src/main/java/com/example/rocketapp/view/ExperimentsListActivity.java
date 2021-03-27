@@ -43,39 +43,24 @@ public class ExperimentsListActivity extends AppCompatActivity{
         setContentView(R.layout.activity_experiments_list);
 
         initRecyclerViewOwned();
-
         initRecyclerViewSubscribed();
 
-        ImageButton profileBtn = findViewById(R.id.experiment_options);
-        profileBtn.setOnClickListener(v -> {
+        findViewById(R.id.experiment_options).setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
             userProfileIntent.putExtra("id", UserManager.getUser().getId());
             startActivity(userProfileIntent);
         });
 
-        Button showAllExperiment = findViewById(R.id.showAllExp);
-        showAllExperiment.setOnClickListener(v -> {
+        findViewById(R.id.showAllExp).setOnClickListener(v -> {
             Intent allExpIntent = new Intent(getApplicationContext(), ExperimentSearchActivity.class);
             startActivity(allExpIntent);
         });
 
-        Button addNewExperiment = findViewById(R.id.createExpBtn);
-        addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
-
-        ExperimentManager.setUpdateCallback(()-> {
-            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
-            Log.d(TAG, "Updated Owned");
-        });
-        UserManager.setUpdateCallback(()-> {
-            adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList());
-            Log.e(TAG, "subscribed updated: " + ExperimentManager.getSubscribedExperimentArrayList().toString());
-        });
+        findViewById(R.id.createExpBtn).setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        Log.e(TAG,UserManager.getUser().toString());
     }
 
 
@@ -96,8 +81,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-//        initRecyclerViewOwned();
-//        initRecyclerViewSubscribed();
+
+        ExperimentManager.setUpdateCallback(()-> {
+            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
+            adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList());
+        });
+        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
     }
 
     /**
