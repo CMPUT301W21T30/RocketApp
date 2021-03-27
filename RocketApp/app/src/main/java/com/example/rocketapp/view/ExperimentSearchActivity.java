@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Display unsubscribed experiments on a new activity.
  */
 public class ExperimentSearchActivity extends RocketAppActivity {
-    private static final String TAG = "AllExperimentsActivity";
+    private static final String TAG = "ExperimentSearchAct";
     private ArrayList<Experiment> experimentList;
     private ExperimentListAdapter adapter;
 
@@ -59,6 +59,8 @@ public class ExperimentSearchActivity extends RocketAppActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ExperimentManager.setUpdateCallback(()-> filter(searchExperiments.getText().toString()));
     }
 
     @Override
@@ -70,19 +72,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void setContentView(View view) {
-        super.setContentView(view);
-        view.setOnTouchListener((v, motionEvent) -> {
-            v.performClick();
-            toggleKeyboard(false);
-            return false;
-        });
-        view.setOnClickListener(v->{
-            toggleKeyboard(false);
-        });
-    }
+    
 
     /**
      * initialize/ update recycler view with the list of given experiments
@@ -91,7 +81,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
-        experimentList = ExperimentManager.getExperimentArrayList("", false, true);
+        experimentList = ExperimentManager.getExperimentArrayList("", false, false);
 
         adapter = new ExperimentListAdapter(experimentList, experiment -> {
             UserManager.subscribe(experiment, () -> {
@@ -114,7 +104,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
      * @param text
      */
     public void filter(String text){
-        adapter.updateList(ExperimentManager.getExperimentArrayList(text, false, true));
+        adapter.updateList(ExperimentManager.getExperimentArrayList(text, false, false));
     }
     
 }

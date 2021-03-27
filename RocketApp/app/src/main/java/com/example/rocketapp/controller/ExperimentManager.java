@@ -94,20 +94,11 @@ public class ExperimentManager {
         ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
         if (!includeSubscribed)
             ignored.addAll(UserManager.getSubscriptionsIdList());
-        for(Experiment experiment: experimentArrayList){
-            if (experiment.getState().equals(Experiment.State.UNPUBLISHED)) {
-                ignored.add(experiment.getId());
-            }
-        }
 
         return getExperimentArrayList(experiment -> {
-
+            if (!experiment.isPublished()) return false;
+            if (!includeOwned && UserManager.getUser().isOwner(experiment)) return false;
             if (ignored.contains(experiment.getId())) return false;
-            System.out.println(experiment.getOwnerId().getKey() + " " + UserManager.getUser().getId().getKey());
-            if (!includeOwned && experiment.getOwnerId().equals(UserManager.getUser().getId())) {
-                System.out.println("false");
-                return false;
-            }
 
             for (String word : words)
                 if (!experiment.toSearchString().toLowerCase().contains(word.toLowerCase()))
@@ -173,8 +164,8 @@ public class ExperimentManager {
 
         for (FirestoreDocument.Id id : UserManager.getSubscriptionsIdList()) {
             for (Experiment experiment : experimentArrayList) {
-                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
-                    if(!(experiment.getState().equals(Experiment.State.UNPUBLISHED))) {
+                if (experiment.isValid() && experiment.getId().equals(id)) {
+                    if(experiment.isPublished()) {
                         filteredExperiments.add(experiment);
                     }
                 }
@@ -197,6 +188,37 @@ public class ExperimentManager {
         return null;
     }
 
+    /**
+     * Creates a new experiment
+     * @param experiment
+     *      Experiment to publish
+     * @param onSuccess
+     *      Callback for when successful
+     * @param onFailure
+     *      Callback for failure
+     */
+    public static void createExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
+        if (!UserManager.isSignedIn()) {
+            Log.e(TAG, "Create Experiment Failed. User must be signed in to create an experiment.");
+            onFailure.callBack(new Exception("Create Experiment Failed. User must be signed in to create an experiment."));
+            return;
+        }
+
+        if (experiment == null) {
+            Log.e(TAG, "Create Experiment Failed. Experiment was null.");
+            onFailure.callBack(new Exception("Create Experiment Failed. Experiment was null."));
+            return;
+        }
+
+        if (experiment.isValid()) {
+            Log.e(TAG, "Create Experiment Failed. Can only pass NEW Experiments.");
+            onFailure.callBack(new Exception("Create Experiment Failed. Can only pass NEW Experiments."));
+            return;
+        }
+
+        ((FirestoreOwnableDocument) experiment).setOwner(UserManager.getUser());
+        push(experiment, onSuccess, onFailure);
+    }
 
     /**
      * Publish a new experiment
@@ -209,19 +231,24 @@ public class ExperimentManager {
      */
     public static void publishExperiment(Experiment experiment, ExperimentCallback onSuccess, ExceptionCallback onFailure) {
         if (!UserManager.isSignedIn()) {
-            Log.e(TAG, "publishExperiment() Failed. User must be signed in to publish experiment.");
+            Log.e(TAG, "Publish Failed. User must be signed in to publish experiment.");
             onFailure.callBack(new Exception("Publish Experiment Failed. User must be signed in to publish experiment."));
             return;
         }
 
         if (experiment == null) {
-            Log.e(TAG, "publishExperiment() Failed. Experiment was null.");
+            Log.e(TAG, "Publish Failed. Experiment was null.");
             onFailure.callBack(new Exception("Publish Experiment Failed. Experiment was null."));
             return;
         }
 
-        ((FirestoreOwnableDocument) experiment).setOwnerId(UserManager.getUser().getId());
-        experiment.setState(Experiment.State.PUBLISHED);
+        if (experiment.ownerIsValid() && !UserManager.getUser().isOwner(experiment)) {
+            Log.e(TAG, "Publish Failed. Experiment does not belong to current user.");
+            onFailure.callBack(new Exception("Publish Failed. Experiment does not belong to current user."));
+            return;
+        }
+
+        experiment.setPublished(true);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -248,13 +275,13 @@ public class ExperimentManager {
             return;
         }
 
-        if (!experiment.getOwnerId().equals(UserManager.getUser().getId())) {
+        if (!UserManager.getUser().isOwner(experiment)) {
             Log.e(TAG, "User (" + UserManager.getUser().getId().getKey() + ") does not own this experiment " + experiment.getOwnerId().getKey() + ". Cannot un-publish.");
-            onFailure.callBack(new Exception("User does not own this experiment. Cannot un-publish."));
+            onFailure.callBack(new Exception("Unpublish Failed. User does not own this experiment."));
             return;
         }
 
-        experiment.setState(Experiment.State.UNPUBLISHED);
+        experiment.setPublished(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -287,7 +314,7 @@ public class ExperimentManager {
             return;
         }
 
-        experiment.setState(Experiment.State.ENDED);
+        experiment.setActive(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -315,10 +342,11 @@ public class ExperimentManager {
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
             if (updatedExperiment != null) {
                 experiment.info = updatedExperiment.info;
-                experiment.setState(updatedExperiment.getState());
+                experiment.setActive(updatedExperiment.isActive());
+                experiment.setPublished(updatedExperiment.isPublished());
             }
             else Log.e(TAG, "classType null in listen");
-
+            Log.e(TAG, "Published " + experiment.isPublished());
             onUpdate.callBack(experiment);
         });
     }

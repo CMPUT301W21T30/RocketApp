@@ -128,7 +128,7 @@ public class CreateExperimentDialog extends DialogFragment {
      * @param newExperiment Experiment to be published.
      */
     public void returnExperiment(Experiment newExperiment){
-        ExperimentManager.publishExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
+        ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
     }
 
     /**

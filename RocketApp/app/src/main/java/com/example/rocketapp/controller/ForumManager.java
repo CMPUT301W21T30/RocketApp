@@ -82,7 +82,7 @@ public class ForumManager {
      *      Callback for when push fails
      */
     public static void addQuestion(Question question, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
-        ((FirestoreOwnableDocument) question).setOwnerId(UserManager.getUser().getId());
+        ((FirestoreOwnableDocument) question).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) question).setParent(experiment.getId());
         push(question, experiment, onSuccess, onFailure);
 
@@ -120,7 +120,7 @@ public class ForumManager {
      *      Callback for when push fails
      */
     public static void addAnswer(Answer answer, Question question, Callback onSuccess, ExceptionCallback onFailure) {
-        ((FirestoreOwnableDocument) answer).setOwnerId(UserManager.getUser().getId());
+        ((FirestoreOwnableDocument) answer).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) answer).setParent(question.getId());
         push(answer, ExperimentManager.getExperiment(question.getParentId()), onSuccess, onFailure);
     }
@@ -170,7 +170,6 @@ public class ForumManager {
             return;
         }
 
-        ((FirestoreOwnableDocument) comment).setOwnerId(UserManager.getUser().getId());
         CollectionReference commentsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(COMMENTS);
 
         if (comment.getId() != null) {
@@ -182,6 +181,8 @@ public class ForumManager {
                 onFailure.callBack(e);
             });
         } else {
+
+            ((FirestoreOwnableDocument) comment).setOwner(UserManager.getUser());
             commentsRef.add(comment).addOnCompleteListener(task -> {
                 ((FirestoreDocument) comment).setId(new FirestoreDocument.Id(task.getResult().getId()));
                 Log.d(TAG, "Comment Added.");

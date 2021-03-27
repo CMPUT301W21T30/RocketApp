@@ -10,12 +10,15 @@ import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
+import java.util.Calendar;
+
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
 /**
@@ -130,8 +133,12 @@ public class TrialManager {
             return;
         }
 
-        ((FirestoreOwnableDocument) trial).setOwnerId(UserManager.getUser().getId());
-        ((FirestoreNestableDocument) trial).setParent(UserManager.getUser().getId());
+        if (trial.ownerIsValid() && !trial.getOwner().equals(UserManager.getUser())) {
+            Log.e(TAG, "Push failed. User does not own trial.");
+            onFailure.callBack(new Exception("Push failed. User does not own trial."));
+            return;
+        }
+
         CollectionReference trialsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(TRIALS);
 
         if (trial.getId() != null) {
@@ -143,6 +150,9 @@ public class TrialManager {
                 onFailure.callBack(e);
             });
         } else {
+            ((FirestoreOwnableDocument) trial).setOwner(UserManager.getUser());
+            ((FirestoreNestableDocument) trial).setParent(experiment.getId());
+
             trialsRef.add(trial).addOnSuccessListener(trialSnapshot -> {
                 ((FirestoreDocument) trial).setId(new FirestoreDocument.Id(trialSnapshot.getId()));
                 Log.d(TAG, "Trial Added.");

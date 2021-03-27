@@ -66,11 +66,16 @@ public class ExperimentsListActivity extends AppCompatActivity{
             adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
             Log.d(TAG, "Updated Owned");
         });
-        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
+        UserManager.setUpdateCallback(()-> {
+            adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList());
+            Log.e(TAG, "subscribed updated: " + ExperimentManager.getSubscribedExperimentArrayList().toString());
+        });
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Log.e(TAG,UserManager.getUser().toString());
     }
 
 
@@ -91,13 +96,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        initRecyclerViewOwned();
-        initRecyclerViewSubscribed();
-//        ExperimentManager.setUpdateCallback(()-> {
-//            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
-//            Log.d(TAG, "Updated Owned");
-//        });
-//        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
+//        initRecyclerViewOwned();
+//        initRecyclerViewSubscribed();
     }
 
     /**

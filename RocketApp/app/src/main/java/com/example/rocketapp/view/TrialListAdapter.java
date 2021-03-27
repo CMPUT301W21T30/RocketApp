@@ -73,13 +73,13 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
         holder.trialListItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (trials.get(position).getIgnore()) {
-                    trials.get(position).setIgnore(false);
+                if (trials.get(position).getIgnored()) {
+                    trials.get(position).setIgnored(false);
                     int backgroundColor = ContextCompat.getColor(context, R.color.dark_green);
                     holder.trialListItemLayout.setCardBackgroundColor(backgroundColor);
                     Toast.makeText(context, "Include Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
                 } else {
-                    trials.get(position).setIgnore(true);
+                    trials.get(position).setIgnored(true);
                     holder.trialListItemLayout.setCardBackgroundColor(Color.RED);
                     Toast.makeText(context, "Ignore Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
 
