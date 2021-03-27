@@ -44,7 +44,7 @@ captures/
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
-RocketApp/.idea/shelf
+RocketApp/.idea/shelf/
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
