@@ -24,7 +24,7 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <activity
-            android:name=".MapsActivity"
+            android:name=".view.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
 
         <!--
@@ -35,22 +35,28 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <activity android:name=".ExperimentForumActivity" />
-        <activity android:name=".ExperimentEditActivity" />
-        <activity android:name=".ExperimentActivity" />
-        <activity android:name=".ExperimentSearchActivity" />
-        <activity android:name=".LogInActivity">
+        <activity android:name=".view.ExperimentForumActivity"></activity>
+        <activity
+            android:name=".view.ExperimentEditActivity" />
+        <activity
+            android:name=".view.ExperimentActivity" />
+        <activity
+            android:name=".view.ExperimentSearchActivity" />
+        <activity
+            android:name=".view.LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileActivity" />
-        <activity android:name=".ExperimentsListActivity" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyApi8BtHYvyFUCe5w5XAnIa7fKEwYI8Zgs" />
+        <activity
+            android:name=".view.UserProfileActivity"/>
+        <activity
+            android:name=".view.ExperimentsListActivity" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

@@ -1,5 +1,9 @@
 package com.example.rocketapp;
 
+import com.example.rocketapp.model.experiments.BinomialExperiment;
+import com.example.rocketapp.model.trials.BinomialTrial;
+import com.example.rocketapp.model.experiments.Experiment;
+
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
