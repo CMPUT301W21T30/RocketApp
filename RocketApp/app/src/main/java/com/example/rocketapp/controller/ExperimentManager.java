@@ -95,7 +95,7 @@ public class ExperimentManager {
         if (!includeSubscribed)
             ignored.addAll(UserManager.getSubscriptionsIdList());
         for(Experiment experiment: experimentArrayList)
-            if (experiment.isPublished())
+            if (!experiment.isPublished())
                 ignored.add(experiment.getId());
 
         return getExperimentArrayList(experiment -> {
@@ -171,7 +171,7 @@ public class ExperimentManager {
 
         for (FirestoreDocument.Id id : UserManager.getSubscriptionsIdList()) {
             for (Experiment experiment : experimentArrayList) {
-                if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
+                if (experiment.isValid() && experiment.getId().equals(id)) {
                     if(experiment.isPublished()) {
                         filteredExperiments.add(experiment);
                     }
@@ -258,7 +258,7 @@ public class ExperimentManager {
             return;
         }
 
-        experiment.setIsPublished(false);
+        experiment.setPublished(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -291,7 +291,7 @@ public class ExperimentManager {
             return;
         }
 
-        experiment.setIsActive(false);
+        experiment.setActive(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -319,8 +319,8 @@ public class ExperimentManager {
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
             if (updatedExperiment != null) {
                 experiment.info = updatedExperiment.info;
-                experiment.setIsActive(updatedExperiment.isActive());
-                experiment.setIsPublished(updatedExperiment.isPublished());
+                experiment.setActive(updatedExperiment.isActive());
+                experiment.setPublished(updatedExperiment.isPublished());
             }
             else Log.e(TAG, "classType null in listen");
 

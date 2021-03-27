@@ -58,11 +58,11 @@ public abstract class Experiment extends FirestoreOwnableDocument {
         this(new ExperimentInfo(description, region, minTrials, geoLocationEnabled));
     }
 
-    public void setIsActive(boolean isActive) {
+    public void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
-    public void setIsPublished(boolean isActive) {
+    public void setPublished(boolean isActive) {
         this.isPublished = isActive;
     }
 
