@@ -7,7 +7,6 @@ import com.google.firebase.firestore.Exclude;
  */
 public class CountTrial extends Trial implements Comparable<CountTrial>{
     public static final String TYPE = "Count";      //Type of trial
-
     private int count;      //value of trial
 
     /**

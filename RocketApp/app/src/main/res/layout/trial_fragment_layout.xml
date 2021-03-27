@@ -114,6 +114,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/addFailure"
                 app:layout_constraintVertical_bias="0.0" />
 
+            <TextView
+                android:id="@+id/warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="8dp"
+                android:background="#FA0202"
+                android:foregroundGravity="center|center_horizontal"
+                android:gravity="center|center_horizontal"
+                android:text="WARNING - Your current location will be accessed to add this trial."
+                android:textColor="#FFFFFF"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_cancel" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

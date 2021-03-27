@@ -67,4 +67,5 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
     public void setMeasurement(float value){
         measurement = value;
     }
+
 }
