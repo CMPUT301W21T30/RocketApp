@@ -9,8 +9,7 @@ import com.google.firebase.firestore.Exclude;
 public class BinomialTrial extends Trial {
     public static final String TYPE = "Binomial";
     private boolean value;
-    private double latitude;
-    private double longitude;
+    private Geolocation location;
 
     /**
      * Default constructor for firestore serialization. Do not use.
@@ -55,22 +54,12 @@ public class BinomialTrial extends Trial {
         return value ? "True" : "False";
     }
 
-    @Override
-    public double getLongitude() {
-        return longitude;
+
+    public Geolocation getLocation() {
+        return location;
     }
 
-    @Override
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    @Override
-    public double getLatitude() {
-        return latitude;
+    public void setLocation(Geolocation location) {
+        this.location = location;
     }
 }

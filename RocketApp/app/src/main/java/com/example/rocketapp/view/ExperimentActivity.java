@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rocketapp.model.trials.Geolocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -172,7 +173,7 @@ public class ExperimentActivity extends AppCompatActivity {
 
     void onAddTrialClicked(View view) {
         if (!experiment.info.isGeoLocationEnabled()) {
-            new TrialFragment(experiment.getType(), newTrial -> {
+            new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
                 TrialManager.addTrial(newTrial, experiment, t -> {
                     Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
                 }, e -> {
@@ -181,9 +182,7 @@ public class ExperimentActivity extends AppCompatActivity {
             }).show(getSupportFragmentManager(), "ADD_TRIAL");
         }
         else{
-            Log.d("Tag", "Starting geo");
             if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-                Log.d("TAG", "Permission granted");
                 fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                 fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                     @Override
@@ -192,11 +191,9 @@ public class ExperimentActivity extends AppCompatActivity {
                             Log.d(TAG, "Result was null");
                             return;
                         }
-                        System.out.println(task.getResult().getLatitude());
-                        System.out.println(task.getResult().getLongitude());
-                        new TrialFragment(experiment.getType(), newTrial -> {
-                            newTrial.setLatitude(task.getResult().getLatitude());
-                            newTrial.setLongitude(task.getResult().getLongitude());
+                        Geolocation location = new Geolocation(task.getResult().getLongitude(), task.getResult().getLatitude());
+                        new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
+                            newTrial.setLocation(location);
                             TrialManager.addTrial(newTrial, experiment, t -> {
                                 Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
                             }, e -> {

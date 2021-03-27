@@ -37,11 +37,7 @@ public abstract class Trial extends FirestoreNestableDocument {
     @Exclude
     public abstract String getValueString();
 
-    public abstract double getLatitude();
+    public abstract Geolocation getLocation();
 
-    public abstract double getLongitude();
-
-    public abstract void setLatitude(double latitude);
-
-    public abstract void setLongitude(double longitude);
+    public abstract void setLocation(Geolocation location);
 }

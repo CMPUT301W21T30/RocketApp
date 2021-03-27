@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.experiments.IntCountExperiment;
+import com.example.rocketapp.model.trials.Geolocation;
 import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 
@@ -37,10 +39,13 @@ public class TrialFragment extends DialogFragment {
     private String type;
     private EditText inputEditText;
     private TrialManager.TrialCallback callback;
+    private TextView warning;
+    private boolean geo;
 
-    public TrialFragment(String type, TrialManager.TrialCallback callback) {
+    public TrialFragment(String type, Boolean geo, TrialManager.TrialCallback callback) {
         this.type = type;
         this.callback = callback;
+        this.geo = geo;
     }
 
 
@@ -53,6 +58,11 @@ public class TrialFragment extends DialogFragment {
 
         inputEditText = view.findViewById(R.id.inputEditText);
         view.findViewById(R.id.button_cancel).setOnClickListener(i -> alertDialog.dismiss());
+        warning = view.findViewById(R.id.warning);
+
+        if(!geo){
+            warning.setVisibility(View.INVISIBLE);
+        }
 
         if (type.equals(BinomialTrial.TYPE)) {
             view.findViewById(R.id.inputEditText).setVisibility(View.GONE);

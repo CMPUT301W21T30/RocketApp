@@ -1,8 +1,15 @@
 package com.example.rocketapp.view;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
+import android.app.ActionBar;
+import android.app.Notification;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
@@ -22,6 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Experiment experiment;
     private ArrayList<? extends Trial> trialList;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +41,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void onUpdate(Experiment experiment) {
         trialList = experiment.getTrials();
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        try {
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     /**
@@ -56,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         
         for(int i = 0; i<trialList.size(); i++){
             try{
-            LatLng mark = new LatLng(trialList.get(i).getLatitude(), trialList.get(i).getLongitude());
+            LatLng mark = new LatLng(trialList.get(i).getLocation().getLatitude(), trialList.get(i).getLocation().getLongitude());
             mMap.addMarker(new MarkerOptions().position(mark).title(trialList.get(i).getValueString()));
         }
             catch (Exception e){

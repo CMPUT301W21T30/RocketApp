@@ -7,8 +7,7 @@ import com.google.firebase.firestore.Exclude;
  */
 public class CountTrial extends Trial implements Comparable<CountTrial>{
     public static final String TYPE = "Count";      //Type of trial
-    private double longitude;
-    private double latitude;
+    private Geolocation location;
 
     private int count;      //value of trial
 
@@ -66,21 +65,12 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
         return this.getCount() - compareCount;
     }
 
-    @Override
-    public double getLatitude() {
-        return latitude;
+
+    public Geolocation getLocation() {
+        return location;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    @Override
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLocation(Geolocation location) {
+        this.location = location;
     }
 }
