@@ -87,8 +87,8 @@ public class UserManager {
      *      Callback for when experiments are updated from firestore.
      */
     public static void setUpdateCallback(Callback callback) {
-        Log.d(TAG, "Set Update Callback");
         updateCallback = callback;
+        updateCallback.callBack();
     }
 
 

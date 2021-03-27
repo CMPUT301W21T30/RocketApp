@@ -91,7 +91,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
-        experimentList = ExperimentManager.getExperimentArrayList("", false, true);
+        experimentList = ExperimentManager.getExperimentArrayList("", false, false);
 
         adapter = new ExperimentListAdapter(experimentList, experiment -> {
             UserManager.subscribe(experiment, () -> {
@@ -114,7 +114,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
      * @param text
      */
     public void filter(String text){
-        adapter.updateList(ExperimentManager.getExperimentArrayList(text, false, true));
+        adapter.updateList(ExperimentManager.getExperimentArrayList(text, false, false));
     }
     
 }
