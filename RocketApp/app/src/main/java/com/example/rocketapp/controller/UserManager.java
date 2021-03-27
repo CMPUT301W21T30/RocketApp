@@ -86,6 +86,7 @@ public class UserManager {
      *      Callback for when experiments are updated from firestore.
      */
     public static void setUpdateCallback(Callback callback) {
+        Log.d(TAG, "Set Update Callback");
         updateCallback = callback;
     }
 
@@ -170,7 +171,7 @@ public class UserManager {
      * @return
      *      User object matching id
      */
-    public static User getUser(FirestoreDocument.Id id) {
+    public static User getUser(Object id) {
         for (User user : userArrayList)
             if (user.getId().equals(id))
                 return user;

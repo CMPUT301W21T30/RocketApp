@@ -63,6 +63,9 @@ public class ExperimentActivity extends AppCompatActivity {
             meanText.setText("Success Ratio");
         }
 
+        TextView ownerTextView = findViewById(R.id.ownerTextView);
+        ownerTextView.setOnClickListener(this::onOwnerClicked);
+        ownerTextView.setText(experiment.getOwner().getName());
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
         experimentType.setText(experiment.getType());
 
@@ -153,6 +156,12 @@ public class ExperimentActivity extends AppCompatActivity {
     void onForumButtonClicked(View view) {
         Intent intent = new Intent(this, ExperimentForumActivity.class);
         intent.putExtra("id", experiment.getId());
+        startActivity(intent);
+    }
+
+    void onOwnerClicked(View view) {
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra("id", experiment.getOwnerId());
         startActivity(intent);
     }
 

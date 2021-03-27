@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Display unsubscribed experiments on a new activity.
  */
-public class ExperimentSearchActivity extends AppCompatActivity {
+public class ExperimentSearchActivity extends RocketAppActivity {
     private static final String TAG = "AllExperimentsActivity";
     private ArrayList<Experiment> experimentList;
     private ExperimentListAdapter adapter;
@@ -68,6 +71,19 @@ public class ExperimentSearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        view.setOnTouchListener((v, motionEvent) -> {
+            v.performClick();
+            toggleKeyboard(false);
+            return false;
+        });
+        view.setOnClickListener(v->{
+            toggleKeyboard(false);
+        });
+    }
+
     /**
      * initialize/ update recycler view with the list of given experiments
      * or the updated list depending on the searched keyword
@@ -78,11 +94,12 @@ public class ExperimentSearchActivity extends AppCompatActivity {
         experimentList = ExperimentManager.getExperimentArrayList("", false, true);
 
         adapter = new ExperimentListAdapter(experimentList, experiment -> {
-            UserManager.subscribe(experiment,() -> {
+            UserManager.subscribe(experiment, () -> {
                 Log.d(TAG, "Subscribed");
+                toggleKeyboard(false);
                 finish();
             } ,exception -> {
-                Log.d(TAG, "Could not be subscribed.");
+                Log.d(TAG, exception.toString());
             });
         });
 
