@@ -133,9 +133,9 @@ public class TrialManager {
             return;
         }
 
-        if (trial.ownerIsValid() && !UserManager.getUser().isOwner(trial)) {
-            Log.e(TAG, "Push failed. User does not own trial.");
-            onFailure.callBack(new Exception("Push failed. User does not own trial."));
+        if (trial.ownerIsValid() && !UserManager.getUser().isOwner(experiment)) {
+            Log.e(TAG, "Push failed. User does not own experiment. Cannot update trial.");
+            onFailure.callBack(new Exception("Push failed. User does not own experiment. Cannot update trial."));
             return;
         }
 
