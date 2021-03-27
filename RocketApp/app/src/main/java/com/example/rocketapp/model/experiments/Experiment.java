@@ -71,7 +71,7 @@ public abstract class Experiment extends FirestoreOwnableDocument {
     }
 
     public boolean isPublished() {
-        return isActive;
+        return isPublished;
     }
 
     /**

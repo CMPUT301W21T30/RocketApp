@@ -151,10 +151,19 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
     void onPublishClicked(View view) {
-        if (experiment.isPublished())
-            ExperimentManager.unpublishExperiment(experiment, experiment-> {}, e-> {});
-        else
-            ExperimentManager.publishExperiment(experiment, experiment-> {}, e-> {});
+
+        Log.d("ExperimentActivity", "Publish Clicked Published: " + experiment.isPublished());
+
+        if (experiment.isPublished()){
+            Log.e(TAG, "Calling un-publishExperiment");
+            ExperimentManager.unpublishExperiment(experiment, this::update, e-> {});
+
+        }
+        else {
+            Log.e(TAG, "Calling publishExperiment");
+            ExperimentManager.publishExperiment(experiment, this::update, e-> {});
+        }
+
     }
 
     void onEndClicked(View view) {
@@ -230,6 +239,8 @@ public class ExperimentActivity extends AppCompatActivity {
      *          Experiment of current view
      */
     void update(Experiment experiment) {
+
+
         // Could add all updates here
         meanTextView.setText(String.valueOf(experiment.getMean()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
@@ -238,7 +249,14 @@ public class ExperimentActivity extends AppCompatActivity {
         statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
-        if (UserManager.getUser().isOwner(experiment))
+        if (UserManager.getUser().isOwner(experiment)) {
+
+            Log.d("ExperimentActivity", "Update Published: " + experiment.isPublished() + " Active " + experiment.isActive());
+
             publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");
+            endExperimentButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.GONE);
+        } else {
+            Log.d("ExperimentActivity", "Not Owner");
+        }
     }
 }
