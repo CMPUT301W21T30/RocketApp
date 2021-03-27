@@ -94,18 +94,11 @@ public class ExperimentManager {
         ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
         if (!includeSubscribed)
             ignored.addAll(UserManager.getSubscriptionsIdList());
-        for(Experiment experiment: experimentArrayList)
-            if (!experiment.isPublished())
-                ignored.add(experiment.getId());
 
         return getExperimentArrayList(experiment -> {
-
+            if (!experiment.isPublished()) return false;
+            if (!includeOwned && UserManager.getUser().isOwner(experiment)) return false;
             if (ignored.contains(experiment.getId())) return false;
-
-            if (!includeOwned && experiment.getOwnerId().equals(UserManager.getUser().getId())) {
-                System.out.println("false");
-                return false;
-            }
 
             for (String word : words)
                 if (!experiment.toSearchString().toLowerCase().contains(word.toLowerCase()))
