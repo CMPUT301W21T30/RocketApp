@@ -1,12 +1,13 @@
 package com.example.rocketapp.controller;
 
-import android.util.Log;
-
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.Exclude;
 
-public abstract class FirestoreOwnableDocument extends FirestoreDocument {
 
+/**
+ * An object with an id as well as an id of the user that owns the object.
+ */
+public abstract class FirestoreOwnableDocument extends FirestoreDocument {
     private FirestoreDocument.Id ownerId;     // The firestore documentId for this objects owner
 
     /**
@@ -16,15 +17,16 @@ public abstract class FirestoreOwnableDocument extends FirestoreDocument {
         return ownerId;
     }
 
+
     /**
-     * Set the ownerDocumentId for this object. Use when creating objects in subcollections of an object in firestore.
-     * @param id owner documentId for this object.
+     * Set the ownerDocumentId for this object from a User.
+     * @param owner owning user for this object.
      */
-    void setOwnerId(FirestoreDocument.Id id) {
-        if (id == null || !id.isValid())
-            Log.e(TAG, "Tried to call setOwnerId with invalid id.");
-        else
-            ownerId = id;
+    FirestoreOwnableDocument setOwner(User owner) {
+        if (owner.isValid()) {
+            ownerId = owner.getId();
+        }
+        return this;
     }
 
 

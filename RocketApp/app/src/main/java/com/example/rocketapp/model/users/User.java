@@ -1,5 +1,7 @@
 package com.example.rocketapp.model.users;
 import com.example.rocketapp.controller.FirestoreDocument;
+import com.example.rocketapp.controller.FirestoreOwnableDocument;
+import com.google.firebase.firestore.Exclude;
 
 /**
  * User are users of this application
@@ -25,6 +27,13 @@ public class User extends FirestoreDocument {
     public User(String name) {
         this.name = name;
     }
+
+
+    @Exclude
+    public boolean isOwner(FirestoreOwnableDocument ownable) {
+        return ownable.getOwner().equals(this);
+    }
+
 
     /**
      * getter for username of User
@@ -53,6 +62,7 @@ public class User extends FirestoreDocument {
         return "User{" +
                 "name='" + name + '\'' +
                 ", id='" + getId() + '\'' +
+                ", timestamp=" + getTimestamp() +
                 '}';
     }
 

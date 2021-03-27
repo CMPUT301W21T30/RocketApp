@@ -94,16 +94,14 @@ public class ExperimentManager {
         ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
         if (!includeSubscribed)
             ignored.addAll(UserManager.getSubscriptionsIdList());
-        for(Experiment experiment: experimentArrayList){
-            if (experiment.getState().equals(Experiment.State.UNPUBLISHED)) {
+        for(Experiment experiment: experimentArrayList)
+            if (experiment.isPublished())
                 ignored.add(experiment.getId());
-            }
-        }
 
         return getExperimentArrayList(experiment -> {
 
             if (ignored.contains(experiment.getId())) return false;
-            System.out.println(experiment.getOwnerId().getKey() + " " + UserManager.getUser().getId().getKey());
+
             if (!includeOwned && experiment.getOwnerId().equals(UserManager.getUser().getId())) {
                 System.out.println("false");
                 return false;
@@ -174,7 +172,7 @@ public class ExperimentManager {
         for (FirestoreDocument.Id id : UserManager.getSubscriptionsIdList()) {
             for (Experiment experiment : experimentArrayList) {
                 if (experiment.isValid() && experiment.getId().getKey().equals(id.getKey())) {
-                    if(!(experiment.getState().equals(Experiment.State.UNPUBLISHED))) {
+                    if(experiment.isPublished()) {
                         filteredExperiments.add(experiment);
                     }
                 }
@@ -220,8 +218,14 @@ public class ExperimentManager {
             return;
         }
 
-        ((FirestoreOwnableDocument) experiment).setOwnerId(UserManager.getUser().getId());
-        experiment.setState(Experiment.State.PUBLISHED);
+        if (experiment.isValid()) {
+            Log.e(TAG, "publishExperiment() Failed. Experiment already exists.");
+            onFailure.callBack(new Exception("publishExperiment() Failed. Experiment already exists."));
+            return;
+        }
+
+        ((FirestoreOwnableDocument) experiment).setOwner(UserManager.getUser());
+
         push(experiment, onSuccess, onFailure);
     }
 
@@ -254,7 +258,7 @@ public class ExperimentManager {
             return;
         }
 
-        experiment.setState(Experiment.State.UNPUBLISHED);
+        experiment.setIsPublished(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -287,7 +291,7 @@ public class ExperimentManager {
             return;
         }
 
-        experiment.setState(Experiment.State.ENDED);
+        experiment.setIsActive(false);
         push(experiment, onSuccess, onFailure);
     }
 
@@ -315,7 +319,8 @@ public class ExperimentManager {
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
             if (updatedExperiment != null) {
                 experiment.info = updatedExperiment.info;
-                experiment.setState(updatedExperiment.getState());
+                experiment.setIsActive(updatedExperiment.isActive());
+                experiment.setIsPublished(updatedExperiment.isPublished());
             }
             else Log.e(TAG, "classType null in listen");
 

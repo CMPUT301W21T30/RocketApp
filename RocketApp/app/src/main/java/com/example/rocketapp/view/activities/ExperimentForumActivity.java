@@ -1,19 +1,15 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.helper.widget.Layer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.ForumManager;
@@ -21,9 +17,12 @@ import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.users.User;
+import com.example.rocketapp.view.QuestionListAdapter;
+import com.example.rocketapp.view.RocketAppActivity;
+import com.example.rocketapp.view.UserProfileActivity;
 
 public class ExperimentForumActivity extends RocketAppActivity {
-    private static final String TAG = "QuestionsActivity";
+    private static final String TAG = "ForumActivity";
     private Experiment experiment;
     private QuestionListAdapter adapter;
     private EditText inputEditText;

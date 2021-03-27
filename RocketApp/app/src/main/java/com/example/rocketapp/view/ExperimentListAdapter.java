@@ -96,7 +96,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
             experimentNameTextView.setText(experiment.info.getDescription());
             regionTextView.setText(experiment.info.getRegion());
             ownerTextView.setText(experiment.getOwner().getName());
-            statusTextView.setText(experiment.getState().toString());
+            statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
             experimentListItemLayout.setOnClickListener(onClick);
         }
 

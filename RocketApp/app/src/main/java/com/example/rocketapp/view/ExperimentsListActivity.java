@@ -71,6 +71,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Log.e(TAG,UserManager.getUser().toString());
     }
 
 
@@ -93,11 +95,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
         super.onResume();
         initRecyclerViewOwned();
         initRecyclerViewSubscribed();
-//        ExperimentManager.setUpdateCallback(()-> {
-//            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
-//            Log.d(TAG, "Updated Owned");
-//        });
-//        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
     }
 
     /**

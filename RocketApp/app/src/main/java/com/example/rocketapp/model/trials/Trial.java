@@ -1,6 +1,7 @@
 package com.example.rocketapp.model.trials;
 
 import com.example.rocketapp.controller.FirestoreNestableDocument;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 
 /**
@@ -9,19 +10,19 @@ import com.google.firebase.firestore.Exclude;
  * Posts the trial information to relevant experiments inside Firestore database
  */
 public abstract class Trial extends FirestoreNestableDocument {
-    private Boolean isIgnore = false;
+    private Boolean isIgnored = false;
 
     /**
      * Default constructor for firestore serialization. Do not use.
      */
     public Trial() { }
 
-    public Boolean getIgnore() {
-        return isIgnore;
+    public Boolean getIgnored() {
+        return isIgnored;
     }
 
-    public void setIgnore(Boolean ignore) {
-        isIgnore = ignore;
+    public void setIgnored(Boolean ignore) {
+        isIgnored = ignore;
     }
 
     /**
