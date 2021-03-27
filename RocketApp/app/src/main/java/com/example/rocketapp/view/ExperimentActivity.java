@@ -247,7 +247,6 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
         if (UserManager.getUser().isOwner(experiment)) {
-
             Log.d("ExperimentActivity", "Update Published: " + experiment.isPublished() + " Active " + experiment.isActive());
 
             publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");

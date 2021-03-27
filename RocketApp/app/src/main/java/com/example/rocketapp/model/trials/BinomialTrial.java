@@ -9,7 +9,6 @@ import com.google.firebase.firestore.Exclude;
 public class BinomialTrial extends Trial {
     public static final String TYPE = "Binomial";
     private boolean value;
-    private Geolocation location;
 
     /**
      * Default constructor for firestore serialization. Do not use.
@@ -52,14 +51,5 @@ public class BinomialTrial extends Trial {
     @Override
     public String getValueString() {
         return value ? "True" : "False";
-    }
-
-
-    public Geolocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(Geolocation location) {
-        this.location = location;
     }
 }

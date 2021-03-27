@@ -133,7 +133,7 @@ public class TrialManager {
             return;
         }
 
-        if (trial.ownerIsValid() && !trial.getOwner().equals(UserManager.getUser())) {
+        if (trial.ownerIsValid() && !UserManager.getUser().isOwner(trial)) {
             Log.e(TAG, "Push failed. User does not own trial.");
             onFailure.callBack(new Exception("Push failed. User does not own trial."));
             return;

@@ -9,7 +9,6 @@ import static java.lang.Math.ceil;
 public class MeasurementTrial extends Trial implements Comparable<MeasurementTrial>{
     public static final String TYPE = "Measurement";
     private float measurement;
-    private Geolocation location;
 
     /**
      * Constructor for MeasurementTrial initialized with 0 if no value is passed
@@ -69,12 +68,4 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
         measurement = value;
     }
 
-
-    public Geolocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(Geolocation location) {
-        this.location = location;
-    }
 }
