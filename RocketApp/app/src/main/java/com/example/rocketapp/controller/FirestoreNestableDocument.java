@@ -1,9 +1,11 @@
 package com.example.rocketapp.controller;
 
 import android.util.Log;
-
 import com.google.firebase.firestore.Exclude;
 
+/**
+ * Class that has an id, ownerId and parentId in firestore.
+ */
 public abstract class FirestoreNestableDocument extends FirestoreOwnableDocument {
     private FirestoreDocument.Id parentId;
 

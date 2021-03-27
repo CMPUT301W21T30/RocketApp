@@ -1,31 +1,31 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.helper.widget.Layer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.ForumManager;
 import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.comments.Question;
+import com.example.rocketapp.model.users.User;
+import com.example.rocketapp.view.QuestionListAdapter;
+import com.example.rocketapp.view.RocketAppActivity;
+import com.example.rocketapp.view.UserProfileActivity;
 
-public class ExperimentForumActivity extends AppCompatActivity {
-    private static final String TAG = "QuestionsActivity";
+public class ExperimentForumActivity extends RocketAppActivity {
+    private static final String TAG = "ForumActivity";
     private Experiment experiment;
     private QuestionListAdapter adapter;
     private EditText inputEditText;
-    private InputMethodManager input;
     private CommentMode commentMode;
     private Question currentQuestion;
     private Button submitButton;
@@ -44,7 +44,6 @@ public class ExperimentForumActivity extends AppCompatActivity {
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
 
         inputEditText = findViewById(R.id.commentInput);
-        input = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
         layer = findViewById(R.id.inputLayer);
 
         RecyclerView questionsRecyclerView = findViewById(R.id.questionsRecyclerView);
@@ -52,9 +51,7 @@ public class ExperimentForumActivity extends AppCompatActivity {
             commentMode = CommentMode.ANSWER;
             currentQuestion = question;
             toggleKeyboard(true);
-        }, user -> {
-                    // TODO put whatever you want to do when user is clicked here.
-        });
+        }, this::onOwnerClicked);
         questionsRecyclerView.setAdapter(adapter);
         questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -85,12 +82,17 @@ public class ExperimentForumActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void onOwnerClicked(User user) {
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra("id", user.getId());
+        startActivity(intent);
+    }
 
     private void onUpdate(Experiment experiment) {
         adapter.updateList(experiment.getQuestions());
     }
 
-    public void submitComment(View view){
+    private void submitComment(View view){
         if (commentMode == CommentMode.ANSWER) {
             ForumManager.addAnswer(new Answer(inputEditText.getText().toString()), currentQuestion, ()-> {}, e->{}
             );
@@ -106,14 +108,14 @@ public class ExperimentForumActivity extends AppCompatActivity {
         layer.setVisibility(visibility);
     }
 
-    private void toggleKeyboard(boolean open){
+    @Override
+    protected void toggleKeyboard(boolean open){
+        super.toggleKeyboard(open);
         if (open){
             setInputVisibility(View.VISIBLE);
-            input.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             inputEditText.requestFocus();
         } else {
             setInputVisibility(View.INVISIBLE);
-            input.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0);
             inputEditText.setText("");
         }
     }

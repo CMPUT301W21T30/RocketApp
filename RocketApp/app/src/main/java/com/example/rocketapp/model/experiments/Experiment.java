@@ -22,15 +22,9 @@ import java.util.ArrayList;
 public abstract class Experiment extends FirestoreOwnableDocument {
 
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
-    private State state;            //Published, Unpublished or Ended
     protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
     private ArrayList<Question> questionsArrayList = new ArrayList<>();         //Comments posted on this experiment
-
-    public enum State {
-        PUBLISHED,      //Experiment is visible and accepting trials
-        ENDED,          //Experiment is visible but not accepting trials
-        UNPUBLISHED     //Experiment is not visible
-    }
+    private boolean isPublished, isActive;
 
     /**
      * Default constructor for firestore serialization.
@@ -45,7 +39,8 @@ public abstract class Experiment extends FirestoreOwnableDocument {
      */
     public Experiment(ExperimentInfo info) {
         this.info = info;
-        this.state = State.PUBLISHED;
+        this.isPublished = true;
+        this.isActive = true;
     }
 
     /**
@@ -63,36 +58,20 @@ public abstract class Experiment extends FirestoreOwnableDocument {
         this(new ExperimentInfo(description, region, minTrials, geoLocationEnabled));
     }
 
-    /**
-     * If the owner wants to end the experiment after concluding it or for any other reason.
-     * @param user
-     *          Only owner can end the experiment, thus if user passed is not owner, they will be unable to END it
-     */
-    public void endExperiment(User user) {
-        if (user == null || user.getId() != this.getOwnerId()) {
-            Log.e(TAG, "Cannot end experiment. Not the owner.");
-            return;
-        }
-
-        state = State.ENDED;        //Experiment ended
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
-    /**
-     * getter for state of experiment
-     * @return state of experiment
-     */
-    public State getState() {
-        return state;
+    public void setIsPublished(boolean isActive) {
+        this.isPublished = isActive;
     }
 
-    /**
-     * setter for state of experiment, can be used to modify an already existing experiment's state
-     * @param state
-     *          New state of experiment
-     *
-     */
-    public void setState(State state) {
-        this.state = state;         //state of experiment modified
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public boolean isPublished() {
+        return isActive;
     }
 
     /**
@@ -151,7 +130,8 @@ public abstract class Experiment extends FirestoreOwnableDocument {
                 "id=" + getId() +
                 "owner=" + getOwner().getName() +
                 "info=" + info +
-                ", state=" + state +
+                ", isActive=" + isActive +
+                ", isPublished" + isPublished +
                 ", trialsArrayList=" + trialsArrayList +
                 ", questionsArrayList=" + questionsArrayList +
                 '}';
@@ -161,7 +141,7 @@ public abstract class Experiment extends FirestoreOwnableDocument {
      * @return String for search querying
      */
     public String toSearchString() {
-        return getOwner().getName() + info.toSearchString() + state;
+        return getOwner().getName() + info.toSearchString();
     }
 
     /**

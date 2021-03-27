@@ -2,24 +2,24 @@ package com.example.rocketapp.controller;
 
 import android.util.Log;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 /**
- * A class object that will be stored on firestore. Contains information relating to its own documentId, as well
- * as the documentId of an object that "owns" this object.
- * Subclassed in DataManager since id's must be retrieved through firestore, and so should only be set in DataManager.
+ * A class object that will be stored on firestore.
  */
 public abstract class FirestoreDocument  {
-    public final String TAG = "FirestoreDocument";
+    public static final String TAG = "FirestoreDocument";
+    private Timestamp timestamp;
+    private Id id;
 
 
     /**
-     * Id represents a documentId in firestore for finding and referencing documents.
-     * Private class creates "Friend" like functionality so function calls requiring a new ID can only be called
-     * from DataManager to make sure updates will be synced with firestore.
+     * Id represents a documentId in firestore.
      */
     final static class Id implements Serializable {
         private String key;
@@ -30,7 +30,7 @@ public abstract class FirestoreDocument  {
         public Id() {}
 
         /**
-         * Generates a new DocumentId. Private so new documentId's can only be created by DataManager.
+         * Generates a new DocumentId. Package private so new documentId's can only be created by Controllers.
          * @param id documentId string from firestore
          */
         Id(String id) {
@@ -66,7 +66,19 @@ public abstract class FirestoreDocument  {
         }
     }
 
-    private Id id;         // The firestore documentId for this object
+
+    public FirestoreDocument() {
+        timestamp = new Timestamp(Calendar.getInstance().getTime());
+    }
+
+
+    /**
+     * @return the timestamp when this document was created
+     */
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
 
     /**
      * @return firestore documentId for this object
@@ -75,6 +87,7 @@ public abstract class FirestoreDocument  {
     public Id getId() {
         return id;
     }
+
 
     /**
      * @param id documentId for this object retrieved from firestore
@@ -85,6 +98,7 @@ public abstract class FirestoreDocument  {
         this.id = id;
     }
 
+
     /**
      * @return true if documentId is valid.
      */
@@ -92,6 +106,7 @@ public abstract class FirestoreDocument  {
     public boolean isValid() {
         return id != null && id.isValid();
     }
+
 
     /**
      * @param o object to compare
@@ -104,6 +119,8 @@ public abstract class FirestoreDocument  {
         FirestoreDocument that = (FirestoreDocument) o;
         return id.equals(that.id);
     }
+
+
 
     /**
      * Parses and adds id to FirestoreDocument objects from a firestore snapshot

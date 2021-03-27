@@ -30,6 +30,7 @@ import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.view.activities.ExperimentForumActivity;
 
 /**
  * Display view for Experiment
@@ -49,6 +50,7 @@ public class ExperimentActivity extends AppCompatActivity {
     private Button map;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private boolean granted = false;
+    private Button publishExperimentButton;
 
     /**
      * Setup the view for Experiment
@@ -78,24 +80,27 @@ public class ExperimentActivity extends AppCompatActivity {
             meanText.setText("Success Ratio");
         }
 
+        TextView ownerTextView = findViewById(R.id.ownerTextView);
+        ownerTextView.setOnClickListener(this::onOwnerClicked);
+        ownerTextView.setText(experiment.getOwner().getName());
         TextView experimentType = findViewById(R.id.experimentTypeTextView);
         experimentType.setText(experiment.getType());
 
         TextView experimentDescription = findViewById(R.id.descriptionTextView);
         experimentDescription.setText(experiment.info.getDescription());
 
-        unpublishExperimentButton = findViewById(R.id.unpublishExperimentButton);
+        publishExperimentButton = findViewById(R.id.publishExperimentButton);
         endExperimentButton = findViewById(R.id.endExperimentButton);
         map = findViewById(R.id.mapbtn);
         addTrialButton = findViewById(R.id.addTrialButton);
         statusTextView = findViewById(R.id.endedTextView);
 
-        if(!experiment.getOwner().equals(UserManager.getUser())){
-            endExperimentButton.setVisibility(View.GONE);
-            unpublishExperimentButton.setVisibility(View.GONE);
+        if(UserManager.getUser().isOwner(experiment)){
+            endExperimentButton.setOnClickListener(this::onEndClicked);
+            publishExperimentButton.setOnClickListener(this::onPublishClicked);
         } else {
-            endExperimentButton.setOnClickListener(this::onToggleEndClicked);
-            unpublishExperimentButton.setOnClickListener(this::onUnpublishClicked);
+            endExperimentButton.setVisibility(View.GONE);
+            publishExperimentButton.setVisibility(View.GONE);
         }
 
         if(experiment.info.isGeoLocationEnabled()) {
@@ -145,27 +150,15 @@ public class ExperimentActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    void onUnpublishClicked(View view) {
-        switch(experiment.getState()) {
-            case PUBLISHED:
-            case ENDED:
-                ExperimentManager.unpublishExperiment(experiment, experiment-> {}, e-> {});
-                break;
-            case UNPUBLISHED:
-                break;
-        }
+    void onPublishClicked(View view) {
+        if (experiment.isPublished())
+            ExperimentManager.unpublishExperiment(experiment, experiment-> {}, e-> {});
+        else
+            ExperimentManager.publishExperiment(experiment, experiment-> {}, e-> {});
     }
 
-    void onToggleEndClicked(View view) {
-        switch(experiment.getState()) {
-            case PUBLISHED:
-                ExperimentManager.endExperiment(experiment, experiment-> {}, e-> {});
-                break;
-            case ENDED:
-            case UNPUBLISHED:
-                ExperimentManager.publishExperiment(experiment, experiment-> {}, e-> {});
-                break;
-        }
+    void onEndClicked(View view) {
+        ExperimentManager.endExperiment(experiment, exp->{}, e->{});
     }
 
     void onAddTrialClicked(View view) {
@@ -225,6 +218,12 @@ public class ExperimentActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    void onOwnerClicked(View view) {
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra("id", experiment.getOwnerId());
+        startActivity(intent);
+    }
+
     /**
      * Update and display experiment statistics.
      * @param experiment
@@ -236,38 +235,10 @@ public class ExperimentActivity extends AppCompatActivity {
         medianTextView.setText(String.valueOf(experiment.getMedian()));
         stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
 
-        switch(experiment.getState()) {
-            case PUBLISHED:
-                statusTextView.setVisibility(View.GONE);
-                addTrialButton.setVisibility(View.VISIBLE);
-                break;
-            case ENDED:
-                addTrialButton.setVisibility(View.GONE);
-                statusTextView.setVisibility(View.VISIBLE);
-                statusTextView.setText("Experiment has ended.");
-                break;
-            case UNPUBLISHED:
-                addTrialButton.setVisibility(View.GONE);
-                statusTextView.setVisibility(View.VISIBLE);
-                statusTextView.setText("Experiment is not published.");
-                break;
-        }
+        statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
+        addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
-        if (experiment.getOwner().equals(UserManager.getUser())) {
-            switch(experiment.getState()) {
-                case PUBLISHED:
-                    unpublishExperimentButton.setVisibility(View.GONE);
-                    endExperimentButton.setText("End");
-                    break;
-                case ENDED:
-                    endExperimentButton.setText("Publish");
-                    unpublishExperimentButton.setVisibility(View.VISIBLE);
-                    break;
-                case UNPUBLISHED:
-                    endExperimentButton.setText("Publish");
-                    unpublishExperimentButton.setVisibility(View.GONE);
-                    break;
-            }
-        }
+        if (UserManager.getUser().isOwner(experiment))
+            publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");
     }
 }
