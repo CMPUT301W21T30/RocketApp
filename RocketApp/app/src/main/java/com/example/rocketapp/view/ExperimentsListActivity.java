@@ -49,6 +49,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         ImageButton profileBtn = findViewById(R.id.experiment_options);
         profileBtn.setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+            userProfileIntent.putExtra("id", UserManager.getUser().getId());
             startActivity(userProfileIntent);
         });
 
@@ -61,13 +62,18 @@ public class ExperimentsListActivity extends AppCompatActivity{
         Button addNewExperiment = findViewById(R.id.createExpBtn);
         addNewExperiment.setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
 
-        ExperimentManager.setUpdateCallback(()-> adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList()));
+        ExperimentManager.setUpdateCallback(()-> {
+            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
+            Log.d(TAG, "Updated Owned");
+        });
         UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,6 +93,11 @@ public class ExperimentsListActivity extends AppCompatActivity{
         super.onResume();
         initRecyclerViewOwned();
         initRecyclerViewSubscribed();
+//        ExperimentManager.setUpdateCallback(()-> {
+//            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
+//            Log.d(TAG, "Updated Owned");
+//        });
+//        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
     }
 
     /**

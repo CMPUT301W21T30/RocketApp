@@ -23,7 +23,6 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 public class ExperimentManager {
     private static final String TAG = "ExperimentManager";
     private static ArrayList<Experiment> experimentArrayList;
-    private static ArrayList<ListenerRegistration> experimentListeners = new ArrayList<>();
     private static ListenerRegistration experimentListener;
     private static final FirebaseFirestore db;
     private static CollectionReference experimentsRef;
@@ -60,14 +59,18 @@ public class ExperimentManager {
         boolean match(Experiment experiment);
     }
 
+
     /**
      * Set callback for when Experiments are updated from firestore. Should use to update listviews of experiments.
      * @param callback
      *      Callback for when experiments are updated from firestore.
      */
     public static void setUpdateCallback(Callback callback) {
+        Log.d(TAG, "Set Update Callback");
+
         updateCallback = callback;
     }
+
 
     /**
      * Gets the list of all experiments
@@ -77,6 +80,7 @@ public class ExperimentManager {
     public static ArrayList<Experiment> getExperimentArrayList() {
         return experimentArrayList;
     }
+
 
     /**
      * Get a filtered list of all experiments
@@ -148,6 +152,7 @@ public class ExperimentManager {
         return filteredExperiments;
     }
 
+
     /**
      * Gets all experiments not subscribed by current user
      * @return
@@ -156,6 +161,7 @@ public class ExperimentManager {
     public static ArrayList<Experiment> getNotSubscribedExperimentsArrayList() {
         return getExperimentArrayList(experiment -> !UserManager.getSubscriptionsIdList().contains(experiment.getId()));
     }
+
 
     /**
      * Gets all experiments subscribed to by current user
@@ -178,6 +184,7 @@ public class ExperimentManager {
         return filteredExperiments;
     }
 
+
     /**
      * @param id experiment id
      * @return experiment corresponding to the id
@@ -189,6 +196,7 @@ public class ExperimentManager {
         Log.e(TAG, "getExperiment() Experiment not found");
         return null;
     }
+
 
     /**
      * Publish a new experiment
@@ -300,17 +308,21 @@ public class ExperimentManager {
 
         String documentId = experiment.getId().getKey();
 
-        // Listen for changes to experiment info
+        // Listen for changes to experiment
         if (experimentListener != null) experimentListener.remove();
         experimentListener = experimentsRef.document(documentId).addSnapshotListener((snapshot, e) -> {
             Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
             Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
-            if (updatedExperiment != null) experiment.info = updatedExperiment.info;
+            if (updatedExperiment != null) {
+                experiment.info = updatedExperiment.info;
+                experiment.setState(updatedExperiment.getState());
+            }
             else Log.e(TAG, "classType null in listen");
 
             onUpdate.callBack(experiment);
         });
     }
+
 
     /**
      * Update an experiment. Can only be called by the experiments owner.
@@ -325,6 +337,7 @@ public class ExperimentManager {
         push(experiment, onSuccess, onFailure);
     }
 
+
     /**
      * Add or update and experiment.
      * @param experiment
@@ -335,7 +348,7 @@ public class ExperimentManager {
      *      Callback for when push fails
      */
     private static void push(Experiment experiment, ExperimentCallback onComplete, ExceptionCallback onFailure) {
-        if (experiment.isValid()) {
+        if (experiment.isValid()) {  // Update experiment
             experimentsRef.document(experiment.getId().getKey()).set(experiment)
                     .addOnSuccessListener((aVoid -> {
                         Log.d(TAG, "Experiment Updated.");
@@ -345,7 +358,7 @@ public class ExperimentManager {
                         Log.e(TAG, "Failed to update experiment experiment: " + e.toString());
                         onFailure.callBack(e);
                     });
-        } else {
+        } else {    // Add experiment
             experimentsRef.add(experiment)
                     .addOnSuccessListener(task -> {
                         ((FirestoreDocument) experiment).setId(new FirestoreDocument.Id(task.getId()));
@@ -366,12 +379,13 @@ public class ExperimentManager {
     private static void initializeExperiments() {
         experimentArrayList = new ArrayList<>();
         experimentsRef = db.collection(EXPERIMENTS);
-        experimentListener = experimentsRef.addSnapshotListener((snapshot, e) -> {
+        experimentsRef.addSnapshotListener((snapshot, e) -> {
             parseExperimentsSnapshot(snapshot);
             Log.d(TAG, "Updated Experiments.");
             if (updateCallback != null) updateCallback.callBack();
         });
     }
+
 
     /**
      * Parses an experiments list snapshot and stores the experiments in experimentArrayList.
