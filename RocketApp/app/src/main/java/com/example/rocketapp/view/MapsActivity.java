@@ -1,10 +1,12 @@
-package com.example.rocketapp;
+package com.example.rocketapp.view;
 
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
 
+import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,14 +20,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private Experiment experiment;
-    private ArrayList<Trial> trialList;
+    private ArrayList<? extends Trial> trialList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
-        trialList = ((ArrayList<Trial>) experiment.getTrials());
+        TrialManager.listen(experiment, this::onUpdate);
+    }
+
+    private void onUpdate(Experiment experiment) {
+        trialList = experiment.getTrials();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -43,7 +50,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        if (trialList == null) return;
         mMap = googleMap;
+
         
         for(int i = 0; i<trialList.size(); i++){
             try{
