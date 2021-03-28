@@ -1,10 +1,5 @@
 package com.example.rocketapp;
 
-import com.example.rocketapp.model.experiments.BinomialExperiment;
-import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.comments.Question;
-
 import org.junit.Test;
 import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
