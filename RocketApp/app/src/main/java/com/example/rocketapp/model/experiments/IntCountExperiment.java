@@ -80,7 +80,7 @@ public class IntCountExperiment extends Experiment {
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getPCount();
         }
-        return (float) ((sum/trials.size())*1.0);
+        return ((float) sum)/((float) trials.size());
     }
 
     /**
