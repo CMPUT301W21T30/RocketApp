@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background"
     android:visibility="visible"
-    tools:context=".view.ExperimentActivity">
+    tools:context=".ExperimentActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +15,7 @@
 
 
         <Button
-            android:id="@+id/publishExperimentButton"
+            android:id="@+id/unpublishExperimentButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -41,7 +41,7 @@
             android:layout_height="200dp"
             android:layout_marginStart="32dp"
             android:layout_marginLeft="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginRight="32dp"
             android:background="@color/dark_background"
@@ -287,27 +287,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/forumButton" />
-
-        <Button
-            android:id="@+id/mapbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="136dp"
-            android:drawableLeft="@drawable/maps_icon_gmm"
-            android:text="MAP"
-            app:layout_constraintStart_toEndOf="@+id/endedTextView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
-        <TextView
-            android:id="@+id/ownerTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Owner"
-            app:layout_constraintBottom_toTopOf="@+id/cardView3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -6,11 +6,6 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.rocketapp.controller.DataManager;
-import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.ExperimentEditActivity;
-import com.example.rocketapp.view.ExperimentsListActivity;
-import com.example.rocketapp.view.LogInActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;

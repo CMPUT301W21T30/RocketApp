@@ -1,9 +1,5 @@
 package com.example.rocketapp;
 
-import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.experiments.IntCountExperiment;
-import com.example.rocketapp.model.trials.IntCountTrial;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -40,18 +36,6 @@ public class IntCountExperimentUnitTest {
     public void checkStdDev() {
         Experiment experiment = createMockExperiment();
         assertEquals(3.54, experiment.getStdDev(),0.1);
-    }
-
-    @Test
-    public void checkTopQuartile() {
-        Experiment experiment = createMockExperiment();
-        assertEquals(17.5, experiment.getTopQuartile(),0.1);
-    }
-
-    @Test
-    public void checkBottomQuartile() {
-        Experiment experiment = createMockExperiment();
-        assertEquals(12.5, experiment.getBottomQuartile(),0.1);
     }
 
 }
