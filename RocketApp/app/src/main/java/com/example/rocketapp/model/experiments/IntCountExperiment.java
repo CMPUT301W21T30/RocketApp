@@ -163,7 +163,9 @@ public class IntCountExperiment extends Experiment {
     /**
      * @return An ArrayList of all the trials that are not ignored by the owner
      */
-    ArrayList<IntCountTrial> getFilteredTrials(){
+    @Exclude
+    @Override
+    public ArrayList<IntCountTrial> getFilteredTrials(){
         ArrayList<IntCountTrial> trials = getTrials();
         ArrayList<IntCountTrial> filteredTrials = new ArrayList<IntCountTrial>();
         for(int i = 0; i <trials.size(); i++){
