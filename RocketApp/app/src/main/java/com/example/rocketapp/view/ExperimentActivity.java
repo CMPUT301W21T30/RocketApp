@@ -236,8 +236,6 @@ public class ExperimentActivity extends AppCompatActivity {
      *          Experiment of current view
      */
     void update(Experiment experiment) {
-
-
         // Could add all updates here
         meanTextView.setText(String.valueOf(experiment.getMean()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
