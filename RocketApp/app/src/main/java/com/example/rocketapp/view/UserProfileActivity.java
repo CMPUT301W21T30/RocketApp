@@ -51,21 +51,21 @@ public class UserProfileActivity extends RocketAppActivity {
         } else {
 
             saveProfileData.setOnClickListener(v -> {
+                toggleKeyboard(false);
                 // Check inputs and update profile
                 if (!Validate.lengthInRange(userName, 3, 50, true)) return;
                 if (!Validate.lengthInRange(userEmail, 3, 50, true)) return;
                 if (!Validate.lengthInRange(userPhoneNumber, 7, 11, true)) return;
 
-                UserManager.getUser().setName(userEmail.getText().toString());
+                UserManager.getUser().setName(userName.getText().toString());
                 UserManager.getUser().setPhoneNumber(userPhoneNumber.getText().toString());
-                UserManager.getUser().setEmail(userName.getText().toString());
+                UserManager.getUser().setEmail(userEmail.getText().toString());
 
                 UserManager.updateUser(user -> {
-                    Toast.makeText(UserProfileActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
-                    toggleKeyboard(false);
+                    Toast.makeText(this, "User Profile Updated", Toast.LENGTH_SHORT).show();
                     finish();
                 }, e -> {
-                    Toast.makeText(UserProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    userName.setError(e.getMessage());
                     userName.requestFocus();
                 });
             });

@@ -19,6 +19,7 @@ import com.example.rocketapp.helpers.Validate;
  */
 public class LogInActivity extends AppCompatActivity {
     private static final String TAG = "LogInActivity";
+    EditText usernameEditText;
     /**
      * Displays a username entry field and a login button
      * Creates or Logs in to an existing user profile accordingly
@@ -32,7 +33,7 @@ public class LogInActivity extends AppCompatActivity {
 
         // set up login Button
         findViewById(R.id.loginBtn).setOnClickListener(v -> {
-            EditText usernameEditText = findViewById(R.id.usernameEditText);
+            usernameEditText = findViewById(R.id.usernameEditText);
             if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
                 createUser(usernameEditText.getText().toString());
             }
@@ -71,7 +72,10 @@ public class LogInActivity extends AppCompatActivity {
         UserManager.createUser(userName, getPreferences(MODE_PRIVATE), user -> {
             Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
-        }, e -> Log.e(TAG, e.toString()));
+        }, e -> {
+            usernameEditText.setError("Username not available.");
+            usernameEditText.requestFocus();
+        });
     }
 
 }

@@ -103,19 +103,18 @@ public class UserManager {
     public static void createUser(String userName, SharedPreferences sharedPreferences, UserCallback onSuccess, ExceptionCallback onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
-                Log.e(TAG, "CreateUser failed: Username not available");
-                onFailure.callBack(new Exception("Username not available"));
+                Log.e(TAG, "Username not available.");
+                onFailure.callBack(new Exception("Username not available."));
             } else {
                 push(new User(userName), user -> {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("userId", user.getId().getKey());
                     editor.apply();
-                    Log.d(TAG, "Shared Preferences: "+ sharedPreferences.getAll().toString());
                     login(sharedPreferences, onSuccess, onFailure);
                     }, onFailure);
             }
         }).addOnFailureListener(e -> {
-            Log.e(TAG, "CreateUser failed: " + e.toString());
+            Log.e(TAG, e.getMessage());
             onFailure.callBack(e);
         });
     }
