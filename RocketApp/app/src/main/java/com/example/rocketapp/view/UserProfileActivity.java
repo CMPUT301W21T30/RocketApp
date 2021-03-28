@@ -1,18 +1,15 @@
 package com.example.rocketapp.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.users.User;
@@ -21,8 +18,7 @@ import com.example.rocketapp.model.users.User;
  * User has the ability to update their email or phone number through this page
  */
 public class UserProfileActivity extends RocketAppActivity {
-    public ImageButton saveProfileData;
-    public User user;
+    public ImageButton saveProfileButton;
 
 
     @Override
@@ -30,28 +26,28 @@ public class UserProfileActivity extends RocketAppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
 
-        user = UserManager.getUser(getIntent().getSerializableExtra("id"));
+        User user = UserManager.getUser(getIntent().getSerializableExtra("id"));
 
         EditText userName = findViewById(R.id.userNameOnProfile);
         userName.setText(user.getName());
 
         EditText userEmail = findViewById(R.id.userEmail);      //field to enter email
-        EditText userPhoneNumber = findViewById(R.id.userPhoneNumber);      //field to enter phone number
-
         userEmail.setText(user.getEmail());
+
+        EditText userPhoneNumber = findViewById(R.id.userPhoneNumber);      //field to enter phone number
         userPhoneNumber.setText(user.getPhoneNumber());
 
-        saveProfileData = findViewById(R.id.saveUserProfileData);
+        saveProfileButton = findViewById(R.id.saveUserProfileData);
 
         if (!UserManager.getUser().equals(user)) {
             userEmail.setEnabled(false);
             userPhoneNumber.setEnabled(false);
             userName.setEnabled(false);
-            saveProfileData.setVisibility(View.GONE);
+            saveProfileButton.setVisibility(View.GONE);
         } else {
 
-            saveProfileData.setOnClickListener(v -> {
-                toggleKeyboard(false);
+            saveProfileButton.setOnClickListener(v -> {
+
                 // Check inputs and update profile
                 if (!Validate.lengthInRange(userName, 3, 50, true)) return;
                 if (!Validate.lengthInRange(userEmail, 3, 50, true)) return;
@@ -61,7 +57,8 @@ public class UserProfileActivity extends RocketAppActivity {
                 UserManager.getUser().setPhoneNumber(userPhoneNumber.getText().toString());
                 UserManager.getUser().setEmail(userEmail.getText().toString());
 
-                UserManager.updateUser(user -> {
+                UserManager.updateUser(u -> {
+                    toggleKeyboard(false);
                     Toast.makeText(this, "User Profile Updated", Toast.LENGTH_SHORT).show();
                     finish();
                 }, e -> {
