@@ -30,12 +30,10 @@ public class User extends FirestoreDocument {
         this.name = name;
     }
 
-
     @Exclude
     public boolean isOwner(FirestoreOwnableDocument ownable) {
         return ownable.getOwner().equals(this);
     }
-
 
     /**
      * getter for username of User

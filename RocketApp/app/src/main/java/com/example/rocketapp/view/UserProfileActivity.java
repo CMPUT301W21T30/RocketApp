@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.UserManager;
+import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.users.User;
 
 /**
@@ -22,10 +23,8 @@ import com.example.rocketapp.model.users.User;
 public class UserProfileActivity extends RocketAppActivity {
     public ImageButton saveProfileData;
     public User user;
-    /**
-     * User enters the new information they want their profile to be updated with
-     * @param savedInstanceState
-     */
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +32,8 @@ public class UserProfileActivity extends RocketAppActivity {
 
         user = UserManager.getUser(getIntent().getSerializableExtra("id"));
 
-        TextView userName = findViewById(R.id.userNameOnProfile);
-        userName.setText('@'+ user.getName());
+        EditText userName = findViewById(R.id.userNameOnProfile);
+        userName.setText(user.getName());
 
         EditText userEmail = findViewById(R.id.userEmail);      //field to enter email
         EditText userPhoneNumber = findViewById(R.id.userPhoneNumber);      //field to enter phone number
@@ -42,35 +41,37 @@ public class UserProfileActivity extends RocketAppActivity {
         userEmail.setText(user.getEmail());
         userPhoneNumber.setText(user.getPhoneNumber());
 
+        saveProfileData = findViewById(R.id.saveUserProfileData);
+
         if (!UserManager.getUser().equals(user)) {
             userEmail.setEnabled(false);
             userPhoneNumber.setEnabled(false);
-        }
+            userName.setEnabled(false);
+            saveProfileData.setVisibility(View.GONE);
+        } else {
 
-        saveProfileData = findViewById(R.id.saveUserProfileData);
-        saveProfileData.setOnClickListener(new View.OnClickListener() {
+            saveProfileData.setOnClickListener(v -> {
+                // Check inputs and update profile
+                if (!Validate.lengthInRange(userName, 3, 50, true)) return;
+                if (!Validate.lengthInRange(userEmail, 3, 50, true)) return;
+                if (!Validate.lengthInRange(userPhoneNumber, 7, 11, true)) return;
 
-            /**
-             * Upon clicking the update button
-             * The user email and phone number gets updated
-             * The firestore database also gets updated
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                String email = userEmail.getText().toString();
-                String phone = userPhoneNumber.getText().toString();
+                UserManager.getUser().setName(userEmail.getText().toString());
+                UserManager.getUser().setPhoneNumber(userPhoneNumber.getText().toString());
+                UserManager.getUser().setEmail(userName.getText().toString());
 
-                UserManager.getUser().setPhoneNumber(phone);
-                UserManager.getUser().setEmail(email);
                 UserManager.updateUser(user -> {
                     Toast.makeText(UserProfileActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
                     toggleKeyboard(false);
                     finish();
-                }, e -> {});
-            }
-        });
+                }, e -> {
+                    Toast.makeText(UserProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    userName.requestFocus();
+                });
+            });
+        }
 
+        // Create back button
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);

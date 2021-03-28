@@ -2,8 +2,10 @@ package com.example.rocketapp.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -29,30 +31,36 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // set up login Button
-        Button loginBtn = findViewById(R.id.loginBtn);
-        loginBtn.setOnClickListener(v -> {
+        findViewById(R.id.loginBtn).setOnClickListener(v -> {
             EditText usernameEditText = findViewById(R.id.usernameEditText);
             if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
-                loginOrCreateUser(usernameEditText.getText().toString());
+                createUser(usernameEditText.getText().toString());
             }
         });
+
+        findViewById(R.id.inputGroup).setVisibility(View.GONE);
+
+        if (!getPreferences(MODE_PRIVATE).getString("userId", "noId").equals("noId")) {
+            Log.e(TAG, "userId found!");
+            login(getPreferences(MODE_PRIVATE));
+        } else {
+            findViewById(R.id.inputGroup).setVisibility(View.VISIBLE);
+            findViewById(R.id.loadingGroup).setVisibility(View.GONE);
+            Log.e(TAG, "userId not found");
+        }
     }
 
 
     /**
-     * Creates user if name entered does not exist
      * Logs into existing user's profile if username matches a user inside database
-     * @param userName
+     * @param preferences
      *          username entered during login in the box.
      */
-    private void loginOrCreateUser(String userName) {
-        UserManager.login(userName, user -> {           //Username exists and match successful
-            Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+    private void login(SharedPreferences preferences) {
+        UserManager.login(preferences, user -> {
+            Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
-        }, e -> {
-            Log.d(TAG, e.toString());
-            createUser(userName);                       //Create user if user name does not exist
-        });
+        }, e -> Log.d(TAG, e.toString()));
     }
 
     /**
@@ -60,12 +68,10 @@ public class LogInActivity extends AppCompatActivity {
      * @param userName Name of user to create
      */
     private void createUser(String userName) {
-        UserManager.createUser(userName, user -> {
-            Intent ExperimentsListActivityIntent = new Intent(LogInActivity.this, ExperimentsListActivity.class);
+        UserManager.createUser(userName, getPreferences(MODE_PRIVATE), user -> {
+            Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
-        }, e -> {
-            Log.e(TAG, e.toString());        //User is unable to be created with this username
-        });
+        }, e -> Log.e(TAG, e.toString()));
     }
 
 }
