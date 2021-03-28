@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_background"
-    tools:context=".UserProfileActivity">
+    tools:context=".view.UserProfileActivity">
 
-    <TextView
+    <EditText
         android:id="@+id/userNameOnProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,15 +55,15 @@
         android:id="@+id/saveUserProfileData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_baseline_save_alt_24"
+        android:contentDescription="TODO"
         android:tint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="TODO" />
+        app:layout_constraintTop_toBottomOf="@+id/userPhoneNumber"
+        app:srcCompat="@drawable/ic_baseline_save_alt_24" />
 
     <TextView
         android:id="@+id/textView3"

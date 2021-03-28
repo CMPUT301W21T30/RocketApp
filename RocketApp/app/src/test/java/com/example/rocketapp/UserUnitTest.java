@@ -1,4 +1,6 @@
 package com.example.rocketapp;
+import com.example.rocketapp.model.users.User;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

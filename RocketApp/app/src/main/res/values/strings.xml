@@ -10,6 +10,7 @@
     <string name="dropdown_prompt">Select Experiment Type</string>
     <string name="fail">Fail</string>
     <string name="pass">pass</string>
+    <string name="title_activity_maps">Map</string>
     <string-array name="experiments">
         <item>Binomial Experiment</item>
         <item>Count Experiment</item>
