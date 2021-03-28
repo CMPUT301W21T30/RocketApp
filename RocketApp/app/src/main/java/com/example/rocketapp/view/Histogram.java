@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.controller.FirestoreDocument;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
@@ -16,7 +15,6 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.protobuf.StringValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,11 +25,11 @@ public class Histogram extends AppCompatActivity {
     Experiment experiment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate (Bundle savedInstanceState){
+        super.onCreate (savedInstanceState);
         setContentView(R.layout.graph_activity);
 
-        barChart = (BarChart) findViewById(R.id.histogram);
+        barChart = (BarChart)findViewById(R.id.histogram);
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<Trial> done = new ArrayList<Trial>();
 
