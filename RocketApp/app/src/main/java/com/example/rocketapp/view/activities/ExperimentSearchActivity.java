@@ -1,7 +1,6 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,16 +8,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.view.ExperimentListAdapter;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +19,7 @@ import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
+import com.example.rocketapp.view.TrialListAdapter;
 
 import java.util.ArrayList;
 

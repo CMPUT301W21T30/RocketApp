@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rocketapp.model.trials.Geolocation;
+import com.example.rocketapp.view.TrialFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,7 +32,6 @@ import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.activities.ExperimentForumActivity;
 
 /**
  * Display view for Experiment

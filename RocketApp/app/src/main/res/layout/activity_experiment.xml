@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background"
     android:visibility="visible"
-    tools:context=".view.ExperimentActivity">
+    tools:context=".view.activities.ExperimentActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
