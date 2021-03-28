@@ -2,6 +2,7 @@ package com.example.rocketapp.model.experiments;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
 
@@ -48,7 +49,7 @@ public class MeasurementExperiment extends Experiment {
      */
     @Exclude
     public float getMedian(){
-        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
         Collections.sort(trials);
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
@@ -69,7 +70,7 @@ public class MeasurementExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
-        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         float sum = 0;
         if(trials.size()==0){
@@ -91,7 +92,7 @@ public class MeasurementExperiment extends Experiment {
     @Override
     public float getStdDev() {
         //TODO
-        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         float mean = getMean();
         float squareSum = 0;
@@ -113,7 +114,7 @@ public class MeasurementExperiment extends Experiment {
     @Override
     public float getTopQuartile() {
         float quart;
-        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch(trials.size()%4){
@@ -141,7 +142,7 @@ public class MeasurementExperiment extends Experiment {
     @Override
     public float getBottomQuartile() {
         float quart;
-        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch (trials.size()%4){
@@ -158,6 +159,20 @@ public class MeasurementExperiment extends Experiment {
                 quart = (float)(trials.get((trials.size() - 3) / 4 ).getMeasurement());
                 return quart;
         }
+    }
+
+    /**
+     * @return An ArrayList of all the trials that are not ignored by the owner
+     */
+    ArrayList<MeasurementTrial> getFilteredTrials(){
+        ArrayList<MeasurementTrial> trials = getTrials();
+        ArrayList<MeasurementTrial> filteredTrials = new ArrayList<MeasurementTrial>();
+        for(int i = 0; i <trials.size(); i++){
+            if(! trials.get(i).getIgnored()){
+                filteredTrials.add(trials.get(i));
+            }
+        }
+        return filteredTrials;
     }
 
     /**

@@ -39,4 +39,16 @@ public class BinomialExperimentUnitTest {
         Experiment experiment = createMockExperiment();
         assertEquals(0.75, experiment.getStdDev(),0.1);
     }
+
+    @Test
+    public void checkTopQuartile() {
+        Experiment experiment = createMockExperiment();
+        assertEquals(1, experiment.getTopQuartile(),0.1);
+    }
+
+    @Test
+    public void checkBottomQuartile() {
+        Experiment experiment = createMockExperiment();
+        assertEquals(0.5, experiment.getBottomQuartile(),0.1);
+    }
 }
