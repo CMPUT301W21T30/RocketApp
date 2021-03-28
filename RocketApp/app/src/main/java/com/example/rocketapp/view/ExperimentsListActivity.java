@@ -57,23 +57,8 @@ public class ExperimentsListActivity extends AppCompatActivity{
         });
 
         findViewById(R.id.createExpBtn).setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     /**
      * Update the the Experiments List every time it back from other fragment

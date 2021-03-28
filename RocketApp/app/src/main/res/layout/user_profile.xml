@@ -8,7 +8,7 @@
     android:background="@color/dark_background"
     tools:context=".view.UserProfileActivity">
 
-    <TextView
+    <EditText
         android:id="@+id/userNameOnProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -2,14 +2,17 @@ package com.example.rocketapp.view;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
@@ -20,7 +23,7 @@ import com.example.rocketapp.model.trials.Trial;
 import java.util.ArrayList;
 
 public class ExperimentEditActivity extends AppCompatActivity {
-    private static final String TAG = "OwnerActivity";
+    private static final String TAG = "ExperimentEditAct";
     private Experiment experiment;
     private ArrayList<Trial> trialsArrayList = new ArrayList<>();
     private TrialListAdapter trialListAdapter;
@@ -74,7 +77,11 @@ public class ExperimentEditActivity extends AppCompatActivity {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView trialRecyclerView = findViewById(R.id.trialRecyclerView);
 
-        trialListAdapter = new TrialListAdapter(this, trialsArrayList);
+        trialListAdapter = new TrialListAdapter(this, trialsArrayList, (holder, trial) -> {
+            // Toggle ignored
+            trial.setIgnored(!trial.getIgnored());
+            TrialManager.update(trial, experiment, t -> Toast.makeText(this, (trial.getIgnored() ? "Ignore" : "Include") + " Trial: " + trial.getValueString(), Toast.LENGTH_SHORT).show(), e ->{});
+        });
         trialRecyclerView.setAdapter(trialListAdapter);
 
         trialRecyclerView.setLayoutManager(new LinearLayoutManager(this));

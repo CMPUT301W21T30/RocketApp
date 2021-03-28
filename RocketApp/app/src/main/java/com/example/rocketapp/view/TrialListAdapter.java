@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.android.material.card.MaterialCardView;
 
@@ -26,14 +27,19 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
     private static final String TAG = "ExperimentRecylerViewAd";
     private ArrayList<Trial> trials;
     private Context context;
+    private final TrialCallback onTrialClicked;
+
+    public interface TrialCallback {
+        void callback(ViewHolder view, Trial trial);
+    }
 
     /**
-     *
-     * @param context context of the given experiment
-     * @param trials trials for the given experiment
+     * @param trials trials for the list
+     * @param onTrialClicked callback for when trial list item is clicked
      */
-    public TrialListAdapter(Context context, ArrayList<Trial> trials) {
+    public TrialListAdapter(Context context, ArrayList<Trial> trials, TrialCallback onTrialClicked) {
         this.trials = trials;
+        this.onTrialClicked = onTrialClicked;
         this.context = context;
     }
 
@@ -70,22 +76,8 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
 
         // setting the textView as the trial
         holder.trialTextView.setText(String.valueOf(trials.get(position).getValueString()));
-        holder.trialListItemLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (trials.get(position).getIgnored()) {
-                    trials.get(position).setIgnored(false);
-                    int backgroundColor = ContextCompat.getColor(context, R.color.dark_green);
-                    holder.trialListItemLayout.setCardBackgroundColor(backgroundColor);
-                    Toast.makeText(context, "Include Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
-                } else {
-                    trials.get(position).setIgnored(true);
-                    holder.trialListItemLayout.setCardBackgroundColor(Color.RED);
-                    Toast.makeText(context, "Ignore Trial: " + trials.get(position).getValueString(), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
+        holder.trialListItemLayout.setOnClickListener(view -> onTrialClicked.callback(holder, trials.get(position)));
+        holder.trialListItemLayout.setCardBackgroundColor(trials.get(position).getIgnored() ? Color.RED : ContextCompat.getColor(context, R.color.dark_green));
 
     }
 
