@@ -2,6 +2,7 @@ package com.example.rocketapp.model.experiments;
 import java.util.ArrayList;
 
 import com.example.rocketapp.model.trials.BinomialTrial;
+import com.example.rocketapp.model.trials.CountTrial;
 import com.google.firebase.firestore.Exclude;
 
 /**
@@ -60,7 +61,7 @@ public class BinomialExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
-        ArrayList<BinomialTrial> trials = getTrials();
+        ArrayList<BinomialTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
         if(length==0){
@@ -83,7 +84,7 @@ public class BinomialExperiment extends Experiment {
     @Override
     public float getStdDev() {
         float mean = getMean();
-        return (getTrials().size() * (1 - mean) * mean);
+        return (getFilteredTrials().size() * (1 - mean) * mean);
     }
 
     /**
@@ -112,6 +113,20 @@ public class BinomialExperiment extends Experiment {
         } else if (getMean() == 0.75) {
             return (float) 0.5;
         } else return 1;
+    }
+
+    /**
+     * @return An ArrayList of all the trials that are not ignored by the owner
+     */
+    ArrayList<BinomialTrial> getFilteredTrials(){
+        ArrayList<BinomialTrial> trials = getTrials();
+        ArrayList<BinomialTrial> filteredTrials = new ArrayList<BinomialTrial>();
+        for(int i = 0; i <trials.size(); i++){
+            if(! trials.get(i).getIgnored()){
+                filteredTrials.add(trials.get(i));
+            }
+        }
+        return filteredTrials;
     }
 
     /**

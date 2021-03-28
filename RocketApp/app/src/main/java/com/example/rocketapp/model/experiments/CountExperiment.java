@@ -49,7 +49,7 @@ public class CountExperiment extends Experiment {
      */
     @Exclude
     public float getMedian(){
-        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> trials = getFilteredTrials();
         Collections.sort(trials);
         if (trials.size() == 0) {return 0;}
         int length = trials.size();
@@ -71,7 +71,7 @@ public class CountExperiment extends Experiment {
     @Exclude
     @Override
     public float getMean() {
-        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         int sum = 0;
         if(trials.size()==0){
@@ -91,7 +91,7 @@ public class CountExperiment extends Experiment {
     @Exclude
     @Override
     public float getStdDev() {
-        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         float mean = getMean();
         float squareSum = 0;
@@ -113,7 +113,7 @@ public class CountExperiment extends Experiment {
     @Override
     public float getTopQuartile() {
         float quart;
-        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch(trials.size()%4){
@@ -141,7 +141,7 @@ public class CountExperiment extends Experiment {
     @Override
     public float getBottomQuartile() {
         float quart;
-        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch (trials.size()%4){
@@ -160,6 +160,20 @@ public class CountExperiment extends Experiment {
         }
     }
 
+    /**
+     * @return An ArrayList of all the trials that are not ignored by the owner
+     */
+    ArrayList<CountTrial> getFilteredTrials(){
+        ArrayList<CountTrial> trials = getTrials();
+        ArrayList<CountTrial> filteredTrials = new ArrayList<CountTrial>();
+        for(int i = 0; i <trials.size(); i++){
+            if(! trials.get(i).getIgnored()){
+                filteredTrials.add(trials.get(i));
+            }
+        }
+        return filteredTrials;
+    }
+    
     /**
      * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
      */
