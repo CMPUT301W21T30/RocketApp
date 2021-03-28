@@ -34,7 +34,7 @@ public class LogInActivity extends AppCompatActivity {
         // set up login Button
         findViewById(R.id.loginBtn).setOnClickListener(v -> {
             usernameEditText = findViewById(R.id.usernameEditText);
-            if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
+            if (Validate.emailInRange(usernameEditText, 3, 50, true)) {
                 createUser(usernameEditText.getText().toString());
             }
         });

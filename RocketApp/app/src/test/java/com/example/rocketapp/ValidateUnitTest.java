@@ -31,12 +31,25 @@ public class ValidateUnitTest {
     }
 
     @Test
-    public void testLengthRange() {
+    public void testLengthInRange() {
         assertFalse(Validate.lengthInRange("they", 5, 12));
         assertFalse(Validate.lengthInRange("hello world", 5, 10));
 
         assertTrue(Validate.lengthInRange("hello", 5, 10));
         assertTrue(Validate.lengthInRange("helloworld", 5, 10));
+    }
+
+    @Test
+    public void testEmailInRange() {
+        assertFalse(Validate.emailInRange("they", 5, 12));
+        assertFalse(Validate.emailInRange("a@c.o", 6, 10));
+        assertFalse(Validate.emailInRange("hello", 5, 10));
+        assertFalse(Validate.emailInRange("hello.", 5, 10));
+        assertFalse(Validate.emailInRange("hello@", 5, 10));
+        assertFalse(Validate.emailInRange("hello@g.com", 5, 10));
+
+        assertTrue(Validate.emailInRange("hello@g.c", 5, 10));
+        assertTrue(Validate.emailInRange("hello@g.ca", 5, 10));
     }
 
 }

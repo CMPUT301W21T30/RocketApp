@@ -2,6 +2,9 @@ package com.example.rocketapp.helpers;
 
 import android.widget.EditText;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * Used to validate user input
@@ -104,7 +107,7 @@ public class Validate {
     /**
      * Checks if input has a length in range and displays warning if it fails.
      * @param editText
-     *      text box with some text
+     *      text box to check value for
      * @param min
      *      minimum length the text can have
      * @param max
@@ -143,4 +146,53 @@ public class Validate {
         catch (Exception ignored) {}
         return isValid;
     }
+
+    /**
+     * Checks if input has a valid email address with length in range and displays warning if it fails.
+     * @param editText
+     *      text box to check value for
+     * @param min
+     *      minimum length the text can have
+     * @param max
+     *      maximum length the text can have
+     * @param showError
+     *      if showError is true, the error is displayed.
+     * @return
+     *      true if text entered is valid email address and has length within min and max.
+     */
+    public static boolean emailInRange(EditText editText, int min, int max, boolean showError) {
+        boolean isValid = emailInRange(editText.getText().toString(), min, max);
+
+        if (!isValid && showError) {
+            editText.setError("Must be a valid email address between " + min + " and " + max + " characters.");
+            editText.requestFocus();
+        }
+        return isValid;
+    }
+
+    /**
+     * @param str
+     *      string to check if it is an email address
+     * @param
+     *      min minimum length the string can have
+     * @param
+     *      max maximum length the string can have
+     * @return
+     *      true if str entered is has length within min and max
+     */
+    public static boolean emailInRange(String str, int min, int max) {
+        boolean isValid = false;
+
+        try {
+            int length = str.length();
+            // https://stackoverflow.com/a/24320945
+            // Author: Alexander Burakevych (https://stackoverflow.com/users/1522292/alexander-burakevych)
+            Pattern pattern = Pattern.compile("^.+@.+\\..+$");
+            Matcher matcher = pattern.matcher(str);
+            isValid = matcher.matches() && length >= min && length <= max;
+        }
+        catch (Exception ignored) {}
+        return isValid;
+    }
+
 }

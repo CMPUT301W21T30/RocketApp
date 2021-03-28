@@ -50,7 +50,7 @@ public class UserProfileActivity extends RocketAppActivity {
 
                 // Check inputs and update profile
                 if (!Validate.lengthInRange(userName, 3, 50, true)) return;
-                if (!Validate.lengthInRange(userEmail, 3, 50, true)) return;
+                if (!Validate.emailInRange(userEmail, 3, 50, true)) return;
                 if (!Validate.lengthInRange(userPhoneNumber, 7, 11, true)) return;
 
                 UserManager.getUser().setName(userName.getText().toString());
