@@ -185,6 +185,13 @@ public abstract class Experiment extends FirestoreOwnableDocument {
     @Exclude
     public abstract float getBottomQuartile();
 
+    /**
+     * @return An ArrayList of all the trials that are not ignored by the owner
+     */
+    @Exclude
+    public abstract ArrayList<? extends Trial> getFilteredTrials() ;
+
+
 }
 
 

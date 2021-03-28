@@ -164,7 +164,9 @@ public class MeasurementExperiment extends Experiment {
     /**
      * @return An ArrayList of all the trials that are not ignored by the owner
      */
-    ArrayList<MeasurementTrial> getFilteredTrials(){
+    @Exclude
+    @Override
+    public ArrayList<MeasurementTrial> getFilteredTrials(){
         ArrayList<MeasurementTrial> trials = getTrials();
         ArrayList<MeasurementTrial> filteredTrials = new ArrayList<MeasurementTrial>();
         for(int i = 0; i <trials.size(); i++){

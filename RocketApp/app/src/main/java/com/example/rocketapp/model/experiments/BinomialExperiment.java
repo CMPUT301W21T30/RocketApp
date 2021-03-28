@@ -118,7 +118,9 @@ public class BinomialExperiment extends Experiment {
     /**
      * @return An ArrayList of all the trials that are not ignored by the owner
      */
-    ArrayList<BinomialTrial> getFilteredTrials(){
+    @Exclude
+    @Override
+    public ArrayList<BinomialTrial> getFilteredTrials(){
         ArrayList<BinomialTrial> trials = getTrials();
         ArrayList<BinomialTrial> filteredTrials = new ArrayList<BinomialTrial>();
         for(int i = 0; i <trials.size(); i++){
