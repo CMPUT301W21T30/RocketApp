@@ -120,7 +120,7 @@ public class IntCountExperiment extends Experiment {
                 quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getPCount() + trials.get((trials.size() * 3) / 4 ).getPCount()) )/ 2;
                 return quart;
             case (1):
-                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 ).getPCount() + trials.get(((trials.size() - 1) * 3) / 4 + 1).getPCount())) / 2;
+                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 -1).getPCount() + trials.get(((trials.size() - 1) * 3) / 4 ).getPCount())) / 2;
                 return quart;
             case (2):
                 quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getPCount());

@@ -121,7 +121,7 @@ public class MeasurementExperiment extends Experiment {
                 quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getMeasurement() + trials.get((trials.size() * 3) / 4 ).getMeasurement()) )/ 2;
                 return quart;
             case (1):
-                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 + 1).getMeasurement())) / 2;
+                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 -1).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement())) / 2;
                 return quart;
             case (2):
                 quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getMeasurement());

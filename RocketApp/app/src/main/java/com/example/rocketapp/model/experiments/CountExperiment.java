@@ -121,7 +121,7 @@ public class CountExperiment extends Experiment {
                 quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getCount() + trials.get((trials.size() * 3) / 4 ).getCount()) )/ 2;
                 return quart;
             case (1):
-                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 ).getCount() + trials.get(((trials.size() - 1) * 3) / 4 + 1).getCount())) / 2;
+                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 -1).getCount() + trials.get(((trials.size() - 1) * 3) / 4 ).getCount())) / 2;
                 return quart;
             case (2):
                 quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getCount());
