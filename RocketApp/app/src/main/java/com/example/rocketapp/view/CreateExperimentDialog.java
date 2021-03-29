@@ -173,7 +173,6 @@ public class CreateExperimentDialog extends DialogFragment {
     private boolean checkInputsValid() {
         return  Validate.lengthInRange(descriptionET, 1, 100, true) &&
                 Validate.intInRange(minTrialsET, 0, Integer.MAX_VALUE, true) &&
-                Validate.lengthInRange(regionET, 1, 40, true)
-                ;
+                Validate.lengthInRange(regionET, 1, 40, true);
     }
 }

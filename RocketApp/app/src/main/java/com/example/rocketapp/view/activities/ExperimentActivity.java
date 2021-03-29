@@ -112,7 +112,7 @@ public class ExperimentActivity extends AppCompatActivity {
         }
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
-        findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
+        //findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -125,9 +125,15 @@ public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(UserManager.getUser()))
+        if (experiment.getOwner().equals(UserManager.getUser())){
         getMenuInflater().inflate(R.menu.experiment_menu, menu);
         return super.onCreateOptionsMenu(menu);
+        }
+        else{
+            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
+            return super.onCreateOptionsMenu(menu);
+
+        }
     }
 
     @Override
@@ -141,6 +147,15 @@ public class ExperimentActivity extends AppCompatActivity {
                 intent.putExtra("id", experiment.getId());
                 startActivity(intent);
                 return true;
+            case R.id.scannerMenu:
+                Intent scannerIntent = new Intent(this, ScannerActivity.class);
+                startActivity(scannerIntent);
+                return true;
+            case R.id.forumButton:
+                Intent forumintent = new Intent(this, ExperimentForumActivity.class);
+                forumintent.putExtra("id", experiment.getId());
+                startActivity(forumintent);
+
         }
         return super.onOptionsItemSelected(item);
     }
