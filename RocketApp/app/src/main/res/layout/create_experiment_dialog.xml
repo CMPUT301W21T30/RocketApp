@@ -1,75 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="300dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_background">
 
 
-    <Spinner
-        android:id="@+id/select_exp"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"
-        android:prompt="@string/dropdown_prompt"
-        android:spinnerMode="dialog" /><!-- Source: StackOverFlow, Title: Android spinner prompt, Asked By: atapi19, Answered by: Nabin, Link: https://stackoverflow.com/questions/26543408/android-spinner-prompt  -->
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/description_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:autofillHints=""
-        android:hint="@string/description"
-        android:inputType="text" />
+        <Spinner
+            android:id="@+id/select_exp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:prompt="@string/dropdown_prompt"
+            android:spinnerMode="dialog"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/region_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
-        android:autofillHints=""
-        android:hint="@string/region"
-        android:inputType="text" />
+        <EditText
+            android:id="@+id/description_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:autofillHints=""
+            android:hint="@string/description"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/select_exp" />
 
-    <EditText
-        android:id="@+id/min_trial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:autofillHints=""
-        android:hint="@string/min_trial"
-        android:inputType="number" />
+        <EditText
+            android:id="@+id/region_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:autofillHints=""
+            android:hint="@string/region"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description_input" />
 
-    <CheckBox
-        android:id="@+id/geolocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:text="@string/geolocation" />
+        <EditText
+            android:id="@+id/min_trial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:autofillHints=""
+            android:hint="@string/min_trial"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/region_input" />
 
-    <Button
-        android:id="@+id/add_exp"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="4dp"
-        android:text="@string/publish"
-        android:layout_alignParentLeft="true" />
+        <CheckBox
+            android:id="@+id/geolocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/geolocation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/min_trial" />
 
-    <Button
-        android:id="@+id/cancel_exp"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="208dp"
-        android:layout_marginLeft="208dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="0dp"
-        android:text="@string/cancel"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="1dp" />
+        <Button
+            android:id="@+id/add_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/publish"
+            app:backgroundTint="@color/dark_pink"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cancel_exp" />
+
+        <Button
+            android:id="@+id/cancel_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/cancel"
+            app:backgroundTint="@color/dark_pink"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/add_exp"
+            app:layout_constraintHorizontal_bias="0.94"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Source: StackOverFlow, Title: Android spinner prompt, Asked By: atapi19, Answered by: Nabin, Link: https://stackoverflow.com/questions/26543408/android-spinner-prompt  -->
 
 </RelativeLayout>

@@ -183,6 +183,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <Button
+                    android:id="@+id/mapbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginLeft="28dp"
+                    android:layout_marginTop="150dp"
+                    android:drawableLeft="@drawable/maps_icon_gmm"
+                    android:text="MAP"
+                    app:backgroundTint="@color/dark_pink"
+                    app:layout_constraintStart_toEndOf="@+id/regionView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -216,6 +229,7 @@
             android:id="@+id/addTrialButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Add Trial"
             app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
@@ -287,17 +301,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/forumButton" />
 
-        <Button
-            android:id="@+id/mapbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="136dp"
-            android:drawableLeft="@drawable/maps_icon_gmm"
-            android:text="MAP"
-            app:layout_constraintStart_toEndOf="@+id/endedTextView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
         <TextView
             android:id="@+id/ownerTextView"
             android:layout_width="wrap_content"
