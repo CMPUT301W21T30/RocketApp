@@ -125,9 +125,15 @@ public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(UserManager.getUser()))
+        if (experiment.getOwner().equals(UserManager.getUser())){
         getMenuInflater().inflate(R.menu.experiment_menu, menu);
         return super.onCreateOptionsMenu(menu);
+        }
+        else{
+            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
+            return super.onCreateOptionsMenu(menu);
+
+        }
     }
 
     @Override
