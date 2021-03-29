@@ -50,7 +50,7 @@
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateAlwaysHidden"/>
-        
+
         <activity
             android:name=".view.activities.ExperimentActivity" />
         <activity

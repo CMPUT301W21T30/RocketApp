@@ -14,6 +14,10 @@ import com.example.rocketapp.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+/**
+ * ScannerActivity implements the scanner feature
+ * 
+ */
 public class ScannerActivity extends AppCompatActivity implements View.OnClickListener {
     private Button scanBtn;
 

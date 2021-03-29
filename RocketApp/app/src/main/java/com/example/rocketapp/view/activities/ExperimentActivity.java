@@ -141,6 +141,11 @@ public class ExperimentActivity extends AppCompatActivity {
                 intent.putExtra("id", experiment.getId());
                 startActivity(intent);
                 return true;
+            case R.id.scannerMenu:
+                Intent scannerIntent = new Intent(this, ScannerActivity.class);
+                startActivity(scannerIntent);
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

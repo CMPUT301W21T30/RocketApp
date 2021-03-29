@@ -8,5 +8,10 @@
         android:title="Forum"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/scannerMenu"
+        android:icon="@drawable/ic_baseline_document_scanner_24"
+        android:title="scannerItem"
+        app:showAsAction="always"/>
 
 </menu>

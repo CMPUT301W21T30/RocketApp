@@ -216,12 +216,11 @@
             android:id="@+id/addTrialButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Add Trial"
             app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/endedTextView" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView4"
@@ -270,12 +269,12 @@
             android:id="@+id/forumButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="16dp"
             android:text="Question Forum"
             app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
         <Button
             android:id="@+id/endExperimentButton"
