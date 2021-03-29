@@ -3,9 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/forumButton"
+        android:icon="@drawable/ic_baseline_comment_24"
+        android:title="Discussion Forum"
+        app:showAsAction="never"/>
+
+
+    <item
         android:id="@+id/scannerMenu"
         android:icon="@drawable/ic_baseline_document_scanner_24"
-        android:title="scannerItem"
-        app:showAsAction="always"/>
+        android:title="Scan code"
+        app:showAsAction="never"/>
 
 </menu>

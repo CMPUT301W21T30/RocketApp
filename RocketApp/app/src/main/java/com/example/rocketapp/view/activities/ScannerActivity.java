@@ -3,14 +3,19 @@ package com.example.rocketapp.view.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.UserManager;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -20,7 +25,7 @@ import com.google.zxing.integration.android.IntentResult;
  */
 public class ScannerActivity extends AppCompatActivity implements View.OnClickListener {
     private Button scanBtn;
-
+    private TextView code;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -29,6 +34,11 @@ public class ScannerActivity extends AppCompatActivity implements View.OnClickLi
 
         scanBtn = findViewById(R.id.scanButton);
         scanBtn.setOnClickListener(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
@@ -45,6 +55,18 @@ public class ScannerActivity extends AppCompatActivity implements View.OnClickLi
         integrator.initiateScan();
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -52,23 +74,8 @@ public class ScannerActivity extends AppCompatActivity implements View.OnClickLi
         if (result != null){
             if(result.getContents() != null){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(result.getContents());
-                builder.setTitle("Result");
-                builder.setPositiveButton("Scan Again", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        scanCode();
-                    }
-                }).setNegativeButton("finish", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
+                code = findViewById(R.id.scanned_code);
+                code.setText(result.getContents());
             }
             else{
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
