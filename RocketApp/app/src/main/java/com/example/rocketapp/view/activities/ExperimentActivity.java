@@ -155,6 +155,9 @@ public class ExperimentActivity extends AppCompatActivity {
                 Intent forumintent = new Intent(this, ExperimentForumActivity.class);
                 forumintent.putExtra("id", experiment.getId());
                 startActivity(forumintent);
+            case R.id.generateQRcode:
+                Intent qrcodeIntent = new Intent(this, GenerateQRcodeActivity.class);
+                startActivity(qrcodeIntent);
 
         }
         return super.onOptionsItemSelected(item);

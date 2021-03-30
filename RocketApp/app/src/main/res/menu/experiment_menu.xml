@@ -20,5 +20,10 @@
         android:title="Scan Code"
         app:showAsAction="never|withText"/>
 
+    <item
+        android:id="@+id/generateQRcode"
+        android:title="Generate QR code"
+        app:showAsAction="never|withText"/>
+
 
 </menu>
