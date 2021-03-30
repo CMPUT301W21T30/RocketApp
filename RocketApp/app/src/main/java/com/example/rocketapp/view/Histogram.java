@@ -32,44 +32,49 @@ public class Histogram extends AppCompatActivity {
         barChart = (BarChart)findViewById(R.id.histogram);
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<Trial> done = new ArrayList<Trial>();
-
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
-        System.out.println(experiment);
         ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
-        for (int i = 0; i < experiment.getFilteredTrials().size(); i++) {
-            System.out.println(experiment.getFilteredTrials().get(i));
+
+        for (int i = 0; i < trials.size(); i++) {
             int freq = 0;
             int found = 0;
             for (int k = 0; k < done.size(); k++) {
-                if (experiment.getFilteredTrials().get(i).getId() == (done.get(k).getId())) {
+                if (trials.get(i).getId() == (done.get(k).getId())) {
                     found = found + 1;
                 }
             }
-            System.out.println("FOUND");
-            System.out.println(found);
+
             if (found == 0) {
-                for (int j = i; j < experiment.getFilteredTrials().size(); j++) {
-                    System.out.println(experiment.getFilteredTrials().get(j));
-                    System.out.println("YOYOYO");
-                    System.out.println(experiment.getFilteredTrials().get(i).getValueString());
-                    System.out.println(experiment.getFilteredTrials().get(j).getValueString());
-                    if (experiment.getFilteredTrials().get(i).getValueString().equals(experiment.getFilteredTrials().get(j).getValueString())) {
-                        System.out.println("ABCD");
+                //Handling Non binomial Experiments
+                for (int j = i; j < trials.size(); j++) {
+
+                    //Used for handling measurements (grouping experiments less than 1 unit away from each other to avoid bar overlap)
+                    float delta = Float.parseFloat(trials.get(i).getValueString()) - Float.parseFloat(trials.get(j).getValueString());
+
+                    //Handling Counts
+                    if (trials.get(i).getValueString().equals(trials.get(j).getValueString())
+                    || (-1 < delta && delta < 1) /*handling measurements of previously stated case*/) {
                         freq = freq + 1;
-                        done.add(experiment.getFilteredTrials().get(j));
+                        done.add(trials.get(j));
                     }
                 }
-                if (experiment.getFilteredTrials().get(i).getValueString().equals("True")) {
+
+                //Handling Binomial case:
+                if (trials.get(i).getValueString().equals("True")) {
                     barEntries.add(new BarEntry(Float.parseFloat("1"), freq));
                 }
-                else if(experiment.getFilteredTrials().get(i).getValueString().equals("False")){
+                else if(trials.get(i).getValueString().equals("False")){
                     barEntries.add(new BarEntry(Float.parseFloat("0"), freq));
                 }
+
+                //Adding the non-binomial cases to barEntries
                 else{
-                    barEntries.add(new BarEntry(Float.parseFloat(experiment.getFilteredTrials().get(i).getValueString()), freq));
+                    barEntries.add(new BarEntry(Float.parseFloat(trials.get(i).getValueString()), freq));
                 }
             }
         }
+
+        //Creating the graph
         BarDataSet barDataSet = new BarDataSet(barEntries, "Trials");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColors(Collections.singletonList(Color.BLACK));
