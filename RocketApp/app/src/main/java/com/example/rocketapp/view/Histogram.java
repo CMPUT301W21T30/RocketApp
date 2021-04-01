@@ -44,12 +44,12 @@ public class Histogram extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate (Bundle savedInstanceState){
-        super.onCreate (savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_activity);
 
-        barChart = (BarChart)findViewById(R.id.histogram);
-        lineChart = (LineChart)findViewById(R.id.time_plot);
+        barChart = (BarChart) findViewById(R.id.histogram);
+        lineChart = (LineChart) findViewById(R.id.time_plot);
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<Trial> done = new ArrayList<Trial>();
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
@@ -76,16 +76,16 @@ public class Histogram extends AppCompatActivity {
                 for (int j = i; j < trials.size(); j++) {
 
                     //Used for handling measurements (grouping experiments less than 1 unit away from each other to avoid bar overlap)
-                    if(!trials.get(i).getType().equals(BinomialTrial.TYPE)){
+                    if (!trials.get(i).getType().equals(BinomialTrial.TYPE)) {
                         float delta = Float.parseFloat(trials.get(i).getValueString()) - Float.parseFloat(trials.get(j).getValueString());
-                        if(-0.5 < delta && delta < 0.5){
+                        if (-0.5 < delta && delta < 0.5) {
                             freq = freq + 1;
                             done.add(trials.get(j));
                         }
                     }
 
                     //Handling Counts
-                    if(trials.get(i).getType().equals(BinomialTrial.TYPE)){
+                    if (trials.get(i).getType().equals(BinomialTrial.TYPE)) {
                         if (trials.get(i).getValueString().equals(trials.get(j).getValueString())) {
                             freq = freq + 1;
                             done.add(trials.get(j));
@@ -96,13 +96,12 @@ public class Histogram extends AppCompatActivity {
                 //Handling Binomial case:
                 if (trials.get(i).getValueString().equals("True")) {
                     barEntries.add(new BarEntry(Float.parseFloat("1"), freq));
-                }
-                else if(trials.get(i).getValueString().equals("False")){
+                } else if (trials.get(i).getValueString().equals("False")) {
                     barEntries.add(new BarEntry(Float.parseFloat("0"), freq));
                 }
 
                 //Adding the non-binomial cases to barEntries
-                else{
+                else {
                     barEntries.add(new BarEntry(Float.parseFloat(trials.get(i).getValueString()), freq));
                 }
             }
@@ -122,7 +121,7 @@ public class Histogram extends AppCompatActivity {
 
     }
 
-    private ArrayList<Entry> dataValues(ArrayList<Trial> trials){
+    private ArrayList<Entry> dataValues(ArrayList<Trial> trials) {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
@@ -134,12 +133,25 @@ public class Histogram extends AppCompatActivity {
         });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
         float mean = 0;
-        for(int i=0; i<trials.size(); i++) {
-            MeasurementTrial j = (MeasurementTrial) trials.get(i);
+        ArrayList<String> done = new ArrayList<>();
+        for (int i = 0; i < trials.size(); i++) {
             mean = experiment.getMean(trials.get(i).getTimestamp().toDate());
-            dataValue.add(new Entry(trials.get(i).getTimestamp().toDate().getTime(), mean));
+            Entry entry = new Entry(trials.get(i).getTimestamp().toDate().getTime(), mean);
+            DateFormat df = new SimpleDateFormat("dd/MM");
+            String sdf = (df).format(trials.get(i).getTimestamp().toDate().getTime());
+            int found = 0;
+            for (int k = 0; k < done.size(); k++) {
+                if(sdf.equals(done.get(k))){
+                    found = found + 1;
+                }
+            }
+            if(found==0){
+                dataValue.add(entry);
+                done.add(sdf);
+            }
         }
-
-        return dataValue;
+        System.out.println(dataValue);
+        System.out.println(dataValue);
+    return dataValue;
     }
 }
