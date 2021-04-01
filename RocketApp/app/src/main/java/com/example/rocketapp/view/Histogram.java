@@ -14,18 +14,25 @@ import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 public class Histogram extends AppCompatActivity {
 
@@ -51,6 +58,7 @@ public class Histogram extends AppCompatActivity {
         ArrayList<Trial> done = new ArrayList<Trial>();
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
         ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
+
 
         for (int i = 0; i < trials.size(); i++) {
             int freq = 0;
@@ -113,6 +121,15 @@ public class Histogram extends AppCompatActivity {
     }
 
     private ArrayList<Entry> dataValues(){
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                Date date = new Date(new Date().getTime());
+                DateFormat df = new SimpleDateFormat("dd/MM");
+                return (df).format(date);// xVal is a string array
+            }
+        });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
         dataValue.add(new Entry(1, 20));
         dataValue.add(new Entry(2, 40));
