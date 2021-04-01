@@ -41,7 +41,6 @@ public class MeasurementExperimentUnitTest {
         Experiment experiment = createMockExperiment();
         assertEquals(3.54, experiment.getStdDev(),0.1);
     }
-
     @Test
     public void checkTopQuartile() {
         Experiment experiment = createMockExperiment();

@@ -11,11 +11,17 @@ import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,6 +29,7 @@ public class Histogram extends AppCompatActivity {
 
     BarChart barChart; //Source: https://www.youtube.com/watch?v=pi1tq-bp7uA
     Experiment experiment;
+    LineChart lineChart;
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -30,6 +37,13 @@ public class Histogram extends AppCompatActivity {
         setContentView(R.layout.graph_activity);
 
         barChart = (BarChart)findViewById(R.id.histogram);
+        lineChart = (LineChart)findViewById(R.id.time_plot);
+        LineDataSet lineDataSet = new LineDataSet(dataValues(), "Data set 1");
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet);
+        LineData data = new LineData(dataSets);
+        lineChart.setData(data);
+        lineChart.invalidate();
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<Trial> done = new ArrayList<Trial>();
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
@@ -85,5 +99,16 @@ public class Histogram extends AppCompatActivity {
         barChart.setData(barData);
         barChart.getDescription().setText("Experiment Trials");
         barChart.animateY(2000);
+
+    }
+
+    private ArrayList<Entry> dataValues(){
+        ArrayList<Entry> dataValue = new ArrayList<Entry>();
+        dataValue.add(new Entry(1, 20));
+        dataValue.add(new Entry(2, 40));
+        dataValue.add(new Entry(5, 60));
+        dataValue.add(new Entry(8, 10));
+
+        return dataValue;
     }
 }
