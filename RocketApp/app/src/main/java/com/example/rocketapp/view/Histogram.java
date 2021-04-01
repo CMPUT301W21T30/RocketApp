@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -28,8 +30,9 @@ import java.util.Collections;
 public class Histogram extends AppCompatActivity {
 
     BarChart barChart; //Source: https://www.youtube.com/watch?v=pi1tq-bp7uA
+    LineChart lineChart; //Source: https://www.youtube.com/watch?v=yrbgN2UvKGQ&list=PLFh8wpMiEi89LcBupeftmAcgDKCeC24bJ&ab_channel=SarthiTechnology
     Experiment experiment;
-    LineChart lineChart;
+
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -63,13 +66,20 @@ public class Histogram extends AppCompatActivity {
                 for (int j = i; j < trials.size(); j++) {
 
                     //Used for handling measurements (grouping experiments less than 1 unit away from each other to avoid bar overlap)
-                    float delta = Float.parseFloat(trials.get(i).getValueString()) - Float.parseFloat(trials.get(j).getValueString());
+                    if(!trials.get(i).getType().equals(BinomialTrial.TYPE)){
+                        float delta = Float.parseFloat(trials.get(i).getValueString()) - Float.parseFloat(trials.get(j).getValueString());
+                        if(-0.5 < delta && delta < 0.5){
+                            freq = freq + 1;
+                            done.add(trials.get(j));
+                        }
+                    }
 
                     //Handling Counts
-                    if (trials.get(i).getValueString().equals(trials.get(j).getValueString())
-                    || (-1 < delta && delta < 1) /*handling measurements of previously stated case*/) {
-                        freq = freq + 1;
-                        done.add(trials.get(j));
+                    if(trials.get(i).getType().equals(BinomialTrial.TYPE)){
+                        if (trials.get(i).getValueString().equals(trials.get(j).getValueString())) {
+                            freq = freq + 1;
+                            done.add(trials.get(j));
+                        }
                     }
                 }
 
