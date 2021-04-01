@@ -11,6 +11,8 @@ import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
+import com.example.rocketapp.model.trials.CountTrial;
+import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -48,16 +50,16 @@ public class Histogram extends AppCompatActivity {
 
         barChart = (BarChart)findViewById(R.id.histogram);
         lineChart = (LineChart)findViewById(R.id.time_plot);
-        LineDataSet lineDataSet = new LineDataSet(dataValues(), "Data set 1");
+        ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
+        ArrayList<Trial> done = new ArrayList<Trial>();
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
+        LineDataSet lineDataSet = new LineDataSet(dataValues(trials), "Data set 1");
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(lineDataSet);
         LineData data = new LineData(dataSets);
         lineChart.setData(data);
         lineChart.invalidate();
-        ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
-        ArrayList<Trial> done = new ArrayList<Trial>();
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
-        ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
 
 
         for (int i = 0; i < trials.size(); i++) {
@@ -120,21 +122,23 @@ public class Histogram extends AppCompatActivity {
 
     }
 
-    private ArrayList<Entry> dataValues(){
+    private ArrayList<Entry> dataValues(ArrayList<Trial> trials){
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                Date date = new Date(new Date().getTime());
+                Date date = new Date((long) value);
                 DateFormat df = new SimpleDateFormat("dd/MM");
                 return (df).format(date);// xVal is a string array
             }
         });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
-        dataValue.add(new Entry(1, 20));
-        dataValue.add(new Entry(2, 40));
-        dataValue.add(new Entry(5, 60));
-        dataValue.add(new Entry(8, 10));
+        float sum = 0;
+        for(int i=0; i<trials.size(); i++) {
+            MeasurementTrial j = (MeasurementTrial) trials.get(i);
+            sum = sum+j.getMeasurement();
+            dataValue.add(new Entry(trials.get(i).getTimestamp().toDate().getTime(), sum));
+        }
 
         return dataValue;
     }
