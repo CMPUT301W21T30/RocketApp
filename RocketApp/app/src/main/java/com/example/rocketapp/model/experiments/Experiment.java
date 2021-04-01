@@ -9,6 +9,7 @@ import com.example.rocketapp.model.trials.Trial;
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Abstract class Experiment
@@ -163,6 +164,9 @@ public abstract class Experiment extends FirestoreOwnableDocument {
      */
     @Exclude
     public abstract float getMean();
+
+    @Exclude
+    public abstract float getMean(Date date);
 
     /**
      * getter for standard deviation of this experiment under normal curve

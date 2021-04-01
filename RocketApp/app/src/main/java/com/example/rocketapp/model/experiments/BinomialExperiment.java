@@ -1,5 +1,6 @@
 package com.example.rocketapp.model.experiments;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.CountTrial;
@@ -74,6 +75,30 @@ public class BinomialExperiment extends Experiment {
             }
         }
         return  ((float) success)/((float)trials.size());
+    }
+
+    /**
+     *
+     * @return Mean of all trials in this experiment up to a given date. - Float
+     */
+    @Exclude
+    @Override
+    public float getMean(Date date) {
+        ArrayList<BinomialTrial> trials = getFilteredTrials();
+        if (trials.size() == 0) {return 0;}
+        int length = trials.size();
+        if(length==0){
+            return 0;
+        }
+        int success = 0;
+        int trialCounter = 0;
+        for(int i=0; i<length; i++){
+            if(trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
+                success++;
+                trialCounter++;
+            }
+        }
+        return  ((float) success)/((float)trialCounter);
     }
 
     /**

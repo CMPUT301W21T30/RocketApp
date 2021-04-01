@@ -133,11 +133,11 @@ public class Histogram extends AppCompatActivity {
             }
         });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
-        float sum = 0;
+        float mean = 0;
         for(int i=0; i<trials.size(); i++) {
             MeasurementTrial j = (MeasurementTrial) trials.get(i);
-            sum = sum+j.getMeasurement();
-            dataValue.add(new Entry(trials.get(i).getTimestamp().toDate().getTime(), sum));
+            mean = experiment.getMean(trials.get(i).getTimestamp().toDate());
+            dataValue.add(new Entry(trials.get(i).getTimestamp().toDate().getTime(), mean));
         }
 
         return dataValue;

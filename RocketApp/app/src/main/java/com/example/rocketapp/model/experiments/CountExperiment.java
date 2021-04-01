@@ -2,8 +2,10 @@ package com.example.rocketapp.model.experiments;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import com.example.rocketapp.model.trials.CountTrial;
+import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
 
 import static java.lang.Math.sqrt;
@@ -81,6 +83,30 @@ public class CountExperiment extends Experiment {
             sum = sum + trials.get(i).getCount();
         }
         return ((float) sum)/((float) trials.size());
+    }
+
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the mean from all trials present in this experiment up to a certain date
+     * @return the mean of experiment to given date
+     */
+    @Exclude
+    @Override
+    public float getMean(Date date) {
+        ArrayList<CountTrial> trials = getFilteredTrials();
+        if (trials.size() == 0) {return 0;}
+        float sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
+        int trialCounter = 0;
+        for(int i = 0; i<trials.size() ; i++){
+            if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
+            sum = sum + trials.get(i).getCount();
+            trialCounter++;
+        }
+        float mean = ((float) sum) / trialCounter;
+        return mean;
     }
 
     /**
