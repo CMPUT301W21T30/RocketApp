@@ -85,20 +85,28 @@ public class BinomialExperiment extends Experiment {
     @Override
     public float getMean(Date date) {
         ArrayList<BinomialTrial> trials = getFilteredTrials();
-        if (trials.size() == 0) {return 0;}
+        if (trials.size() == 0) {
+            return 0;
+        }
         int length = trials.size();
-        if(length==0){
+        if (length == 0) {
             return 0;
         }
         int success = 0;
         int trialCounter = 0;
-        for(int i=0; i<length; i++){
-            if(trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
+        for (int i = 0; i < length; i++) {
+            if (trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
                 success++;
+                trialCounter++;
+            } else if (!trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
                 trialCounter++;
             }
         }
-        return  ((float) success)/((float)trialCounter);
+        if (success == 0) {
+            return (float) 0;
+        } else {
+            return ((float) success) / ((float) trialCounter);
+        }
     }
 
     /**

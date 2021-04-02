@@ -33,7 +33,9 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class Histogram extends AppCompatActivity {
@@ -54,12 +56,7 @@ public class Histogram extends AppCompatActivity {
         ArrayList<Trial> done = new ArrayList<Trial>();
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
         ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
-        LineDataSet lineDataSet = new LineDataSet(dataValues(trials), "Data set 1");
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(lineDataSet);
-        LineData data = new LineData(dataSets);
-        lineChart.setData(data);
-        lineChart.invalidate();
+        timePlot(trials);
 
 
         for (int i = 0; i < trials.size(); i++) {
@@ -121,7 +118,7 @@ public class Histogram extends AppCompatActivity {
 
     }
 
-    private ArrayList<Entry> dataValues(ArrayList<Trial> trials) {
+    private void timePlot(ArrayList<Trial> trials) {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
@@ -132,6 +129,7 @@ public class Histogram extends AppCompatActivity {
             }
         });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
+        ArrayList<Entry> mockData = new ArrayList<Entry>();
         float mean = 0;
         ArrayList<String> done = new ArrayList<>();
         for (int i = 0; i < trials.size(); i++) {
@@ -149,9 +147,26 @@ public class Histogram extends AppCompatActivity {
                 dataValue.add(entry);
                 done.add(sdf);
             }
+            else{
+                for(int j = 0; j<dataValue.size(); j++){
+                    if((sdf.equals((df).format(dataValue.get(j).getX())))&&(entry.getX()>dataValue.get(j).getX())){
+                        dataValue.set(j, entry);
+                    }
+                }
+            }
         }
-        System.out.println(dataValue);
-        System.out.println(dataValue);
-    return dataValue;
+
+        Collections.sort(dataValue, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry entry, Entry t1) {
+                return (int) (entry.getX()-t1.getX());
+            }
+        });
+                LineDataSet lineDataSet = new LineDataSet(dataValue, "Data set 1");
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet);
+        LineData data = new LineData(dataSets);
+        lineChart.setData(data);
+        System.out.println(lineChart.getData().getDataSets());
     }
 }
