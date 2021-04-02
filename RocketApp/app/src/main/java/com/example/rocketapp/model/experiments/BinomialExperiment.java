@@ -7,9 +7,9 @@ import com.example.rocketapp.model.trials.CountTrial;
 import com.google.firebase.firestore.Exclude;
 
 /**
-    * Class for Experiments of 'Binomial' type.
-    *Inherits from abstract class Experiment.
-    */
+ * Class for Experiments of 'Binomial' type.
+ *Inherits from abstract class Experiment.
+ */
 public class BinomialExperiment extends Experiment {
     public static final String TYPE = "Binomial";     //Type of experiment
 
@@ -94,12 +94,14 @@ public class BinomialExperiment extends Experiment {
         }
         int success = 0;
         int trialCounter = 0;
-        for (int i = 0; i < length; i++) {
-            if (trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
-                success++;
+
+        for(int i=0; i<length; i++){
+            if(trials.get(i).getTimestamp().toDate().compareTo(date) == 0 || trials.get(i).getTimestamp().toDate().compareTo(date) < 0) {
+                System.out.println("Trial timestamp: " + trials.get(i).getTimestamp().toDate());/*For testing, checking if the issue with tie graphs is getMean(date) of binomials, test shows it is now the issue */
                 trialCounter++;
-            } else if (!trials.get(i).isValue() && trials.get(i).getTimestamp().toDate().after(date)) {
-                trialCounter++;
+                if(trials.get(i).isValue()){
+                    success++;
+                }
             }
         }
         if (success == 0) {
