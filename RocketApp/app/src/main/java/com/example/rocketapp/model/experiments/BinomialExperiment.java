@@ -94,7 +94,7 @@ public class BinomialExperiment extends Experiment {
         int trialCounter = 0;
         for(int i=0; i<length; i++){
             if(trials.get(i).getTimestamp().toDate().compareTo(date) == 0 || trials.get(i).getTimestamp().toDate().compareTo(date) < 0) {
-                System.out.println("Trial timestamp: " + trials.get(i).getTimestamp().toDate());/*For testing, checking if the issue with tie graphs is get mean of binomials, test shows it is now the issue */
+                System.out.println("Trial timestamp: " + trials.get(i).getTimestamp().toDate());/*For testing, checking if the issue with tie graphs is getMean(date) of binomials, test shows it is now the issue */
                 trialCounter++;
                 if(trials.get(i).isValue()){
                     success++;
