@@ -136,6 +136,8 @@ public class Histogram extends AppCompatActivity {
         ArrayList<String> done = new ArrayList<>();
         for (int i = 0; i < trials.size(); i++) {
             mean = experiment.getMean(trials.get(i).getTimestamp().toDate());
+            System.out.println("the mean is " + mean);
+
             Entry entry = new Entry(trials.get(i).getTimestamp().toDate().getTime(), mean);
             DateFormat df = new SimpleDateFormat("dd/MM");
             String sdf = (df).format(trials.get(i).getTimestamp().toDate().getTime());
@@ -152,6 +154,6 @@ public class Histogram extends AppCompatActivity {
         }
         System.out.println(dataValue);
         System.out.println(dataValue);
-    return dataValue;
+        return dataValue;
     }
 }
