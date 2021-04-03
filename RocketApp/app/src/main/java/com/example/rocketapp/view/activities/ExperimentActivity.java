@@ -147,8 +147,9 @@ public class ExperimentActivity extends AppCompatActivity {
                 intent.putExtra("id", experiment.getId());
                 startActivity(intent);
                 return true;
-            case R.id.scannerMenu:
-                Intent scannerIntent = new Intent(this, ScannerActivity.class);
+            case R.id.registerMenu:
+                Intent scannerIntent = new Intent(this, RegisterBarcodeActivity.class);
+                scannerIntent.putExtra("id", experiment.getId());
                 startActivity(scannerIntent);
                 return true;
             case R.id.forumButton:
@@ -157,6 +158,7 @@ public class ExperimentActivity extends AppCompatActivity {
                 startActivity(forumintent);
             case R.id.generateQRcode:
                 Intent qrcodeIntent = new Intent(this, GenerateQRcodeActivity.class);
+                qrcodeIntent.putExtra("id", experiment.getId());
                 startActivity(qrcodeIntent);
 
         }
@@ -271,4 +273,5 @@ public class ExperimentActivity extends AppCompatActivity {
             Log.d("ExperimentActivity", "Not Owner");
         }
     }
+
 }

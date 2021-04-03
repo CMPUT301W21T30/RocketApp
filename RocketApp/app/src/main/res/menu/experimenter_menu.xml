@@ -10,14 +10,14 @@
 
 
     <item
-        android:id="@+id/scannerMenu"
+        android:id="@+id/registerMenu"
         android:icon="@drawable/ic_baseline_document_scanner_24"
-        android:title="Scan code"
+        android:title="Register Code"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/generateQRcode"
-        android:title="Generate QR code"
+        android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
 
 
