@@ -116,4 +116,8 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         }
     }
 
+//    void onRegisterClicked(){
+//
+//    }
+
 }
