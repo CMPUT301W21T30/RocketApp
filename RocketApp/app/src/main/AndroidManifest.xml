@@ -52,6 +52,7 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".view.activities.GenerateQRcodeActivity"/>
+        <activity android:name=".view.activities.ScanCodeActivity"/>
 
         <activity
             android:name=".view.activities.ExperimentActivity" />

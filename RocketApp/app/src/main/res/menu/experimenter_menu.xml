@@ -15,10 +15,13 @@
         android:title="Register Code"
         app:showAsAction="never"/>
 
+
     <item
         android:id="@+id/generateQRcode"
         android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
+
+
 
 
 </menu>

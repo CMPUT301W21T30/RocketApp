@@ -8,14 +8,15 @@ import com.example.rocketapp.model.trials.Trial;
  */
 public class Code {
     private String code;
-    private Experiment experiment;
-    private Trial trial;
+    private String experimentinfo;
+    private Boolean ifBinomial;
+    private int ifNotBinomial;
 
     /**
      * store scanned code to a string
      * @param code
      */
-    void setCode(String code){
+    public void setCode(String code){
         this.code = code;
     }
 
@@ -23,23 +24,24 @@ public class Code {
      * store the experiment that code corresponds to
      * @param experiment
      */
-    void setExperiment(Experiment experiment){
-        this.experiment = experiment;
+    public void setExperiment(String experiment){
+        this.experimentinfo = experiment;
     }
 
     /**
-     * store trial that the code corresponds to
-     * @param trial
+     * if a binomial trial is registered, register a pass of fail value
+     * @param success
      */
-    void setTrial(Trial trial){
-        this.trial = trial;
+    public void setIfBinomial(Boolean success){
+        this.ifBinomial = success;
     }
+
 
     /**
      * return the code
      * @return
      */
-    String getCode(){
+    public String getCode(){
         return this.code;
     }
 
@@ -47,18 +49,9 @@ public class Code {
      * return the experiment
      * @return
      */
-    Experiment getExperiment(){
-        return this.experiment;
+    public String getExperiment(){
+        return this.experimentinfo;
     }
-
-    /**
-     * return the trial
-     * @return
-     */
-    Trial getTrial(){
-        return this.trial;
-    }
-
 
 
 }
