@@ -10,7 +10,7 @@ public class Code {
     private String code;
     private String experimentinfo;
     private Boolean ifBinomial;
-    private int ifNotBinomial;
+    private Float ifNotBinomial;
 
     public Code (){}
 
@@ -42,12 +42,12 @@ public class Code {
         return this.ifBinomial;
     }
 
-    public void setIfNotBinomial(int trial){
+    public void setIfNotBinomial(Float trial){
         this.ifNotBinomial = trial;
     }
 
 
-    public int getIfNotBinomial(){
+    public Float getIfNotBinomial(){
         return this.ifNotBinomial;
     }
 

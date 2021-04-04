@@ -46,10 +46,6 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
     private CheckBox registerfail;
     private Button registerBtn;
     private Code registerCode;
-    private BinomialTrial binomialTrial;
-    private CountTrial countTrial;
-    private IntCountTrial intCountTrial;
-    private MeasurementTrial measurementTrial;
     private TextView checkRegister;
 
     @Override
@@ -123,7 +119,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
                 }
                 else {
                     registerCode.setCode(code.getText().toString());
-                    registerCode.setIfNotBinomial(Integer.parseInt(trialsEditText.getText().toString()));
+                    registerCode.setIfNotBinomial(Float.parseFloat(trialsEditText.getText().toString()));
                     registerCode.setExperiment(experiment.info.getDescription());
 
                     checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + String.valueOf(registerCode.getIfNotBinomial()));
