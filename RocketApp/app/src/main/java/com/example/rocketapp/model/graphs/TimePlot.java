@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.model.graphs;
 
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;

@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.model.graphs;
 
 
 import android.graphics.Color;

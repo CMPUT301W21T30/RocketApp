@@ -1,13 +1,14 @@
 package com.example.rocketapp.view;
 
 import android.os.Bundle;
-import android.os.SystemClock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.graphs.Histogram;
+import com.example.rocketapp.model.graphs.TimePlot;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
