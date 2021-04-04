@@ -44,7 +44,7 @@
         <activity
             android:name=".view.activities.ExperimentEditActivity" />
         <activity
-            android:name=".view.activities.ScannerActivity"/>
+            android:name=".view.activities.RegisterBarcodeActivity"/>
         <activity
             android:name=".view.activities.CaptureAct"
             android:screenOrientation="fullSensor"
@@ -52,6 +52,7 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".view.activities.GenerateQRcodeActivity"/>
+        <activity android:name=".view.activities.ScanCodeActivity"/>
 
         <activity
             android:name=".view.activities.ExperimentActivity" />
