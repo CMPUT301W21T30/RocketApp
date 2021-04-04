@@ -1,3 +1,8 @@
+* Mar 29, 2021
+   * Aryan, Saji, and Trevor working on QR codes
+   * Mike working on automatic login
+   * Archit and Saif working on statistics graph displays
+
 * Mar 26th, 2021
    * Mike will work on the database addressing the feedback and add extra testing to some of its features
    * Trevor will add a flagging feature to trials to ignore them (available only to owners)
