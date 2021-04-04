@@ -12,6 +12,8 @@ public class Code {
     private Boolean ifBinomial;
     private int ifNotBinomial;
 
+    public Code (){}
+
     /**
      * store scanned code to a string
      * @param code

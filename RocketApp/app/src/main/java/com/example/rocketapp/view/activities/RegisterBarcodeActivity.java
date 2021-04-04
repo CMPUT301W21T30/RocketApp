@@ -60,6 +60,8 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         registerBtn = findViewById(R.id.registerButton);
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
 
+        registerCode = new Code();
+
 
         experimentType.setText(experiment.getType());
 
