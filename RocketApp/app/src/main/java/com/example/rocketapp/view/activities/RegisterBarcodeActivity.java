@@ -65,6 +65,9 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
 
         scanBtn = findViewById(R.id.scanButton);
         scanBtn.setOnClickListener(this);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         //System.out.println(code.getText());
 
@@ -75,34 +78,34 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
             registerfail.setVisibility(View.GONE);
         }
 
-//        registerBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (experiment.getType().equals(BinomialTrial.TYPE)) {
-//                    if (registerpass.isChecked()) {
-//                        registerCode.setCode(code.getText().toString());
-//                        //registerCode.setExperiment(experiment.info.toString());
-//                        registerCode.setIfBinomial(true);
-//
-//                    }
-//                    else if (registerfail.isChecked()) {
-//                        registerCode.setCode(code.getText().toString());
-//                        //registerCode.setExperiment(experiment.info.toString());
-//                        registerCode.setIfBinomial(false);
-//
-//                    }
-//                    else {
-//                        //CANNOT select both
-//                    }
-//
-//                }
-//                else {
-//
-//                }
-//
-//
-//            }
-//        });
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (experiment.getType().equals(BinomialTrial.TYPE)) {
+                    if (registerpass.isChecked()) {
+                        registerCode.setCode(code.getText().toString());
+                        registerCode.setExperiment(experiment.info.getDescription());
+                        registerCode.setIfBinomial(true);
+
+                    }
+                    else if (registerfail.isChecked()) {
+                        registerCode.setCode(code.getText().toString());
+                        registerCode.setExperiment(experiment.info.getDescription());
+                        registerCode.setIfBinomial(false);
+
+                    }
+                    else {
+                        //CANNOT select both
+                    }
+
+                }
+                else {
+
+                }
+
+
+            }
+        });
 
     }
 
@@ -150,5 +153,6 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
 
         }
     }
+
 
 }
