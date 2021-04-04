@@ -38,6 +38,18 @@ public class Code {
         this.ifBinomial = success;
     }
 
+    public Boolean getIfBinomial(){
+        return this.ifBinomial;
+    }
+
+    public void setIfNotBinomial(int trial){
+        this.ifNotBinomial = trial;
+    }
+
+
+    public int getIfNotBinomial(){
+        return this.ifNotBinomial;
+    }
 
     /**
      * return the code
