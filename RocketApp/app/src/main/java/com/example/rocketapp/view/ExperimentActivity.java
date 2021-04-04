@@ -172,7 +172,8 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
     void onGraphClicked(View view){
-        Intent intent = new Intent(this, Histogram.class);
+        //TODO: debug
+        Intent intent = new Intent(this, GraphsActivity.class);
         intent.putExtra("id", experiment.getId());
         startActivity(intent);
     }
