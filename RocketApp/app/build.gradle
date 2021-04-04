@@ -56,10 +56,13 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.23.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.2'
+    implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
 
     def lottieVersion = "3.4.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
+
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_background"
-    tools:context=".view.ExperimentEditActivity">
+    tools:context=".view.activities.ExperimentEditActivity">
 
     <TextView
         android:id="@+id/OwnerExperimentNameTextView"

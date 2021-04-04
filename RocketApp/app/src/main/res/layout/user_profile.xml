@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_background"
-    tools:context=".view.UserProfileActivity">
+    tools:context=".view.activities.UserProfileActivity">
 
     <EditText
         android:id="@+id/userNameOnProfile"
