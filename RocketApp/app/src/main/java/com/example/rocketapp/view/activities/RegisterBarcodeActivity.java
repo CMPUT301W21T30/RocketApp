@@ -23,16 +23,13 @@ import com.example.rocketapp.model.Code;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.trials.CountTrial;
-import com.example.rocketapp.model.trials.IntCountTrial;
-import com.example.rocketapp.model.trials.MeasurementTrial;
-import com.example.rocketapp.model.trials.Trial;
-import com.google.protobuf.StringValue;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 /**
  * ScannerActivity implements the scanner feature
+ *
+ * https://youtu.be/wfucGSKngq4
  *
  */
 public class RegisterBarcodeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -94,7 +91,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
 
                         checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + registerCode.getIfBinomial().toString());
 
-
+                        giveConfirmation();
 
 
                     }
@@ -105,6 +102,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
 
                         checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + registerCode.getIfBinomial().toString());
 
+                        giveConfirmation();
 
 
                     }
@@ -181,6 +179,10 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
 
     public void giveError(){
         Toast.makeText(this, "Cannot do this", Toast.LENGTH_LONG).show();
+    }
+
+    public void giveConfirmation(){
+        Toast.makeText(this, "registered!", Toast.LENGTH_LONG).show();
     }
 
 }

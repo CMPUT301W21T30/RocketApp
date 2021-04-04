@@ -74,7 +74,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Get input value from edit text
-                String sText = experiment.info.getDescription();
+                String sText = experiment.info.getDescription() ;
                 //Initialize multi format writer
                 MultiFormatWriter writer = new MultiFormatWriter();
                 try {
