@@ -43,7 +43,7 @@
         <activity
             android:name=".view.ExperimentSearchActivity" />
         <activity
-            android:name=".view.Histogram" />
+            android:name=".view.GraphsActivity" />
         <activity
             android:name=".view.LogInActivity">
             <intent-filter>
