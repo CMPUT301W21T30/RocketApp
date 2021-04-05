@@ -99,11 +99,13 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
+            android:visibility="gone"
             app:cardBackgroundColor="@color/dark_yellow"
             app:cardCornerRadius="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/animationView">
+            app:layout_constraintTop_toBottomOf="@+id/animationView"
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
 
@@ -120,10 +122,10 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
                     android:background="@android:color/transparent"
-                    app:srcCompat="@drawable/ic_round_filter_list_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_round_filter_list_24"
                     app:tint="@color/black" />
 
                 <EditText
@@ -153,11 +155,11 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="12dp"
                     android:background="@android:color/transparent"
-                    app:srcCompat="@drawable/ic_round_search_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/ic_round_search_24"
                     app:tint="@color/black" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

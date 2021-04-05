@@ -25,8 +25,8 @@ import java.util.ArrayList;
  */
 public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.ViewHolder> {
     private static final String TAG = "ExperimentRecylerViewAd";
-    private ArrayList<Trial> trials;
-    private Context context;
+    private final ArrayList<Trial> trials;
+    private final Context context;
     private final TrialCallback onTrialClicked;
 
     public interface TrialCallback {

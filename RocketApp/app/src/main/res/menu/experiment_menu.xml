@@ -11,7 +11,7 @@
     <item
         android:id="@+id/menuButton"
         android:icon="@drawable/ic_round_menu_24"
-        android:title="Info"
+        android:title="Edit Experiment"
         app:showAsAction="never|withText" />
 
     <item

@@ -35,7 +35,7 @@ public class Validate {
         boolean isValid = intInRange(editText.getText().toString(), min, max);
 
         if (!isValid && showError) {
-            editText.setError("Must be a non-negative number.");
+            editText.setError("Must be between " + min + " and " + max + ".");
             editText.requestFocus();
         }
         return isValid;
@@ -77,7 +77,7 @@ public class Validate {
         boolean isValid = floatInRange(editText.getText().toString(), min, max);
 
         if (!isValid && showError) {
-            editText.setError("Must be a non-negative float.");
+            editText.setError("Must be between " + min + " and " + max + ".");
             editText.requestFocus();
         }
         return isValid;

@@ -20,7 +20,11 @@ public class RocketAppActivity extends AppCompatActivity {
             input.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         } else {
             View view = getCurrentFocus();
-            if (view != null) input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (view != null) {
+                getCurrentFocus().clearFocus();
+                input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
         }
     }
 }

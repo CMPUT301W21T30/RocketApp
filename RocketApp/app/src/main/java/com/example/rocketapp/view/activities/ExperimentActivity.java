@@ -43,14 +43,14 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView meanTextView;
     private TextView medianTextView;
     private TextView stdDevTextView;
-    private TextView regionView;
+    private TextView regionTextView;
     private TextView minTrialsTextView;
     private TextView statusTextView;
+    private TextView descriptionTextView;
+    private TextView ownerTextView;
     private Button addTrialButton;
     private Button endExperimentButton;
-    private Button unpublishExperimentButton;
     private Button graphButton;
-    private Button map;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private boolean granted = false;
     private Button publishExperimentButton;
@@ -72,52 +72,42 @@ public class ExperimentActivity extends AppCompatActivity {
         meanTextView = findViewById(R.id.meanView);
         medianTextView = findViewById(R.id.medianValue);
         stdDevTextView = findViewById(R.id.stdDevVal);
-        regionView  = findViewById(R.id.regionView);
-        regionView.setText(experiment.info.getRegion());
+        regionTextView = findViewById(R.id.regionView);
         graphButton = findViewById(R.id.graphbtn);
-
+        descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
-        minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
-
-        TextView meanText = findViewById(R.id.meanText);
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            meanText.setText("Success Ratio");
-        }
-
-        TextView ownerTextView = findViewById(R.id.ownerTextView);
-        ownerTextView.setOnClickListener(this::onOwnerClicked);
-        ownerTextView.setText(experiment.getOwner().getName());
-        TextView experimentType = findViewById(R.id.experimentTypeTextView);
-        experimentType.setText(experiment.getType());
-
-        TextView experimentDescription = findViewById(R.id.descriptionTextView);
-        experimentDescription.setText(experiment.info.getDescription());
-
-        publishExperimentButton = findViewById(R.id.publishExperimentButton);
-        endExperimentButton = findViewById(R.id.endExperimentButton);
-        map = findViewById(R.id.mapbtn);
-        addTrialButton = findViewById(R.id.addTrialButton);
         statusTextView = findViewById(R.id.endedTextView);
 
+        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
+            ((TextView) findViewById(R.id.meanText)).setText("Success Ratio");
+        }
+        ((TextView) findViewById(R.id.experimentTypeTextView)).setText(experiment.getType());
+
+        ownerTextView = findViewById(R.id.ownerTextView);
+        ownerTextView.setOnClickListener(this::onOwnerClicked);
+
+        addTrialButton = findViewById(R.id.addTrialButton);
+        addTrialButton.setOnClickListener(this::onAddTrialClicked);
+
+        findViewById(R.id.graphbtn).setOnClickListener(this::onGraphClicked);
+
+        Button mapButton = findViewById(R.id.mapbtn);
+        if(experiment.info.isGeoLocationEnabled()) {
+            mapButton.setOnClickListener(this::mapClicked);
+        }
+        else{
+            mapButton.setVisibility(View.GONE);
+        }
+
+        endExperimentButton = findViewById(R.id.endExperimentButton);
+        publishExperimentButton = findViewById(R.id.publishExperimentButton);
         if(UserManager.getUser().isOwner(experiment)){
-            endExperimentButton.setOnClickListener(this::onEndClicked);
             publishExperimentButton.setOnClickListener(this::onPublishClicked);
+            endExperimentButton.setOnClickListener(this::onEndClicked);
         } else {
             endExperimentButton.setVisibility(View.GONE);
             publishExperimentButton.setVisibility(View.GONE);
         }
-
-        if(experiment.info.isGeoLocationEnabled()) {
-            map.setOnClickListener(this::mapClicked);
-        }
-        else{
-            map.setVisibility(View.GONE);
-        }
-        addTrialButton.setOnClickListener(this::onAddTrialClicked);
-
-        //findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
-
-        graphButton.setOnClickListener(this::onGraphClicked);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -125,6 +115,13 @@ public class ExperimentActivity extends AppCompatActivity {
 
         ExperimentManager.listen(experiment, this::update);
         TrialManager.listen(experiment, this::update);
+        update(experiment);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
         update(experiment);
     }
 
@@ -160,6 +157,7 @@ public class ExperimentActivity extends AppCompatActivity {
                 Intent forumintent = new Intent(this, ExperimentForumActivity.class);
                 forumintent.putExtra("id", experiment.getId());
                 startActivity(forumintent);
+                return true;
 
         }
         return super.onOptionsItemSelected(item);
@@ -244,14 +242,6 @@ public class ExperimentActivity extends AppCompatActivity {
         }
     }
 
-
-
-    void onForumButtonClicked(View view) {
-        Intent intent = new Intent(this, ExperimentForumActivity.class);
-        intent.putExtra("id", experiment.getId());
-        startActivity(intent);
-    }
-
     void onOwnerClicked(View view) {
         Intent intent = new Intent(this, UserProfileActivity.class);
         intent.putExtra("id", experiment.getOwnerId());
@@ -264,10 +254,14 @@ public class ExperimentActivity extends AppCompatActivity {
      *          Experiment of current view
      */
     void update(Experiment experiment) {
-        // Could add all updates here
+        descriptionTextView.setText(experiment.info.getDescription());
+        ownerTextView.setText(experiment.getOwner().getName());
+
         meanTextView.setText(String.valueOf(experiment.getMean()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
         stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
+        minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
+        regionTextView.setText(experiment.info.getRegion());
 
         statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);

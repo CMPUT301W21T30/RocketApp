@@ -61,6 +61,7 @@ public class LogInActivity extends AppCompatActivity {
         UserManager.login(preferences, user -> {
             Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
+            finish();
         }, e -> Log.d(TAG, e.toString()));
     }
 
@@ -72,6 +73,7 @@ public class LogInActivity extends AppCompatActivity {
         UserManager.createUser(userName, getPreferences(MODE_PRIVATE), user -> {
             Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
             startActivity(ExperimentsListActivityIntent);
+            finish();
         }, e -> {
             usernameEditText.setError("Username not available.");
             usernameEditText.requestFocus();

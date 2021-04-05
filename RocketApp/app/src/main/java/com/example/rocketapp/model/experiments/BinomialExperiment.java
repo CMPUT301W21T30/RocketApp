@@ -1,9 +1,10 @@
 package com.example.rocketapp.model.experiments;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.trials.CountTrial;
 import com.google.firebase.firestore.Exclude;
 
 /**
@@ -63,18 +64,20 @@ public class BinomialExperiment extends Experiment<BinomialTrial> {
     @Override
     public float getMean() {
         ArrayList<BinomialTrial> trials = getFilteredTrials();
-        if (trials.size() == 0) {return 0;}
+        Log.d(TAG, trials.toString());
         int length = trials.size();
-        if(length==0){
-            return 0;
-        }
+        if(length == 0) return 0;
+
         int success = 0;
-        for(int i=0; i<length; i++){
-            if(trials.get(i).isValue()) {
-                success = success + 1;
+        for(int i=0; i < length; i++){
+            if(trials.get(i).getValue()) {
+                success++;
             }
         }
-        return  ((float) success)/((float)trials.size());
+
+        float mean = ((float) success)/((float)trials.size());
+        Log.d(TAG, "Mean: " + mean);
+        return mean;
     }
 
     /**
@@ -99,7 +102,7 @@ public class BinomialExperiment extends Experiment<BinomialTrial> {
             if(trials.get(i).getTimestamp().toDate().compareTo(date) == 0 || trials.get(i).getTimestamp().toDate().compareTo(date) < 0) {
                 System.out.println("Trial timestamp: " + trials.get(i).getTimestamp().toDate());/*For testing, checking if the issue with tie graphs is getMean(date) of binomials, test shows it is now the issue */
                 trialCounter++;
-                if(trials.get(i).isValue()){
+                if(trials.get(i).getValue()){
                     success++;
                 }
             }

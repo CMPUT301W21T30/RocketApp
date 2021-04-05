@@ -11,23 +11,26 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.TrialManager;
+import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 import com.example.rocketapp.view.TrialListAdapter;
 
 import java.util.ArrayList;
 
-public class ExperimentEditActivity extends AppCompatActivity {
+public class ExperimentEditActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentEditAct";
     private Experiment experiment;
     private ArrayList<Trial> trialsArrayList = new ArrayList<>();
     private TrialListAdapter trialListAdapter;
+    private EditText descriptionEditText, regionEditText, minTrialsEditText;
 
     /**
      * Create The Activity by setting the textview, button and using the adapter to display trials
@@ -40,16 +43,28 @@ public class ExperimentEditActivity extends AppCompatActivity {
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
         
-        TextView ownerExperimentNameTextView = findViewById(R.id.OwnerExperimentNameTextView);
-        ownerExperimentNameTextView.setText(experiment.info.getDescription());
+        descriptionEditText = findViewById(R.id.OwnerExperimentNameTextView);
+        regionEditText = findViewById(R.id.editTextRegion);
+        minTrialsEditText = findViewById(R.id.editTextMinTrials);
+
+        findViewById(R.id.textViewUpdate).setOnClickListener(v -> {
+            if (Validate.lengthInRange(descriptionEditText, 3, 50, true) &&
+                Validate.lengthInRange(regionEditText, 2, 50, true) &&
+                Validate.intInRange(minTrialsEditText, 1, 1000, true)) {
+
+                experiment.info.setDescription(descriptionEditText.getText().toString());
+                experiment.info.setRegion(regionEditText.getText().toString());
+                experiment.info.setMinTrials(Integer.parseInt(minTrialsEditText.getText().toString()));
+
+                ExperimentManager.update(experiment,
+                        experiment -> Toast.makeText(this, "Experiment updated.", Toast.LENGTH_SHORT).show(),
+                        exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+            toggleKeyboard(false);
+        });
 
         TextView experimentTypeTextView = findViewById(R.id.ExperimentTypeTextView);
         experimentTypeTextView.setText(experiment.getType());
-
-        Button endExperimentBtn = findViewById(R.id.EndExperimentBtn);
-        endExperimentBtn.setOnClickListener(v ->
-            ExperimentManager.endExperiment(experiment, experiment -> finish(), e -> Log.d(TAG, e.toString()))
-        );
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -59,6 +74,7 @@ public class ExperimentEditActivity extends AppCompatActivity {
 
         ExperimentManager.listen(experiment, this::update);
         TrialManager.listen(experiment, this::update);
+        update(experiment);
     }
 
     @Override
@@ -85,15 +101,18 @@ public class ExperimentEditActivity extends AppCompatActivity {
         });
         trialRecyclerView.setAdapter(trialListAdapter);
 
-        trialRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        trialRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     /**
-     * Update the list using Data Manager
-     * @param experiment which the trials of the experiment
+     * Update the list according to the current experiment state
+     * @param experiment experiment object
      */
     void update(Experiment experiment) {
-        trialListAdapter.updateList((ArrayList<Trial>) experiment.getTrials());
+        trialListAdapter.updateList(experiment.getTrials());
+        minTrialsEditText.setText(String.valueOf(experiment.info.getMinTrials()));
+        descriptionEditText.setText(experiment.info.getDescription());
+        regionEditText.setText(experiment.info.getRegion());
     }
 
 
