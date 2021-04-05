@@ -14,7 +14,7 @@ import static java.lang.Math.sqrt;
  * Class for experiments of type "IntCount".
  * Inherits from abstract class Experiment.
  */
-public class IntCountExperiment extends Experiment {
+public class IntCountExperiment extends Experiment<IntCountTrial> {
     public static final String TYPE = "IntCount";
 
     /**
@@ -184,31 +184,6 @@ public class IntCountExperiment extends Experiment {
                 quart = (float)(trials.get((trials.size() - 3) / 4 ).getPCount());
                 return quart;
         }
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    @Exclude
-    @Override
-    public ArrayList<IntCountTrial> getFilteredTrials(){
-        ArrayList<IntCountTrial> trials = getTrials();
-        ArrayList<IntCountTrial> filteredTrials = new ArrayList<IntCountTrial>();
-        for(int i = 0; i <trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
-            }
-        }
-        return filteredTrials;
-    }
-
-    /**
-     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
-     */
-    @Exclude
-    @Override
-    public ArrayList<IntCountTrial> getTrials(){
-        return (ArrayList<IntCountTrial>) trialsArrayList;
     }
 
 }

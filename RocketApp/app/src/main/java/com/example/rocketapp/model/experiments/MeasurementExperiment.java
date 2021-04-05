@@ -14,7 +14,7 @@ import static java.lang.Math.sqrt;
  * Inherits from abstract class Experiment.
  */
 
-public class MeasurementExperiment extends Experiment {
+public class MeasurementExperiment extends Experiment<MeasurementTrial> {
     public static final String TYPE = "Measurement";
 
     public MeasurementExperiment() {
@@ -185,31 +185,6 @@ public class MeasurementExperiment extends Experiment {
                 quart = (float)(trials.get((trials.size() - 3) / 4 ).getMeasurement());
                 return quart;
         }
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    @Exclude
-    @Override
-    public ArrayList<MeasurementTrial> getFilteredTrials(){
-        ArrayList<MeasurementTrial> trials = getTrials();
-        ArrayList<MeasurementTrial> filteredTrials = new ArrayList<MeasurementTrial>();
-        for(int i = 0; i <trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
-            }
-        }
-        return filteredTrials;
-    }
-
-    /**
-     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
-     */
-    @Exclude
-    @Override
-    public ArrayList<MeasurementTrial> getTrials(){
-        return (ArrayList<MeasurementTrial>) trialsArrayList;
     }
 
 }

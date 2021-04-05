@@ -10,7 +10,7 @@ import com.google.firebase.firestore.Exclude;
  * Class for Experiments of 'Binomial' type.
  *Inherits from abstract class Experiment.
  */
-public class BinomialExperiment extends Experiment {
+public class BinomialExperiment extends Experiment<BinomialTrial> {
     public static final String TYPE = "Binomial";     //Type of experiment
 
     /**
@@ -148,32 +148,6 @@ public class BinomialExperiment extends Experiment {
         } else if (getMean() == 0.75) {
             return (float) 0.5;
         } else return 1;
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    @Exclude
-    @Override
-    public ArrayList<BinomialTrial> getFilteredTrials(){
-        ArrayList<BinomialTrial> trials = getTrials();
-        ArrayList<BinomialTrial> filteredTrials = new ArrayList<BinomialTrial>();
-        for(int i = 0; i <trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
-            }
-        }
-        return filteredTrials;
-    }
-
-    /**
-     *
-     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
-     */
-    @Exclude
-    @Override
-    public ArrayList<BinomialTrial> getTrials(){
-        return (ArrayList<BinomialTrial>) trialsArrayList;
     }
 
 }

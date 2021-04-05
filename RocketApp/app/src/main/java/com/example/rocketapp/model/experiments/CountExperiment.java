@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
@@ -14,7 +15,7 @@ import static java.lang.Math.sqrt;
  * Class for experiments of type "Count".
  * Inherits from abstract class Experiment.
  */
-public class CountExperiment extends Experiment {
+public class CountExperiment extends Experiment<CountTrial> {
     public static final String TYPE = "Count";
 
     /**
@@ -184,31 +185,6 @@ public class CountExperiment extends Experiment {
                 quart = (float)(trials.get((trials.size() - 3) / 4 ).getCount());
                 return quart;
         }
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    @Exclude
-    @Override
-    public ArrayList<CountTrial> getFilteredTrials(){
-        ArrayList<CountTrial> trials = getTrials();
-        ArrayList<CountTrial> filteredTrials = new ArrayList<CountTrial>();
-        for(int i = 0; i <trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
-            }
-        }
-        return filteredTrials;
-    }
-    
-    /**
-     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
-     */
-    @Exclude
-    @Override
-    public ArrayList<CountTrial> getTrials(){
-        return (ArrayList<CountTrial>) trialsArrayList;
     }
 
 }
