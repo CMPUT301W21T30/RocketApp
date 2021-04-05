@@ -8,9 +8,9 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.example.rocketapp.controller.DataManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.ExperimentEditActivity;
-import com.example.rocketapp.view.ExperimentsListActivity;
-import com.example.rocketapp.view.LogInActivity;
+import com.example.rocketapp.view.activities.ExperimentEditActivity;
+import com.example.rocketapp.view.activities.ExperimentsListActivity;
+import com.example.rocketapp.view.activities.LogInActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;

@@ -7,6 +7,11 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,7 +29,7 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <activity
-            android:name=".view.MapsActivity"
+            android:name=".view.activities.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
 
         <!--
@@ -37,15 +42,25 @@
         -->
         <activity android:name=".view.activities.ExperimentForumActivity"></activity>
         <activity
-            android:name=".view.ExperimentEditActivity" />
+            android:name=".view.activities.ExperimentEditActivity" />
         <activity
-            android:name=".view.ExperimentActivity" />
+            android:name=".view.activities.ScannerActivity"/>
         <activity
-            android:name=".view.ExperimentSearchActivity" />
+            android:name=".view.activities.CaptureAct"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
         <activity
+            android:name=".view.activities.ExperimentActivity" />
+        <activity
+            android:name=".view.activities.ExperimentSearchActivity" />
+        <activity
+
             android:name=".view.GraphsActivity" />
         <activity
-            android:name=".view.LogInActivity">
+            android:name=".view.activities.LogInActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,9 +71,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyApi8BtHYvyFUCe5w5XAnIa7fKEwYI8Zgs" />
         <activity
-            android:name=".view.UserProfileActivity"/>
+            android:name=".view.activities.UserProfileActivity"/>
         <activity
-            android:name=".view.ExperimentsListActivity" />
+            android:name=".view.activities.ExperimentsListActivity" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

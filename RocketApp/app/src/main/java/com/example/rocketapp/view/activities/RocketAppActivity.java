@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import android.os.Bundle;
 import android.view.View;

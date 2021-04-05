@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -6,12 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
+import com.example.rocketapp.view.activities.ExperimentsListActivity;
 
 /**
  * This is the landing screen of RocketApp
@@ -34,7 +34,7 @@ public class LogInActivity extends AppCompatActivity {
         // set up login Button
         findViewById(R.id.loginBtn).setOnClickListener(v -> {
             usernameEditText = findViewById(R.id.usernameEditText);
-            if (Validate.emailInRange(usernameEditText, 3, 50, true)) {
+            if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
                 createUser(usernameEditText.getText().toString());
             }
         });

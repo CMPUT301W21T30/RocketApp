@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -13,6 +13,7 @@ import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.users.User;
+import com.example.rocketapp.view.activities.RocketAppActivity;
 
 /**
  * User has the ability to update their email or phone number through this page
