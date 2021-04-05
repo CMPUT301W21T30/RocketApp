@@ -1,5 +1,7 @@
 package com.example.rocketapp.view.activities;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,15 +23,13 @@ import com.example.rocketapp.model.Code;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.trials.CountTrial;
-import com.example.rocketapp.model.trials.IntCountTrial;
-import com.example.rocketapp.model.trials.MeasurementTrial;
-import com.example.rocketapp.model.trials.Trial;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 /**
  * ScannerActivity implements the scanner feature
+ *
+ * https://youtu.be/wfucGSKngq4
  *
  */
 public class RegisterBarcodeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,10 +43,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
     private CheckBox registerfail;
     private Button registerBtn;
     private Code registerCode;
-    private BinomialTrial binomialTrial;
-    private CountTrial countTrial;
-    private IntCountTrial intCountTrial;
-    private MeasurementTrial measurementTrial;
+    private TextView checkRegister;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +55,10 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         registerpass = findViewById(R.id.registerpass);
         code = findViewById(R.id.scanned_code);
         registerBtn = findViewById(R.id.registerButton);
+        checkRegister = findViewById(R.id.checkRegister);
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+
+        registerCode = new Code();
 
 
         experimentType.setText(experiment.getType());
@@ -79,27 +79,50 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         }
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
+            private Context context;
+
             @Override
             public void onClick(View v) {
                 if (experiment.getType().equals(BinomialTrial.TYPE)) {
-                    if (registerpass.isChecked()) {
+                    if (registerpass.isChecked() && !(registerfail.isChecked())) {
                         registerCode.setCode(code.getText().toString());
                         registerCode.setExperiment(experiment.info.getDescription());
                         registerCode.setIfBinomial(true);
 
+                        checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + registerCode.getIfBinomial().toString());
+
+                        giveConfirmation();
+
+
                     }
-                    else if (registerfail.isChecked()) {
+                    else if (registerfail.isChecked() && !(registerpass.isChecked())) {
                         registerCode.setCode(code.getText().toString());
                         registerCode.setExperiment(experiment.info.getDescription());
                         registerCode.setIfBinomial(false);
 
+                        checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + registerCode.getIfBinomial().toString());
+
+                        giveConfirmation();
+
+
                     }
-                    else {
+                    else if (registerfail.isChecked() && registerpass.isChecked()){
                         //CANNOT select both
+                        //
+                        giveError();
+                        return;
+
                     }
 
                 }
                 else {
+                    registerCode.setCode(code.getText().toString());
+                    registerCode.setIfNotBinomial(Float.parseFloat(trialsEditText.getText().toString()));
+                    registerCode.setExperiment(experiment.info.getDescription());
+
+                    checkRegister.setText(registerCode.getCode() + " " + registerCode.getExperiment() + " " + String.valueOf(registerCode.getIfNotBinomial()));
+
+
 
                 }
 
@@ -154,5 +177,12 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         }
     }
 
+    public void giveError(){
+        Toast.makeText(this, "Cannot do this", Toast.LENGTH_LONG).show();
+    }
+
+    public void giveConfirmation(){
+        Toast.makeText(this, "registered!", Toast.LENGTH_LONG).show();
+    }
 
 }

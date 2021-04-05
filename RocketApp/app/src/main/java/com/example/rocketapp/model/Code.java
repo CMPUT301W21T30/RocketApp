@@ -10,7 +10,9 @@ public class Code {
     private String code;
     private String experimentinfo;
     private Boolean ifBinomial;
-    private int ifNotBinomial;
+    private Float ifNotBinomial;
+
+    public Code (){}
 
     /**
      * store scanned code to a string
@@ -36,6 +38,18 @@ public class Code {
         this.ifBinomial = success;
     }
 
+    public Boolean getIfBinomial(){
+        return this.ifBinomial;
+    }
+
+    public void setIfNotBinomial(Float trial){
+        this.ifNotBinomial = trial;
+    }
+
+
+    public Float getIfNotBinomial(){
+        return this.ifNotBinomial;
+    }
 
     /**
      * return the code
