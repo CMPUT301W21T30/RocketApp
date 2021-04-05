@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background"
     android:visibility="visible"
-    tools:context=".view.ExperimentActivity">
+    tools:context=".view.activities.ExperimentActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,12 +18,17 @@
             android:id="@+id/publishExperimentButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="Unpublish"
             app:backgroundTint="@color/dark_pink"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/endExperimentButton"
+            app:layout_constraintHorizontal_bias="0.69"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/endExperimentButton" />
+            app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
         <TextView
             android:id="@+id/endedTextView"
@@ -183,6 +188,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <Button
+                    android:id="@+id/mapbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="150dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:drawableLeft="@drawable/maps_icon_gmm"
+                    android:text="MAP"
+                    app:backgroundTint="@color/dark_pink"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -221,7 +239,7 @@
             app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            app:layout_constraintTop_toBottomOf="@+id/endedTextView" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView4"
@@ -267,38 +285,19 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/forumButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
-            android:text="Question Forum"
-            app:backgroundTint="@color/dark_pink"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
-
-        <Button
             android:id="@+id/endExperimentButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="End"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:text="End Study"
             app:backgroundTint="@color/dark_pink"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.84"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/forumButton" />
+            app:layout_constraintTop_toBottomOf="@+id/addTrialButton" />
 
-        <Button
-            android:id="@+id/mapbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="136dp"
-            android:drawableLeft="@drawable/maps_icon_gmm"
-            android:text="MAP"
-            app:layout_constraintStart_toEndOf="@+id/endedTextView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
         <TextView
             android:id="@+id/ownerTextView"
             android:layout_width="wrap_content"

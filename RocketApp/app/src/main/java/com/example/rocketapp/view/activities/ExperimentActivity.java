@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rocketapp.model.trials.Geolocation;
+import com.example.rocketapp.view.TrialFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,7 +32,6 @@ import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.activities.ExperimentForumActivity;
 
 /**
  * Display view for Experiment
@@ -112,7 +112,7 @@ public class ExperimentActivity extends AppCompatActivity {
         }
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
-        findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
+        //findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -125,9 +125,15 @@ public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(UserManager.getUser()))
+        if (experiment.getOwner().equals(UserManager.getUser())){
         getMenuInflater().inflate(R.menu.experiment_menu, menu);
         return super.onCreateOptionsMenu(menu);
+        }
+        else{
+            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
+            return super.onCreateOptionsMenu(menu);
+
+        }
     }
 
     @Override
@@ -141,6 +147,20 @@ public class ExperimentActivity extends AppCompatActivity {
                 intent.putExtra("id", experiment.getId());
                 startActivity(intent);
                 return true;
+            case R.id.registerMenu:
+                Intent scannerIntent = new Intent(this, RegisterBarcodeActivity.class);
+                scannerIntent.putExtra("id", experiment.getId());
+                startActivity(scannerIntent);
+                return true;
+            case R.id.forumButton:
+                Intent forumintent = new Intent(this, ExperimentForumActivity.class);
+                forumintent.putExtra("id", experiment.getId());
+                startActivity(forumintent);
+            case R.id.generateQRcode:
+                Intent qrcodeIntent = new Intent(this, GenerateQRcodeActivity.class);
+                qrcodeIntent.putExtra("id", experiment.getId());
+                startActivity(qrcodeIntent);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -253,4 +273,5 @@ public class ExperimentActivity extends AppCompatActivity {
             Log.d("ExperimentActivity", "Not Owner");
         }
     }
+
 }
