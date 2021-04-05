@@ -59,7 +59,11 @@
         <activity
             android:name=".view.activities.ExperimentSearchActivity" />
         <activity
+
+            android:name=".view.GraphsActivity" />
+        <activity
             android:name=".view.activities.LogInActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

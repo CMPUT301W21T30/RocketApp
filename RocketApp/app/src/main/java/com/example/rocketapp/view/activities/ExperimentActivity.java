@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rocketapp.model.trials.Geolocation;
+import com.example.rocketapp.view.GraphsActivity;
 import com.example.rocketapp.view.TrialFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -48,6 +49,7 @@ public class ExperimentActivity extends AppCompatActivity {
     private Button addTrialButton;
     private Button endExperimentButton;
     private Button unpublishExperimentButton;
+    private Button graphButton;
     private Button map;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private boolean granted = false;
@@ -72,6 +74,7 @@ public class ExperimentActivity extends AppCompatActivity {
         stdDevTextView = findViewById(R.id.stdDevVal);
         regionView  = findViewById(R.id.regionView);
         regionView.setText(experiment.info.getRegion());
+        graphButton = findViewById(R.id.graphbtn);
 
         minTrialsTextView = findViewById(R.id.minTrialsView);
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
@@ -113,6 +116,8 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
         //findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
+
+        graphButton.setOnClickListener(this::onGraphClicked);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -187,6 +192,13 @@ public class ExperimentActivity extends AppCompatActivity {
 
     }
 
+    void onGraphClicked(View view){
+        //TODO: debug
+        Intent intent = new Intent(this, GraphsActivity.class);
+        intent.putExtra("id", experiment.getId());
+        startActivity(intent);
+    }
+
     void onEndClicked(View view) {
         ExperimentManager.endExperiment(experiment, exp->{}, e->{});
     }
@@ -236,6 +248,7 @@ public class ExperimentActivity extends AppCompatActivity {
             }
         }
     }
+
 
 
     void onForumButtonClicked(View view) {
