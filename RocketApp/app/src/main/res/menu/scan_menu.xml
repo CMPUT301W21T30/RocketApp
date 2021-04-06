@@ -3,8 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/scanCode"
-        android:title="Scan Code"
+        android:id="@+id/scanBarCode"
+        android:title="Scan Barcode"
+        app:showAsAction="never|withText"/>
+
+    <item
+        android:id="@+id/scanQRCode"
+        android:title="Scan QR code"
         app:showAsAction="never|withText"/>
 
 

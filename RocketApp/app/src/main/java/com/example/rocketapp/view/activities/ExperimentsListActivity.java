@@ -71,10 +71,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.scanCode:
-                Intent scanIntent = new Intent(this, ScanCodeActivity.class);
+            case R.id.scanBarCode:
+                Intent scanIntent = new Intent(this, ScanBarcodeActivity.class);
                 startActivity(scanIntent);
                 return true;
+//            case R.id.scanQRCode:
+//                Intent scanQRintent = new Intent(this, )
         }
         return super.onOptionsItemSelected(item);
     }

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
 
-public class ScanCodeActivity extends AppCompatActivity{
+public class ScanBarcodeActivity extends AppCompatActivity{
     private Button scanBtn;
 
     @Override
