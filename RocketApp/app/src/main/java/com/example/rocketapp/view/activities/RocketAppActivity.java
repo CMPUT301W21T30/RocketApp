@@ -12,7 +12,7 @@ public class RocketAppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        input = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+        input = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 
     protected void toggleKeyboard(boolean open){

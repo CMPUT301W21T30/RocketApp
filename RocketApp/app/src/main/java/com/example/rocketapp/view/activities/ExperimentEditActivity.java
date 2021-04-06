@@ -1,16 +1,12 @@
 package com.example.rocketapp.view.activities;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +23,8 @@ import java.util.ArrayList;
 
 public class ExperimentEditActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentEditAct";
-    private Experiment experiment;
-    private ArrayList<Trial> trialsArrayList = new ArrayList<>();
+    private Experiment<?> experiment;
+    private final ArrayList<Trial> trialsArrayList = new ArrayList<>();
     private TrialListAdapter trialListAdapter;
     private EditText descriptionEditText, regionEditText, minTrialsEditText;
 
@@ -108,7 +104,7 @@ public class ExperimentEditActivity extends RocketAppActivity {
      * Update the list according to the current experiment state
      * @param experiment experiment object
      */
-    void update(Experiment experiment) {
+    void update(Experiment<?> experiment) {
         trialListAdapter.updateList(experiment.getTrials());
         minTrialsEditText.setText(String.valueOf(experiment.info.getMinTrials()));
         descriptionEditText.setText(experiment.info.getDescription());

@@ -125,7 +125,7 @@ public class CreateExperimentDialog extends DialogFragment {
 
     /**
      * Exception handler which checks if Experiment is valid and published or not
-     * @param newExperiment Experiment to be published.
+     * @param newExperiment<?> experiment to be published.
      */
     public void returnExperiment(Experiment newExperiment){
         ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
@@ -139,7 +139,7 @@ public class CreateExperimentDialog extends DialogFragment {
      *          experiment of said type based on user input
      */
     public Experiment getExperiment(String type){
-        Experiment exp;
+        Experiment<?> exp;
         switch(type) {
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),

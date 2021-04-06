@@ -6,7 +6,7 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.view.activities.ExperimentEditActivity;
 import com.example.rocketapp.view.activities.ExperimentsListActivity;
@@ -20,7 +20,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -49,7 +48,7 @@ public class GeneralAppTest {
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-        ArrayList<Experiment> array = DataManager.getOwnedExperimentsArrayList();
+        ArrayList<Experiment<?>> array = ExperimentManager.getOwnedExperimentsArrayList();
         int initialSize = array.size();
         solo.clickOnButton("NEW");
         //TODO: figure out how to check if dialog fragment was opened
@@ -59,7 +58,7 @@ public class GeneralAppTest {
         solo.enterText((EditText) solo.getView(R.id.min_trial), "10");
         solo.clickOnCheckBox(0);
         solo.clickOnButton("PUBLISH");
-        array = DataManager.getOwnedExperimentsArrayList();
+        array = ExperimentManager.getOwnedExperimentsArrayList();
         int finalSize = array.size();
         assertTrue(solo.waitForText("Toss a coin, record SUCCESS if it lands on head, FAIL if it lands on fail", 1, 1000));
         //TODO: delete experiment from database then check size again
@@ -123,7 +122,7 @@ public class GeneralAppTest {
         solo.drag(fromX, toX, fromY, toY, 10);
 
         // check published
-        assertTrue(solo.searchText("PUBLISHED"));;
+        assertTrue(solo.searchText("PUBLISHED"));
     }
 
     @Test
@@ -155,7 +154,7 @@ public class GeneralAppTest {
         solo.drag(fromX, toX, fromY, toY, 10);
 
         // check published
-        assertTrue(solo.searchText("UNPUBLISHED"));;
+        assertTrue(solo.searchText("UNPUBLISHED"));
 
         // Reset to publish activity by default
         fromX = location[0] + 100;
@@ -165,7 +164,7 @@ public class GeneralAppTest {
         toY = fromY;
 
         solo.drag(fromX, toX, fromY, toY, 10);
-        assertTrue(solo.searchText("PUBLISHED"));;
+        assertTrue(solo.searchText("PUBLISHED"));
     }
 
 
@@ -230,7 +229,7 @@ public class GeneralAppTest {
         solo.drag(fromX, toX, fromY, toY, 10);
 
         // check published
-        assertTrue(solo.searchText("PUBLISHED"));;
+        assertTrue(solo.searchText("PUBLISHED"));
 
 
         // Check owned experiment
@@ -238,8 +237,8 @@ public class GeneralAppTest {
         solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
 
         // check if the trial exists
-        solo.clickOnView(solo.getView(R.id.EndExperimentBtn));
-        assertTrue(solo.searchText("ENDED"));
+//        solo.clickOnView(solo.getView(R.id.EndExperimentBtn));
+//        assertTrue(solo.searchText("ENDED"));
     }
 
     @After

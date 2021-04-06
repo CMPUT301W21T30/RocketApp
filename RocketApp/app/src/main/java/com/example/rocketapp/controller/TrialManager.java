@@ -2,7 +2,7 @@ package com.example.rocketapp.controller;
 
 import android.util.Log;
 
-import com.example.rocketapp.controller.callbacks.ExceptionCallback;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.CountTrial;
@@ -10,14 +10,12 @@ import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
@@ -29,8 +27,9 @@ public class TrialManager {
     private static ListenerRegistration trialsListener;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String EXPERIMENTS = "Experiments";
+    private static final String BARCODES = "Barcode";
     private static final String TRIALS = "Trials";
-
+    private static final ArrayList<Barcode> barCodes = new ArrayList<>();
 
     // TODO Add any new Trial types to this map
     static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
@@ -45,10 +44,6 @@ public class TrialManager {
      */
     private TrialManager() {}
 
-    public interface TrialCallback {
-        void callBack(Trial trial);
-    }
-
     /**
      * Listens to firestore for changes to this experiment. You MUST use this to get the trials for an experiment.
      * You may want to update the UI in onUpdate.
@@ -57,7 +52,7 @@ public class TrialManager {
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment experiment, ExperimentManager.ExperimentCallback onUpdate) {
+    public static void listen(Experiment<?> experiment, ObjectCallback<Experiment<?>> onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
@@ -73,6 +68,106 @@ public class TrialManager {
         });
     }
 
+    static class Barcode {
+
+        private FirestoreDocument.Id experimentId;
+        private Trial trial;
+        private String code;
+
+        public Barcode() {
+        }
+
+        public Barcode(String barcode, Experiment<?> experiment, Trial trial) {
+            this.code = barcode;
+            this.experimentId = experiment.getId();
+            this.trial = trial;
+        }
+
+        public FirestoreDocument.Id getExperimentId() {
+            return experimentId;
+        }
+
+        public Trial getTrial() {
+            return trial;
+        }
+
+        public String getCode() {
+            return code;
+        }
+    }
+
+
+    /**
+     * Registers a barcode to be used for uploading trials to an experiment
+     * @param code the barcode
+     * @param experiment experiment to add a trial for
+     * @param trial the trial to add
+     * @param onComplete callback for when registration is complete
+     * @param onFailure callback for when registration fails
+     */
+    public static void registerBarcode(String code, Experiment<?> experiment, Trial trial, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
+        registerBarcode(new Barcode(code, experiment, trial), onComplete, onFailure);
+    }
+
+    /**
+     * Registers a barcode to be used for uploading trials to an experiment
+     * @param barcode the barcode to register
+     * @param onComplete callback for when registration is complete
+     * @param onFailure callback for when registration fails
+     */
+    public static void registerBarcode(Barcode barcode, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
+        CollectionReference barCodesRef = db.collection(BARCODES);
+
+        barCodesRef.add(barcode).addOnSuccessListener(trialSnapshot -> {
+            Log.d(TAG, "Barcode registered.");
+            onComplete.callBack(barcode);
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to register barcode.");
+            onFailure.callBack(e);
+        });
+    }
+
+
+    /**
+     * Reads a barcode and adds the corresponding trial if it exists in the registry
+     * @param code the barcode being read
+     * @param onComplete
+     * @param onFailure
+     */
+    public static void readBarcode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+
+        CollectionReference barCodesRef = db.collection(BARCODES);
+        barCodesRef.whereEqualTo("code", code).get().addOnSuccessListener(snapshot -> {
+            Log.d(TAG, "Barcode registered.");
+            ArrayList<Barcode> barCodesArrayList = new ArrayList<>(snapshot.toObjects(Barcode.class));
+            if (barCodesArrayList.size() > 0) {
+                Barcode barCode = barCodesArrayList.get(0);
+                Experiment<?> experiment = ExperimentManager.getExperiment(barCode.experimentId);
+                Trial trial = barCode.trial;
+                addTrial(trial, experiment, (t) -> {
+                    Log.e(TAG, t.toString() + " added to experiment " + experiment.toString());
+                    onComplete.callBack(t);
+                }, onFailure);
+            } else {
+                onFailure.callBack(new Exception("Barcode not found in registry."));
+            }
+
+
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to read barcode.");
+            onFailure.callBack(e);
+        });
+
+    }
+
+    private static void parseBarcodeSnapshot(QuerySnapshot userSnapshots) {
+        barCodes.clear();
+        for (QueryDocumentSnapshot snapshot : userSnapshots) {
+            barCodes.add(snapshot.toObject(Barcode.class));
+        }
+    }
+
+
     /**
      * Add a new trial for an experiment.
      * @param trial
@@ -84,7 +179,7 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addTrial(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+    public static void addTrial(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
         push(trial, experiment, onSuccess, onFailure);
     }
 
@@ -99,7 +194,7 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Trial trial, Experiment experiment, TrialCallback onSuccess, ExceptionCallback onFailure) {
+    public static void update(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
         push(trial, experiment, onSuccess, onFailure);
     }
 
@@ -114,7 +209,7 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when trial push fails
      */
-    private static void push(Trial trial, Experiment experiment, TrialCallback onComplete, ExceptionCallback onFailure) {
+    private static void push(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "Push failed. Must be logged in to push.");
             onFailure.callBack(new Exception("Push failed. Must be logged in to push."));
@@ -171,12 +266,12 @@ public class TrialManager {
      * @param userSnapshots
      *      The snapshot from firestore to parse
      */
-    private static void parseTrialsSnapshot(Experiment experiment, QuerySnapshot userSnapshots) {
-        ArrayList<Trial> array = new ArrayList<>();
+    private static <TrialType extends Trial> void parseTrialsSnapshot(Experiment<TrialType> experiment, QuerySnapshot userSnapshots) {
+        ArrayList<TrialType> array = new ArrayList<>();
 
         for (QueryDocumentSnapshot snapshot : userSnapshots) {
             Class<? extends Trial> classType = trialClassMap.get(snapshot.getString("type"));
-            if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot, TAG));
+            if (classType != null) array.add((TrialType) readFirebaseObjectSnapshot(classType, snapshot, TAG));
             else Log.e(TAG, "classType null in parseTrialsSnapshot.");
         }
 

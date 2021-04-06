@@ -1,5 +1,4 @@
 package com.example.rocketapp.model.users;
-import android.util.Log;
 
 import com.example.rocketapp.controller.FirestoreDocument;
 import com.example.rocketapp.controller.FirestoreOwnableDocument;

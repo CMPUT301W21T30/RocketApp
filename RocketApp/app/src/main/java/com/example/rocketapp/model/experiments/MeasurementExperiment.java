@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
 
@@ -80,8 +79,7 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getMeasurement();
         }
-        final float mean = sum / trials.size();
-        return mean;
+        return sum / trials.size();
     }
 
     /**
@@ -104,8 +102,7 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
             sum = sum + trials.get(i).getMeasurement();
             trialCounter++;
         }
-        float mean = sum / trialCounter;
-        return mean;
+        return sum / trialCounter;
     }
 
 
@@ -145,16 +142,16 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
-                quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getMeasurement() + trials.get((trials.size() * 3) / 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get(( trials.size() * 3) / 4 - 1).getMeasurement() + trials.get((trials.size() * 3) / 4 ).getMeasurement()) / 2;
                 return quart;
             case (1):
-                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 -1).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement())) / 2;
+                quart =  (trials.get(((trials.size() - 1) * 3) / 4 -1).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement()) / 2;
                 return quart;
             case (2):
-                quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getMeasurement());
+                quart = trials.get(((trials.size() - 2)* 3) / 4 + 1).getMeasurement();
                 return quart;
             default:
-                quart = (float)(trials.get(((trials.size() - 3)* 3) / 4 + 2).getMeasurement());
+                quart = trials.get(((trials.size() - 3)* 3) / 4 + 2).getMeasurement();
                 return quart;
         }
     }
@@ -173,16 +170,16 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):
-                quart = ( (float)(trials.get( trials.size()  / 4 - 1).getMeasurement() + trials.get(trials.size() / 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get( trials.size()  / 4 - 1).getMeasurement() + trials.get(trials.size() / 4 ).getMeasurement()) / 2;
                 return quart;
             case (1):
-                quart = ( (float)(trials.get( (trials.size() - 1 )/ 4 - 1).getMeasurement() + trials.get((trials.size() - 1 )/ 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get( (trials.size() - 1 )/ 4 - 1).getMeasurement() + trials.get((trials.size() - 1 )/ 4 ).getMeasurement()) / 2;
                 return quart;
             case (2):
-                quart = (float)(trials.get((trials.size() - 2) / 4 ).getMeasurement());
+                quart = trials.get((trials.size() - 2) / 4 ).getMeasurement();
                 return quart;
             default:
-                quart = (float)(trials.get((trials.size() - 3) / 4 ).getMeasurement());
+                quart = trials.get((trials.size() - 3) / 4 ).getMeasurement();
                 return quart;
         }
     }

@@ -3,11 +3,12 @@ package com.example.rocketapp.controller;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.Callback;
-import com.example.rocketapp.controller.callbacks.ExceptionCallback;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.comments.Comment;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.trials.Trial;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -18,7 +19,7 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 
 /**
- * Handles adding, retrieving, and modifying questions and answers for experiment experiment forums.
+ * Handles adding, retrieving, and modifying questions and answers for Experiment<?> experiment forums.
  */
 public class ForumManager {
     private static final String TAG = "ForumManager";
@@ -32,15 +33,6 @@ public class ForumManager {
      */
     private ForumManager() { }
 
-    public interface QuestionCallback {
-        void callBack(Question question);
-    }
-
-    public interface AnswerCallback {
-        void callBack(Answer answer);
-    }
-
-
     /**
      * Listens to firestore for changes to this experiment. You MUST use this to get the trials and questions for an experiment.
      * You may want to update the UI in onUpdate.
@@ -49,7 +41,7 @@ public class ForumManager {
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment experiment, ExperimentManager.ExperimentCallback onUpdate) {
+    public static <TrialType extends Trial> void listen(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
@@ -81,11 +73,10 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addQuestion(Question question, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void addQuestion(Question question, Experiment<?> experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         ((FirestoreOwnableDocument) question).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) question).setParent(experiment.getId());
         push(question, experiment, onSuccess, onFailure);
-
     }
 
 
@@ -100,7 +91,7 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Question question, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void update(Question question, Experiment<?> experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!question.getOwner().equals(UserManager.getUser())) {
             onFailure.callBack(new Exception("Cannot update question. Not owned by user."));
         }
@@ -119,7 +110,7 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addAnswer(Answer answer, Question question, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void addAnswer(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         ((FirestoreOwnableDocument) answer).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) answer).setParent(question.getId());
         push(answer, ExperimentManager.getExperiment(question.getParentId()), onSuccess, onFailure);
@@ -137,7 +128,7 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Answer answer, Question question, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void update(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!answer.getOwner().equals(UserManager.getUser())) {
             onFailure.callBack(new Exception("Cannot update answer. Not owned by user."));
         } else {
@@ -157,7 +148,7 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when comment push fails
      */
-    private static void push(Comment comment, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    private static void push(Comment comment, Experiment<?> experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (comment == null || !comment.parentIsValid()) {
             Log.e(TAG, "Push failed. Tried to add null or un-parented comment.");
             onFailure.callBack(new Exception("Push failed. Tried to add null or un-parented comment."));
@@ -202,7 +193,7 @@ public class ForumManager {
      * @param userSnapshots
      *      The snapshot from firestore to parse
      */
-    private static void parseCommentsSnapshot(Experiment experiment, QuerySnapshot userSnapshots) {
+    private static void parseCommentsSnapshot(Experiment<?> experiment, QuerySnapshot userSnapshots) {
         ArrayList<Answer> answersArrayList = new ArrayList<>();
         ArrayList<Question> questionsArrayList = new ArrayList<>();
 

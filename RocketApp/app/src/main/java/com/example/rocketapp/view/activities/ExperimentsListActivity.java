@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public class ExperimentsListActivity extends AppCompatActivity{
     private static final String TAG = "ExperimentsListActivity";
-    private ArrayList<Experiment> experimentsOwned, experimentsSubscribed;
+    private ArrayList<Experiment<?>> experimentsOwned, experimentsSubscribed;
     private ExperimentListAdapter adapterOwned, adapterSubscribed;
 
     /**
@@ -115,7 +115,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
 
     // Adds swiping behaviour
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+    final ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;

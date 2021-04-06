@@ -39,7 +39,7 @@ import com.example.rocketapp.model.experiments.Experiment;
  */
 public class ExperimentActivity extends AppCompatActivity {
     private static final String TAG = "ExperimentActivity";
-    private Experiment experiment;
+    private Experiment<?> experiment;
     private TextView meanTextView;
     private TextView medianTextView;
     private TextView stdDevTextView;
@@ -50,7 +50,6 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView ownerTextView;
     private Button addTrialButton;
     private Button endExperimentButton;
-    private Button graphButton;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private boolean granted = false;
     private Button publishExperimentButton;
@@ -73,7 +72,6 @@ public class ExperimentActivity extends AppCompatActivity {
         medianTextView = findViewById(R.id.medianValue);
         stdDevTextView = findViewById(R.id.stdDevVal);
         regionTextView = findViewById(R.id.regionView);
-        graphButton = findViewById(R.id.graphbtn);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
         statusTextView = findViewById(R.id.endedTextView);
@@ -253,7 +251,7 @@ public class ExperimentActivity extends AppCompatActivity {
      * @param experiment
      *          Experiment of current view
      */
-    void update(Experiment experiment) {
+    void update(Experiment<?> experiment) {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
 

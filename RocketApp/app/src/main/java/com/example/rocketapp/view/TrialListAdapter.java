@@ -7,14 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.android.material.card.MaterialCardView;
 
@@ -46,7 +44,7 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
     /**
      * @param trials new list of trials
      */
-    public void updateList(ArrayList<Trial> trials) {
+    public void updateList(ArrayList<? extends Trial> trials) {
         this.trials.clear();
         this.trials.addAll(trials);
         notifyDataSetChanged();
@@ -92,10 +90,10 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
     /**
      *  The view holder for each item in the recycler view
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView trialTextView;
-        MaterialCardView trialListItemLayout;;
+        final TextView trialTextView;
+        final MaterialCardView trialListItemLayout;
 
         /**
          *  implementing the view holder

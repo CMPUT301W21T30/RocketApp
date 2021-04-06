@@ -14,14 +14,15 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.TrialManager;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.experiments.IntCountExperiment;
-import com.example.rocketapp.model.trials.Geolocation;
 import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
+import com.example.rocketapp.model.trials.Trial;
 
 /**
  * Fragment for creating or editing experiments.
@@ -36,13 +37,13 @@ import com.example.rocketapp.model.trials.MeasurementTrial;
  */
 public class TrialFragment extends DialogFragment {
 
-    private String type;
+    private final String type;
     private EditText inputEditText;
-    private TrialManager.TrialCallback callback;
+    private final ObjectCallback<Trial> callback;
     private TextView warning;
-    private boolean geo;
+    private final boolean geo;
 
-    public TrialFragment(String type, Boolean geo, TrialManager.TrialCallback callback) {
+    public TrialFragment(String type, Boolean geo, ObjectCallback<Trial> callback) {
         this.type = type;
         this.callback = callback;
         this.geo = geo;

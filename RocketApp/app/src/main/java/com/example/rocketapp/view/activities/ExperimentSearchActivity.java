@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class ExperimentSearchActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentSearchAct";
-    private ArrayList<Experiment> experimentList;
+    private ArrayList<Experiment<?>> experimentList;
     private ExperimentListAdapter adapter;
 
 
