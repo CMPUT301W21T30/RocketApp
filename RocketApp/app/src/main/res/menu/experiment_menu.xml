@@ -15,9 +15,14 @@
         app:showAsAction="never|withText" />
 
     <item
-        android:id="@+id/scannerMenu"
+        android:id="@+id/registerMenu"
         android:icon="@drawable/ic_baseline_document_scanner_24"
-        android:title="Scan Code"
+        android:title="Register Code"
+        app:showAsAction="never|withText"/>
+
+    <item
+        android:id="@+id/generateQRcode"
+        android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
 
 

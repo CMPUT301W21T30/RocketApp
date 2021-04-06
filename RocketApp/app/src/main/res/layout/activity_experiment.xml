@@ -192,13 +192,13 @@
                     android:id="@+id/mapbtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginLeft="28dp"
                     android:layout_marginTop="150dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:drawableLeft="@drawable/maps_icon_gmm"
                     android:text="MAP"
                     app:backgroundTint="@color/dark_pink"
-                    app:layout_constraintStart_toEndOf="@+id/regionView"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
