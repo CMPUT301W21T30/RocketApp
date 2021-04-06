@@ -15,7 +15,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
@@ -27,7 +29,7 @@ public class TrialManager {
     private static ListenerRegistration trialsListener;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String EXPERIMENTS = "Experiments";
-    private static final String BARCODES = "Barcode";
+    private static final String BARCODES = "Barcodes";
     private static final String TRIALS = "Trials";
     private static final ArrayList<Barcode> barCodes = new ArrayList<>();
 
@@ -74,8 +76,7 @@ public class TrialManager {
         private Trial trial;
         private String code;
 
-        public Barcode() {
-        }
+        public Barcode() { }
 
         public Barcode(String barcode, Experiment<?> experiment, Trial trial) {
             this.code = barcode;
@@ -118,7 +119,7 @@ public class TrialManager {
     public static void registerBarcode(Barcode barcode, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
         CollectionReference barCodesRef = db.collection(BARCODES);
 
-        barCodesRef.add(barcode).addOnSuccessListener(trialSnapshot -> {
+        barCodesRef.document(barcode.code).set(barcode).addOnSuccessListener(trialSnapshot -> {
             Log.d(TAG, "Barcode registered.");
             onComplete.callBack(barcode);
         }).addOnFailureListener(e -> {
@@ -137,34 +138,26 @@ public class TrialManager {
     public static void readBarcode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
 
         CollectionReference barCodesRef = db.collection(BARCODES);
-        barCodesRef.whereEqualTo("code", code).get().addOnSuccessListener(snapshot -> {
-            Log.d(TAG, "Barcode registered.");
-            ArrayList<Barcode> barCodesArrayList = new ArrayList<>(snapshot.toObjects(Barcode.class));
-            if (barCodesArrayList.size() > 0) {
-                Barcode barCode = barCodesArrayList.get(0);
-                Experiment<?> experiment = ExperimentManager.getExperiment(barCode.experimentId);
-                Trial trial = barCode.trial;
-                addTrial(trial, experiment, (t) -> {
-                    Log.e(TAG, t.toString() + " added to experiment " + experiment.toString());
-                    onComplete.callBack(t);
-                }, onFailure);
-            } else {
-                onFailure.callBack(new Exception("Barcode not found in registry."));
-            }
 
+        barCodesRef.document(code).get().addOnSuccessListener(snapshot -> {
+
+            String trialType = (String) ((Map<String, Object>)snapshot.getData().get("trial")).get("type");
+            Experiment<?> experiment = ExperimentManager.getExperiment(snapshot.get("experimentId", FirestoreDocument.Id.class));
+
+            Barcode barcode = new Barcode(
+                    snapshot.getString("code"),
+                    experiment,
+                    snapshot.get("trial", trialClassMap.get(trialType))
+            );
+
+            ((FirestoreDocument) barcode.trial).newTimestamp();
+            addTrial(barcode.trial, experiment, onComplete, onFailure);
 
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Failed to read barcode.");
             onFailure.callBack(e);
         });
 
-    }
-
-    private static void parseBarcodeSnapshot(QuerySnapshot userSnapshots) {
-        barCodes.clear();
-        for (QueryDocumentSnapshot snapshot : userSnapshots) {
-            barCodes.add(snapshot.toObject(Barcode.class));
-        }
     }
 
 
