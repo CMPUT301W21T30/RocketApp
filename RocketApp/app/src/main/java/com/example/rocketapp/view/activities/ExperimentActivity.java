@@ -193,15 +193,15 @@ public class ExperimentActivity extends AppCompatActivity {
 
     void onAddTrialClicked(View view) {
         if (!experiment.info.isGeoLocationEnabled()) {
-            new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
+            new TrialFragment(experiment, newTrial ->
                 TrialManager.addTrial(newTrial, experiment,
                         t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),
-                        e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show());
-            }).show(getSupportFragmentManager(), "ADD_TRIAL");
+                        e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show())
+                ).show(getSupportFragmentManager(), "ADD_TRIAL");
         } else {
             getLocation(location -> {
                 if (location == null) return;
-                new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
+                new TrialFragment(experiment, newTrial -> {
                     newTrial.setLocation(new Geolocation(location));
                     TrialManager.addTrial(newTrial, experiment,
                             t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),

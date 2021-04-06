@@ -14,7 +14,7 @@ import java.util.Calendar;
  */
 public abstract class FirestoreDocument  {
     public static final String TAG = "FirestoreDocument";
-    private final Timestamp timestamp;
+    private Timestamp timestamp;
     private Id id;
 
 
@@ -68,9 +68,12 @@ public abstract class FirestoreDocument  {
 
 
     public FirestoreDocument() {
-        timestamp = new Timestamp(Calendar.getInstance().getTime());
+        newTimestamp();
     }
 
+    void newTimestamp() {
+        timestamp = new Timestamp(Calendar.getInstance().getTime());
+    }
 
     /**
      * @return the timestamp when this document was created

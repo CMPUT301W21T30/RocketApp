@@ -16,6 +16,7 @@ import com.example.rocketapp.R;
 import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.helpers.Validate;
+import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.trials.CountTrial;
@@ -36,17 +37,14 @@ import com.example.rocketapp.model.trials.Trial;
  * If no experiment is passed in, will create a new experiment and return a reference to it in OnOkCallback when OK is pressed.
  */
 public class TrialFragment extends DialogFragment {
-
-    private final String type;
-    private EditText inputEditText;
+    private final Experiment<?> experiment;
     private final ObjectCallback<Trial> callback;
-    private TextView warning;
-    private final boolean geo;
+    private EditText inputEditText;
 
-    public TrialFragment(String type, Boolean geo, ObjectCallback<Trial> callback) {
-        this.type = type;
+
+    public TrialFragment(Experiment<?> experiment, ObjectCallback<Trial> callback) {
+        this.experiment = experiment;
         this.callback = callback;
-        this.geo = geo;
     }
 
 
@@ -55,17 +53,16 @@ public class TrialFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.trial_fragment_layout, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle(type).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle(experiment.getType()).create();
 
         inputEditText = view.findViewById(R.id.inputEditText);
         view.findViewById(R.id.button_cancel).setOnClickListener(i -> alertDialog.dismiss());
-        warning = view.findViewById(R.id.warning);
 
-        if(!geo){
-            warning.setVisibility(View.INVISIBLE);
+        if(!experiment.info.isGeoLocationEnabled()){
+            view.findViewById(R.id.warning).setVisibility(View.INVISIBLE);
         }
 
-        if (type.equals(BinomialTrial.TYPE)) {
+        if (experiment.getType().equals(BinomialTrial.TYPE)) {
             view.findViewById(R.id.inputEditText).setVisibility(View.GONE);
             view.findViewById(R.id.button_confirm).setVisibility(View.GONE);
 
@@ -82,7 +79,7 @@ public class TrialFragment extends DialogFragment {
             view.findViewById(R.id.addSuccess).setVisibility(View.GONE);
             view.findViewById(R.id.addFailure).setVisibility(View.GONE);
             view.findViewById(R.id.button_confirm).setOnClickListener(i -> {
-                    switch(type) {
+                    switch(experiment.getType()) {
                         case IntCountExperiment.TYPE:
                             if (Validate.intInRange(inputEditText, 0, Integer.MAX_VALUE, true)) {
                                 callback.callBack(new IntCountTrial(Integer.parseInt(inputEditText.getText().toString())));
