@@ -68,7 +68,7 @@ public class TrialManager {
         });
     }
 
-    static class Barcode {
+    public static class Barcode {
 
         private FirestoreDocument.Id experimentId;
         private Trial trial;
