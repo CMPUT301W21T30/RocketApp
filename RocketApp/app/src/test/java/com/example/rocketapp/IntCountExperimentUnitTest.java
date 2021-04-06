@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class IntCountExperimentUnitTest {
 
     public Experiment createMockExperiment() {
-        Experiment<?> experiment = new IntCountExperiment();
+        IntCountExperiment experiment = new IntCountExperiment();
         ArrayList<IntCountTrial> trials = new ArrayList<>();
         trials.add(new IntCountTrial(20));
         trials.add(new IntCountTrial(10));

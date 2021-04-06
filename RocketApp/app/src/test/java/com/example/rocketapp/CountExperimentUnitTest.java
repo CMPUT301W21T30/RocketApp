@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class CountExperimentUnitTest {
     public Experiment createMockExperiment() {
-        Experiment<?> experiment = new CountExperiment();
+        CountExperiment experiment = new CountExperiment();
         ArrayList<CountTrial> trials = new ArrayList<>();
         trials.add(new CountTrial(20));
         trials.add(new CountTrial(10));

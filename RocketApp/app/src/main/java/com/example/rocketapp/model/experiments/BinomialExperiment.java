@@ -64,7 +64,6 @@ public class BinomialExperiment extends Experiment<BinomialTrial> {
     @Override
     public float getMean() {
         ArrayList<BinomialTrial> trials = getFilteredTrials();
-        Log.d(TAG, trials.toString());
         int length = trials.size();
         if(length == 0) return 0;
 
@@ -75,9 +74,7 @@ public class BinomialExperiment extends Experiment<BinomialTrial> {
             }
         }
 
-        float mean = ((float) success)/((float)trials.size());
-        Log.d(TAG, "Mean: " + mean);
-        return mean;
+        return ((float) success)/((float)trials.size());
     }
 
     /**

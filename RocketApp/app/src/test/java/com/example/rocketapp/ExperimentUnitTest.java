@@ -13,7 +13,7 @@ import static org.junit.Assert.assertFalse;
 public class ExperimentUnitTest {
 
     private Experiment createMockExperiment() {
-        Experiment<?> experiment = new BinomialExperiment();
+        BinomialExperiment experiment = new BinomialExperiment();
         ArrayList<BinomialTrial> trials = new ArrayList<>();
         trials.add(new BinomialTrial(true));
         trials.add(new BinomialTrial(true));

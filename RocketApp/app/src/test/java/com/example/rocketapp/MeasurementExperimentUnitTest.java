@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MeasurementExperimentUnitTest {
     public Experiment createMockExperiment() {
-        Experiment<?> experiment = new MeasurementExperiment();
+        MeasurementExperiment experiment = new MeasurementExperiment();
         ArrayList<MeasurementTrial> trials = new ArrayList<>();
         trials.add(new MeasurementTrial(20.0f));
         trials.add(new MeasurementTrial(10.0f));
