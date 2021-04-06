@@ -44,8 +44,6 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
     private CheckBox registerpass;
     private CheckBox registerfail;
     private Button registerBtn;
-    private Code registerCode;
-    private TextView checkRegister;
     private String scannedCode;
 
     @Override
@@ -61,11 +59,6 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
         registerpass = findViewById(R.id.registerpass);
         code = findViewById(R.id.scanned_code);
         registerBtn = findViewById(R.id.registerButton);
-        checkRegister = findViewById(R.id.checkRegister);
-
-        registerCode = new Code();
-
-
         experimentType.setText(experiment.getType());
 
         scanBtn = findViewById(R.id.scanButton);
@@ -128,13 +121,4 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-    public void giveError(){
-        Toast.makeText(this, "Cannot do this", Toast.LENGTH_LONG).show();
-    }
-
-    public void giveConfirmation(){
-        Toast.makeText(this, "registered!", Toast.LENGTH_LONG).show();
-    }
-
 }
