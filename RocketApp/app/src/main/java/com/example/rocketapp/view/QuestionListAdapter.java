@@ -1,6 +1,5 @@
 package com.example.rocketapp.view;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,23 +10,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.ForumManager;
 import com.example.rocketapp.controller.UserManager;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Question;
 
 import java.util.ArrayList;
 
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder>  {
     private final ArrayList<Question> questions;
-    private final ForumManager.QuestionCallback onClickRespond;
+    private final ObjectCallback<Question> onClickRespond;
     private final UserManager.UserCallback onClickUser;
-    private final Context context;
+
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param questions the initial questions list
      */
-    public QuestionListAdapter(Context context, ArrayList<Question> questions, ForumManager.QuestionCallback onClickRespond, UserManager.UserCallback onClickUser) {
-        this.context = context;
+    public QuestionListAdapter(ArrayList<Question> questions, ObjectCallback<Question> onClickRespond, UserManager.UserCallback onClickUser) {
         this.questions = questions;
         this.onClickRespond = onClickRespond;
         this.onClickUser = onClickUser;
@@ -72,9 +70,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 
         holder.answerRecyclerView.setLayoutManager(layoutManager);
         holder.answerRecyclerView.setAdapter(new AnswersListAdapter(question.getAnswers(), answer -> {
-            // TODO not implemented for anything, needs more setup to work
-//            Intent userProfileIntent = new Intent(context, UserProfileActivity.class);
-//            context.startActivity(userProfileIntent);
+            // TODO not implemented for anything, could be used for editing answers
         }, onClickUser));
         holder.answerRecyclerView.setRecycledViewPool(holder.viewPool);
         holder.answerRecyclerView.addItemDecoration(new DividerItemDecoration(holder.answerRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
@@ -99,7 +95,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
         private final TextView dialogueTextView;
         private final TextView respondButton;
         private final RecyclerView answerRecyclerView;
-        private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+        private final RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
         /**
          * Sets all fields according to the experiment input

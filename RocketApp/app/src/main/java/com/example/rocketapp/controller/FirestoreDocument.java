@@ -68,9 +68,12 @@ public abstract class FirestoreDocument  {
 
 
     public FirestoreDocument() {
-        timestamp = new Timestamp(Calendar.getInstance().getTime());
+        newTimestamp();
     }
 
+    void newTimestamp() {
+        timestamp = new Timestamp(Calendar.getInstance().getTime());
+    }
 
     /**
      * @return the timestamp when this document was created
@@ -135,7 +138,7 @@ public abstract class FirestoreDocument  {
      */
     static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot, String TAG) {
         ClassType object = snapshot.toObject(typeClass);
-        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.Id(snapshot.getId()));
+        if (object != null) object.setId(new FirestoreDocument.Id(snapshot.getId()));
         else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
         return object;
     }

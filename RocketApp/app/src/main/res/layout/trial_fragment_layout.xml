@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/experiment_fragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/dark_background"
     android:orientation="vertical">
 
@@ -77,16 +77,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:layout_marginBottom="32dp"
                 android:background="#00FFFFFF"
                 android:text="CANCEL"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:backgroundTint="@color/green_soft"
                 app:backgroundTintMode="add"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.74"
+                app:layout_constraintHorizontal_bias="0.529"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/addSuccess" />
 
@@ -95,9 +93,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginBottom="32dp"
                 android:background="#00FFFFFF"
                 android:paddingLeft="0dp"
                 android:paddingRight="0dp"
@@ -106,24 +101,27 @@
                 android:textSize="14sp"
                 app:backgroundTint="@color/green_soft"
                 app:backgroundTintMode="add"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/button_cancel"
-                app:layout_constraintTop_toBottomOf="@+id/addFailure"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/addFailure" />
 
             <TextView
                 android:id="@+id/warning"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="32dp"
                 android:background="#FA0202"
                 android:foregroundGravity="center|center_horizontal"
-                android:gravity="center|center_horizontal"
+                android:gravity="center_horizontal"
                 android:text="WARNING - Your current location will be accessed to add this trial."
                 android:textColor="#FFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_cancel" />
 

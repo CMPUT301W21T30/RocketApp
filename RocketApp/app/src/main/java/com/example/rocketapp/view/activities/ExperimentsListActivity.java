@@ -28,7 +28,7 @@ import java.util.ArrayList;
  */
 public class ExperimentsListActivity extends AppCompatActivity{
     private static final String TAG = "ExperimentsListActivity";
-    private ArrayList<Experiment> experimentsOwned, experimentsSubscribed;
+    private ArrayList<Experiment<?>> experimentsOwned, experimentsSubscribed;
     private ExperimentListAdapter adapterOwned, adapterSubscribed;
 
     /**
@@ -47,7 +47,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         findViewById(R.id.experiment_options).setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
-            userProfileIntent.putExtra("id", UserManager.getUser().getId());
+            userProfileIntent.putExtra(Experiment.ID_KEY, UserManager.getUser().getId());
             startActivity(userProfileIntent);
         });
 
@@ -110,7 +110,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         experimentsOwned = ExperimentManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
-            intent.putExtra("id", experiment.getId());
+            intent.putExtra(Experiment.ID_KEY, experiment.getId());
             startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterOwned);
@@ -132,7 +132,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         experimentsSubscribed = ExperimentManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
-            intent.putExtra("id", experiment.getId());
+            intent.putExtra(Experiment.ID_KEY, experiment.getId());
             startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterSubscribed);
@@ -141,7 +141,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
 
     // Adds swiping behaviour
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+    final ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;

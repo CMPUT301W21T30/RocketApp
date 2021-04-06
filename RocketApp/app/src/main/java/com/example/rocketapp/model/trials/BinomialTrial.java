@@ -33,7 +33,7 @@ public class BinomialTrial extends Trial {
     /**
      * @return the outcome of trial, True if pass, False if fail.    - Boolean
      */
-    public boolean isValue() {
+    public boolean getValue() {
         return value;
     }
 
@@ -51,5 +51,10 @@ public class BinomialTrial extends Trial {
     @Override
     public String getValueString() {
         return value ? "True" : "False";
+    }
+
+    @Override
+    public String toString() {
+        return "BinomialTrial: " + value +" ignored: " + getIgnored();
     }
 }

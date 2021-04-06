@@ -65,12 +65,7 @@ public class CreateExperimentDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.create_experiment_dialog, container, false);
         initialSetup(view);
 
-        geoBox.setOnClickListener(v -> {
-            if (geoBox.isChecked()){            //if experiment requires geoLocation to be enabled
-                geolocationEnabled = true;
-                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Geolocation Enabled", Toast.LENGTH_LONG).show();
-            }
-        });
+        geoBox.setOnClickListener(v -> geolocationEnabled = geoBox.isChecked());
 
         publishBtn.setOnClickListener(v -> {          //Confirm button is clicked
             if (checkInputsValid()) {
@@ -125,7 +120,7 @@ public class CreateExperimentDialog extends DialogFragment {
 
     /**
      * Exception handler which checks if Experiment is valid and published or not
-     * @param newExperiment Experiment to be published.
+     * @param newExperiment<?> experiment to be published.
      */
     public void returnExperiment(Experiment newExperiment){
         ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
@@ -139,7 +134,7 @@ public class CreateExperimentDialog extends DialogFragment {
      *          experiment of said type based on user input
      */
     public Experiment getExperiment(String type){
-        Experiment exp;
+        Experiment<?> exp;
         switch(type) {
             case ("Count Experiment"):
                 exp = new CountExperiment(descriptionET.getText().toString(),

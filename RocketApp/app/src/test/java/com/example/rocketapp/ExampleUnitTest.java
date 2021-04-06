@@ -2,8 +2,6 @@ package com.example.rocketapp;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.Assert.*;
 
 /**

@@ -22,11 +22,10 @@ public abstract class FirestoreOwnableDocument extends FirestoreDocument {
      * Set the ownerDocumentId for this object from a User.
      * @param owner owning user for this object.
      */
-    FirestoreOwnableDocument setOwner(User owner) {
+    void setOwner(User owner) {
         if (owner.isValid()) {
             ownerId = owner.getId();
         }
-        return this;
     }
 
 

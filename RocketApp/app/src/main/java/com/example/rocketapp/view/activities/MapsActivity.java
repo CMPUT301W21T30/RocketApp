@@ -1,15 +1,10 @@
 package com.example.rocketapp.view.activities;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
-import android.app.ActionBar;
-import android.app.Notification;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
@@ -26,7 +21,7 @@ import java.util.ArrayList;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Experiment experiment;
+    private Experiment<?> experiment;
     private ArrayList<? extends Trial> trialList;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -34,11 +29,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         TrialManager.listen(experiment, this::onUpdate);
     }
 
-    private void onUpdate(Experiment experiment) {
+    private void onUpdate(Experiment<?> experiment) {
         trialList = experiment.getTrials();
 
         try {

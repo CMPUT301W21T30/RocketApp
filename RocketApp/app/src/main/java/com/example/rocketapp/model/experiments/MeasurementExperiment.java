@@ -1,8 +1,8 @@
 package com.example.rocketapp.model.experiments;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
-import com.example.rocketapp.model.trials.IntCountTrial;
 import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
 
@@ -13,7 +13,7 @@ import static java.lang.Math.sqrt;
  * Inherits from abstract class Experiment.
  */
 
-public class MeasurementExperiment extends Experiment {
+public class MeasurementExperiment extends Experiment<MeasurementTrial> {
     public static final String TYPE = "Measurement";
 
     public MeasurementExperiment() {
@@ -79,9 +79,32 @@ public class MeasurementExperiment extends Experiment {
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getMeasurement();
         }
-        final float mean = sum / trials.size();
-        return mean;
+        return sum / trials.size();
     }
+
+    /**
+     * Excluded from getting stored inside firestore.
+     * Calculates the mean from all trials present in this experiment up to a certain date
+     * @return the mean of experiment to given date
+     */
+    @Exclude
+    @Override
+    public float getMean(Date date) {
+        ArrayList<MeasurementTrial> trials = getFilteredTrials();
+        if (trials.size() == 0) {return 0;}
+        float sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
+        int trialCounter = 0;
+        for(int i = 0; i<trials.size() ; i++){
+            if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
+            sum = sum + trials.get(i).getMeasurement();
+            trialCounter++;
+        }
+        return sum / trialCounter;
+    }
+
 
     /**
      * Excluded from getting stored inside firestore.
@@ -119,16 +142,16 @@ public class MeasurementExperiment extends Experiment {
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
-                quart = ( (float)(trials.get(( trials.size() * 3) / 4 - 1).getMeasurement() + trials.get((trials.size() * 3) / 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get(( trials.size() * 3) / 4 - 1).getMeasurement() + trials.get((trials.size() * 3) / 4 ).getMeasurement()) / 2;
                 return quart;
             case (1):
-                quart =  ((float) (trials.get(((trials.size() - 1) * 3) / 4 -1).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement())) / 2;
+                quart =  (trials.get(((trials.size() - 1) * 3) / 4 -1).getMeasurement() + trials.get(((trials.size() - 1) * 3) / 4 ).getMeasurement()) / 2;
                 return quart;
             case (2):
-                quart = (float)(trials.get(((trials.size() - 2)* 3) / 4 + 1).getMeasurement());
+                quart = trials.get(((trials.size() - 2)* 3) / 4 + 1).getMeasurement();
                 return quart;
             default:
-                quart = (float)(trials.get(((trials.size() - 3)* 3) / 4 + 2).getMeasurement());
+                quart = trials.get(((trials.size() - 3)* 3) / 4 + 2).getMeasurement();
                 return quart;
         }
     }
@@ -147,41 +170,18 @@ public class MeasurementExperiment extends Experiment {
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):
-                quart = ( (float)(trials.get( trials.size()  / 4 - 1).getMeasurement() + trials.get(trials.size() / 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get( trials.size()  / 4 - 1).getMeasurement() + trials.get(trials.size() / 4 ).getMeasurement()) / 2;
                 return quart;
             case (1):
-                quart = ( (float)(trials.get( (trials.size() - 1 )/ 4 - 1).getMeasurement() + trials.get((trials.size() - 1 )/ 4 ).getMeasurement()) )/ 2;
+                quart = (trials.get( (trials.size() - 1 )/ 4 - 1).getMeasurement() + trials.get((trials.size() - 1 )/ 4 ).getMeasurement()) / 2;
                 return quart;
             case (2):
-                quart = (float)(trials.get((trials.size() - 2) / 4 ).getMeasurement());
+                quart = trials.get((trials.size() - 2) / 4 ).getMeasurement();
                 return quart;
             default:
-                quart = (float)(trials.get((trials.size() - 3) / 4 ).getMeasurement());
+                quart = trials.get((trials.size() - 3) / 4 ).getMeasurement();
                 return quart;
         }
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    ArrayList<MeasurementTrial> getFilteredTrials(){
-        ArrayList<MeasurementTrial> trials = getTrials();
-        ArrayList<MeasurementTrial> filteredTrials = new ArrayList<MeasurementTrial>();
-        for(int i = 0; i <trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
-            }
-        }
-        return filteredTrials;
-    }
-
-    /**
-     * @return All the trials in this experiment in the form of an Array List, indexed such as the earliest submitted trial is at 0th position.
-     */
-    @Exclude
-    @Override
-    public ArrayList<MeasurementTrial> getTrials(){
-        return (ArrayList<MeasurementTrial>) trialsArrayList;
     }
 
 }

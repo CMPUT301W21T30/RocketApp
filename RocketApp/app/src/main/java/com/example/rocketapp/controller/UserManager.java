@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.Callback;
-import com.example.rocketapp.controller.callbacks.ExceptionCallback;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.CollectionReference;
@@ -100,7 +100,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when username already exists fails
      */
-    public static void createUser(String userName, SharedPreferences sharedPreferences, UserCallback onSuccess, ExceptionCallback onFailure) {
+    public static void createUser(String userName, SharedPreferences sharedPreferences, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
                 Log.e(TAG, "Username not available.");
@@ -127,7 +127,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when login fails (username does not exist)
      */
-    public static void login(SharedPreferences sharedPreferences, UserCallback onSuccess, ExceptionCallback onFailure) {
+    public static void login(SharedPreferences sharedPreferences, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
         String userId = sharedPreferences.getString("userId", "not found");
         Log.e(TAG, "Read UserID: "+ userId);
         usersRef.document(userId).get().addOnSuccessListener(snapshot -> {
@@ -154,7 +154,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when update fails
      */
-    public static void updateUser(UserCallback onSuccess, ExceptionCallback onFailure) {
+    public static void updateUser(UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.whereEqualTo("name", user.getName()).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() == 1 && !matchingUserNames.getDocuments().get(0).getId().equals(user.getId().getKey())) {
                 Log.e(TAG, "Update User Failed: Username not available");
@@ -202,7 +202,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when subscribing fails
      */
-    public static void subscribe(Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void subscribe(Experiment<?> experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!isSignedIn()) {
             Log.d(TAG, "Failed to subscribe. User must be logged in to subscribe to an experiment.");
             if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. User must be logged in to subscribe to an experiment."));
@@ -275,7 +275,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    private static void push(User user, UserCallback onSuccess, ExceptionCallback onFailure) {
+    private static void push(User user, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
         if (user.isValid()) {
             usersRef.document(user.getId().getKey()).set(user)
                     .addOnSuccessListener(u -> {
@@ -302,7 +302,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when pullSubscriptions fails
      */
-    private static void pullSubscriptions(Callback onSuccess, ExceptionCallback onFailure) {
+    private static void pullSubscriptions(Callback onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
             ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
             for (QueryDocumentSnapshot sub : subs.getResult())
