@@ -1,5 +1,6 @@
 package com.example.rocketapp.controller;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
@@ -15,9 +16,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
@@ -126,6 +133,30 @@ public class TrialManager {
             Log.e(TAG, "Failed to register barcode.");
             onFailure.callBack(e);
         });
+    }
+
+
+    public static void createQRCodeBitmap(Experiment<?> experiment, Trial trial, ObjectCallback<Bitmap> bitmap, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
+
+        String code = experiment.getId().getKey() + " " + trial.getType() + " " + trial.getValueString();
+
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            //Initialize bit matrix
+            BitMatrix matrix = writer.encode(code, BarcodeFormat.QR_CODE, 800,800);
+            //Initialize barcode encoder
+            BarcodeEncoder encoder = new BarcodeEncoder();
+
+            // Return string representation
+            generatedString.callBack(code);
+
+            //Return bitmap
+            bitmap.callBack(encoder.createBitmap(matrix));
+
+        } catch (WriterException e) {
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            onFailure.callBack(e);
+        }
     }
 
 

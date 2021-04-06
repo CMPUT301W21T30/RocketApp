@@ -1,18 +1,15 @@
 package com.example.rocketapp.view.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -20,28 +17,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.trials.BinomialTrial;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.example.rocketapp.view.TrialFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-import io.grpc.Context;
-
 public class GenerateQRcodeActivity extends AppCompatActivity {
+    private static final String TAG = "GenerateQRCodeActivity";
     private ImageView qrcode;
     private Button generateBtn;
     private EditText trialsEditText;
@@ -83,103 +74,23 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
             registerfail.setVisibility(View.GONE);
         }
 
+        generateBtn.setOnClickListener(v ->
+                new TrialFragment(
+                        experiment,
+                        newTrial -> {
+                            TrialManager.createQRCodeBitmap(experiment, newTrial,
+                                    bitmap -> qrcode.setImageBitmap(bitmap),
+                                    generatedString -> checkGenerate.setText(generatedString),
+                                    exception -> Log.e(TAG, exception.toString()));
 
-        generateBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-                if (experiment.getType().equals(BinomialTrial.TYPE)){
-                    if(registerpass.isChecked() && !(registerfail.isChecked())){
-
-                        String sText = experiment.getId() + "%" +  "pass";
-                        //Initialize multi format writer
-                        MultiFormatWriter writer = new MultiFormatWriter();
-                        try {
-                            //Initialize bit matrix
-                            BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                            //Initialize barcode encoder
-                            BarcodeEncoder encoder = new BarcodeEncoder();
-                            //Initialize bitmap
-                            Bitmap bitmap = encoder.createBitmap(matrix);
-                            //Set bitmap on image view
-                            qrcode.setImageBitmap(bitmap);
-
-
-
-                        } catch (WriterException e) {
-                            e.printStackTrace();
+                            giveConfirmation();
                         }
-                        checkGenerate.setText(sText);
-                        giveConfirmation();
-
-                    }
-                    else if (registerfail.isChecked() && !(registerpass.isChecked())){
-                        String sText = experiment.getId() + "%" + "fail";
-                        //Initialize multi format writer
-                        MultiFormatWriter writer = new MultiFormatWriter();
-                        try {
-                            //Initialize bit matrix
-                            BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                            //Initialize barcode encoder
-                            BarcodeEncoder encoder = new BarcodeEncoder();
-                            //Initialize bitmap
-                            Bitmap bitmap = encoder.createBitmap(matrix);
-                            //Set bitmap on image view
-                            qrcode.setImageBitmap(bitmap);
-
-
-
-                        } catch (WriterException e) {
-                            e.printStackTrace();
-                        }
-                        checkGenerate.setText(sText);
-                        giveConfirmation();
-                    }
-                    else{
-                        //cannot select both
-                        giveError();
-                    }
-                }
-                else {
-                    String sText = experiment.getId() + "%" + trialsEditText.getText().toString();
-                    //Initialize multi format writer
-                    MultiFormatWriter writer = new MultiFormatWriter();
-                    try {
-                        //Initialize bit matrix
-                        BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                        //Initialize barcode encoder
-                        BarcodeEncoder encoder = new BarcodeEncoder();
-                        //Initialize bitmap
-                        Bitmap bitmap = encoder.createBitmap(matrix);
-                        //Set bitmap on image view
-                        qrcode.setImageBitmap(bitmap);
-
-
-
-                    } catch (WriterException e) {
-                        e.printStackTrace();
-                    }
-                    checkGenerate.setText(sText);
-                    giveConfirmation();
-
-                }
-
-                //Get input value from edit text
-
-            }
-        });
+                ).show(getSupportFragmentManager(), "ADD_TRIAL"));
 
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
-        saveQRcodeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveToGallery();
-            }
-        });
-
-
+        saveQRcodeBtn.setOnClickListener(v -> saveToGallery());
     }
 
 
