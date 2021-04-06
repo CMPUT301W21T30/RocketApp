@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class IntCountExperimentUnitTest {
 
     public Experiment createMockExperiment() {
-        Experiment experiment = new IntCountExperiment();
+        IntCountExperiment experiment = new IntCountExperiment();
         ArrayList<IntCountTrial> trials = new ArrayList<>();
         trials.add(new IntCountTrial(20));
         trials.add(new IntCountTrial(10));
@@ -26,31 +26,31 @@ public class IntCountExperimentUnitTest {
 
     @Test
     public void checkMean() {
-        Experiment experiment = createMockExperiment();
+        Experiment<?> experiment = createMockExperiment();
         assertEquals(15.0, experiment.getMean(), 0.1);
     }
 
     @Test
     public void checkMedian() {
-        Experiment experiment = createMockExperiment();
+        Experiment<?> experiment = createMockExperiment();
         assertEquals(15.0, experiment.getMedian(),0.1);
     }
 
     @Test
     public void checkStdDev() {
-        Experiment experiment = createMockExperiment();
+        Experiment<?> experiment = createMockExperiment();
         assertEquals(3.54, experiment.getStdDev(),0.1);
     }
 
     @Test
     public void checkTopQuartile() {
-        Experiment experiment = createMockExperiment();
+        Experiment<?> experiment = createMockExperiment();
         assertEquals(17.5, experiment.getTopQuartile(),0.1);
     }
 
     @Test
     public void checkBottomQuartile() {
-        Experiment experiment = createMockExperiment();
+        Experiment<?> experiment = createMockExperiment();
         assertEquals(12.5, experiment.getBottomQuartile(),0.1);
     }
 

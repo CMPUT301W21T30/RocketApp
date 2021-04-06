@@ -1,7 +1,6 @@
 package com.example.rocketapp.model.trials;
 
 import com.example.rocketapp.controller.FirestoreNestableDocument;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 
 /**

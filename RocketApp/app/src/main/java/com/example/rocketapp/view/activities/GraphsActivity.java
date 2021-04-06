@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.activities;
 
 import android.os.Bundle;
 
@@ -16,7 +16,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import java.util.ArrayList;
 
 public class GraphsActivity extends AppCompatActivity {
-    Experiment experiment;
+    Experiment<?> experiment;
     Histogram histogram;
     TimePlot timePlot;
 
@@ -24,14 +24,14 @@ public class GraphsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_activity);
-        System.out.println("The experiment ID is: " +getIntent().getSerializableExtra("id"));
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        System.out.println("The experiment ID is: " +getIntent().getSerializableExtra(Experiment.ID_KEY));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         histogram = new Histogram(experiment);
         timePlot = new TimePlot(experiment);
         ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
-        histogram.setBarChart((BarChart) findViewById(R.id.histogram));
+        histogram.setBarChart(findViewById(R.id.histogram));
         histogram.createHistogramView(trials);
-        timePlot.setLineChart((LineChart) findViewById(R.id.time_plot));
+        timePlot.setLineChart(findViewById(R.id.time_plot));
         timePlot.createTimePlotView(trials);
     }
 }

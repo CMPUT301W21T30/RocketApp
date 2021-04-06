@@ -12,7 +12,7 @@ public class RocketAppActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        input = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+        input = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 
     protected void toggleKeyboard(boolean open){
@@ -20,7 +20,11 @@ public class RocketAppActivity extends AppCompatActivity {
             input.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         } else {
             View view = getCurrentFocus();
-            if (view != null) input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (view != null) {
+                getCurrentFocus().clearFocus();
+                input.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
         }
     }
 }

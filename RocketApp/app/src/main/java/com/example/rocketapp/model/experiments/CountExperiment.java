@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.trials.CountTrial;
-import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.google.firebase.firestore.Exclude;
 
 import static java.lang.Math.sqrt;
@@ -106,8 +104,7 @@ public class CountExperiment extends Experiment<CountTrial> {
             sum = sum + trials.get(i).getCount();
             trialCounter++;
         }
-        float mean = ((float) sum) / trialCounter;
-        return mean;
+        return sum / trialCounter;
     }
 
     /**

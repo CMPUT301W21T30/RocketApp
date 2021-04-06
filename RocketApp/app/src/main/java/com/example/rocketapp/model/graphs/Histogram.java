@@ -2,46 +2,25 @@ package com.example.rocketapp.model.graphs;
 
 
 import android.graphics.Color;
-import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.rocketapp.R;
-import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.trials.CountTrial;
-import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.lang.reflect.Array;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 
 public class Histogram extends AppCompatActivity {
 
     private BarChart barChart; //Source: https://www.youtube.com/watch?v=pi1tq-bp7uA
-    private Experiment experiment;
+    private final Experiment<?> experiment;
 
     public BarChart getBarChart() {
         return barChart;
@@ -51,7 +30,7 @@ public class Histogram extends AppCompatActivity {
         this.barChart = barChart;
     }
 
-    public Histogram(Experiment experiment){
+    public Histogram(Experiment<?> experiment){
         this.experiment = experiment;
     }
 

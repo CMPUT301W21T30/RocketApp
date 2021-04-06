@@ -14,7 +14,7 @@ import java.util.Calendar;
  */
 public abstract class FirestoreDocument  {
     public static final String TAG = "FirestoreDocument";
-    private Timestamp timestamp;
+    private final Timestamp timestamp;
     private Id id;
 
 
@@ -135,7 +135,7 @@ public abstract class FirestoreDocument  {
      */
     static <ClassType extends FirestoreDocument> ClassType readFirebaseObjectSnapshot(Class<ClassType> typeClass, DocumentSnapshot snapshot, String TAG) {
         ClassType object = snapshot.toObject(typeClass);
-        if (object != null) ((FirestoreDocument) object).setId(new FirestoreDocument.Id(snapshot.getId()));
+        if (object != null) object.setId(new FirestoreDocument.Id(snapshot.getId()));
         else Log.e(TAG, "readFirebaseObjectSnapshot returned null");
         return object;
     }

@@ -21,7 +21,7 @@ import com.example.rocketapp.view.QuestionListAdapter;
 
 public class ExperimentForumActivity extends RocketAppActivity {
     private static final String TAG = "ForumActivity";
-    private Experiment experiment;
+    private Experiment<?> experiment;
     private QuestionListAdapter adapter;
     private EditText inputEditText;
     private CommentMode commentMode;
@@ -39,13 +39,13 @@ public class ExperimentForumActivity extends RocketAppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_questions);
 
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         inputEditText = findViewById(R.id.commentInput);
         layer = findViewById(R.id.inputLayer);
 
         RecyclerView questionsRecyclerView = findViewById(R.id.questionsRecyclerView);
-        adapter = new QuestionListAdapter(this, experiment.getQuestions(), question -> {
+        adapter = new QuestionListAdapter(experiment.getQuestions(), question -> {
             commentMode = CommentMode.ANSWER;
             currentQuestion = question;
             toggleKeyboard(true);
@@ -82,11 +82,11 @@ public class ExperimentForumActivity extends RocketAppActivity {
 
     private void onOwnerClicked(User user) {
         Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("id", user.getId());
+        intent.putExtra(Experiment.ID_KEY, user.getId());
         startActivity(intent);
     }
 
-    private void onUpdate(Experiment experiment) {
+    private void onUpdate(Experiment<?> experiment) {
         adapter.updateList(experiment.getQuestions());
     }
 

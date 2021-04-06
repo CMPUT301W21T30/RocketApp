@@ -1,13 +1,11 @@
 package com.example.rocketapp.model.experiments;
-import android.util.Log;
 
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.FirestoreOwnableDocument;
 import com.example.rocketapp.controller.UserManager;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Question;
-import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.trials.Trial;
-import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +20,7 @@ import java.util.Date;
  * Stores data on Firestore
  */
 public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnableDocument {
-
+    public static final String ID_KEY = "ID";
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
     protected ArrayList<TrialType> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
     private ArrayList<Question> questionsArrayList = new ArrayList<>();         //Comments posted on this experiment
@@ -116,7 +114,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      * @param onComplete
      *          Callback to DataManager to update Firestore
      */
-    public void update(ExperimentInfo info, ExperimentManager.ExperimentCallback onComplete) {
+    public void update(ExperimentInfo info, ObjectCallback<Experiment<TrialType>> onComplete) {
         if (!UserManager.isSignedIn() || !this.getOwner().equals(UserManager.getUser())) return;
         this.info = info;
 

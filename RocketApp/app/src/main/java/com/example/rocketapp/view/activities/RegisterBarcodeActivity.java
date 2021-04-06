@@ -56,7 +56,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
         code = findViewById(R.id.scanned_code);
         registerBtn = findViewById(R.id.registerButton);
         checkRegister = findViewById(R.id.checkRegister);
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         registerCode = new Code();
 
