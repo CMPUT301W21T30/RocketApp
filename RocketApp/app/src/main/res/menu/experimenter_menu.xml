@@ -12,8 +12,8 @@
     <item
         android:id="@+id/registerMenu"
         android:icon="@drawable/ic_baseline_document_scanner_24"
-        android:title="Register Code"
-        app:showAsAction="never"/>
+        android:title="Register Bar Code"
+        app:showAsAction="never" />
 
 
     <item

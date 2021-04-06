@@ -15,10 +15,13 @@ import android.widget.Toast;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.view.CreateExperimentDialog;
 import com.example.rocketapp.view.ExperimentListAdapter;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
@@ -71,19 +74,12 @@ public class ExperimentsListActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.scanBarCode:
-                Intent scanIntent = new Intent(this, ScanBarcodeActivity.class);
-                startActivity(scanIntent);
-                return true;
-            case R.id.scanQRCode:
-                Intent scanQRIntent = new Intent(this, ScanQRcodeActivity.class);
-                startActivity(scanQRIntent);
+            case R.id.scanCode:
+                scanCode();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     /**
@@ -173,6 +169,29 @@ public class ExperimentsListActivity extends AppCompatActivity{
         }
     };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
+        if (result != null && result.getContents() != null) {
+            TrialManager.readCode(
+                    result.getContents(),
+                    trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(),
+                    exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+    private void scanCode() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(CaptureAct.class);
+        integrator.setOrientationLocked(false);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Scanning");
+        integrator.initiateScan();
+    }
 
 }

@@ -2,6 +2,7 @@ package com.example.rocketapp.controller;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
@@ -12,6 +13,7 @@ import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -99,6 +101,7 @@ public class TrialManager {
             return trial;
         }
 
+        @Exclude
         public String getCode() {
             return code;
         }
@@ -159,23 +162,29 @@ public class TrialManager {
         }
     }
 
-    private static Trial createTrial(String type, String value) {
-        switch(type) {
-            case BinomialTrial.TYPE:
-                return new BinomialTrial(value.equals("true"));
-            case IntCountTrial.TYPE:
-                return new IntCountTrial(Integer.parseInt(value));
-            case CountTrial.TYPE:
-                return new CountTrial(Integer.parseInt(value));
-            case MeasurementTrial.TYPE:
-                return new MeasurementTrial(Float.parseFloat(value));
-            default:
-                return null;
-        }
 
+    public static void readCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+        switch(code.split(" ").length) {
+            case 3:
+                TrialManager.readQRCode(code, onComplete, onFailure);
+                break;
+            case 1:
+                TrialManager.readBarcode(code, onComplete, onFailure);
+                break;
+            default:
+                Log.d(TAG, "Code does not correspond to an experiment: " + code);
+                onFailure.callBack(new Exception("Code does not correspond to an experiment."));
+        }
     }
 
+
     public static void readQRCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+
+        if (code == null) {
+            Log.e(TAG, "Invalid code: code was null");
+            onFailure.callBack(new Exception("Invalid code: code was null"));
+            return;
+        }
 
         String[] data = code.split(" ");
 
@@ -186,6 +195,13 @@ public class TrialManager {
         }
 
         Experiment<?> experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
+        if (experiment == null) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+
         Trial trial = createTrial(data[1], data[2]);
         if (trial == null) {
             Log.e(TAG, "Invalid code: " + code);
@@ -320,6 +336,23 @@ public class TrialManager {
             });
         }
     }
+
+
+    private static Trial createTrial(String type, String value) {
+        switch(type) {
+            case BinomialTrial.TYPE:
+                return new BinomialTrial(value.equals("true"));
+            case IntCountTrial.TYPE:
+                return new IntCountTrial(Integer.parseInt(value));
+            case CountTrial.TYPE:
+                return new CountTrial(Integer.parseInt(value));
+            case MeasurementTrial.TYPE:
+                return new MeasurementTrial(Float.parseFloat(value));
+            default:
+                return null;
+        }
+    }
+
 
     /**
      * Parses a trials list snapshot from firestore and adds them to an experiment.
