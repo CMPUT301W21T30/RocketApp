@@ -52,9 +52,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
 
         checkGenerate = findViewById(R.id.checkGenerate);
 
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
-
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         experimentType.setText(experiment.getType());
 

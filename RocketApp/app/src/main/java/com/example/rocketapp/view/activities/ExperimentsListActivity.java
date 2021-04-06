@@ -47,7 +47,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
 
         findViewById(R.id.experiment_options).setOnClickListener(v -> {
             Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
-            userProfileIntent.putExtra("id", UserManager.getUser().getId());
+            userProfileIntent.putExtra(Experiment.ID_KEY, UserManager.getUser().getId());
             startActivity(userProfileIntent);
         });
 
@@ -108,7 +108,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         experimentsOwned = ExperimentManager.getOwnedExperimentsArrayList();
         adapterOwned = new ExperimentListAdapter(experimentsOwned, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
-            intent.putExtra("id", experiment.getId());
+            intent.putExtra(Experiment.ID_KEY, experiment.getId());
             startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterOwned);
@@ -130,7 +130,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
         experimentsSubscribed = ExperimentManager.getSubscribedExperimentArrayList();
         adapterSubscribed = new ExperimentListAdapter(experimentsSubscribed, experiment -> {
             Intent intent = new Intent(this, ExperimentActivity.class);
-            intent.putExtra("id", experiment.getId());
+            intent.putExtra(Experiment.ID_KEY, experiment.getId());
             startActivity(intent);
         });
         experimentRecyclerView.setAdapter(adapterSubscribed);

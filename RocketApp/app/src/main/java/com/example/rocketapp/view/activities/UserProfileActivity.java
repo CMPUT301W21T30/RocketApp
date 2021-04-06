@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
+import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
 import com.example.rocketapp.view.activities.RocketAppActivity;
 
@@ -27,7 +28,7 @@ public class UserProfileActivity extends RocketAppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
 
-        User user = UserManager.getUser(getIntent().getSerializableExtra("id"));
+        User user = UserManager.getUser(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         EditText userName = findViewById(R.id.userNameOnProfile);
         userName.setText(user.getName());

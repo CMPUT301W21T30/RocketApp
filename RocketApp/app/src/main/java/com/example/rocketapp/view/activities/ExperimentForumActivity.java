@@ -39,7 +39,7 @@ public class ExperimentForumActivity extends RocketAppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment_questions);
 
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         inputEditText = findViewById(R.id.commentInput);
         layer = findViewById(R.id.inputLayer);
@@ -82,7 +82,7 @@ public class ExperimentForumActivity extends RocketAppActivity {
 
     private void onOwnerClicked(User user) {
         Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("id", user.getId());
+        intent.putExtra(Experiment.ID_KEY, user.getId());
         startActivity(intent);
     }
 

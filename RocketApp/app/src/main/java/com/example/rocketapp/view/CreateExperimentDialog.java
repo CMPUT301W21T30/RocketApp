@@ -65,12 +65,7 @@ public class CreateExperimentDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.create_experiment_dialog, container, false);
         initialSetup(view);
 
-        geoBox.setOnClickListener(v -> {
-            if (geoBox.isChecked()){            //if experiment requires geoLocation to be enabled
-                geolocationEnabled = true;
-                Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Geolocation Enabled", Toast.LENGTH_LONG).show();
-            }
-        });
+        geoBox.setOnClickListener(v -> geolocationEnabled = geoBox.isChecked());
 
         publishBtn.setOnClickListener(v -> {          //Confirm button is clicked
             if (checkInputsValid()) {

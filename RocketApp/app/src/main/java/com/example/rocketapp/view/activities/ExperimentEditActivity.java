@@ -37,7 +37,7 @@ public class ExperimentEditActivity extends RocketAppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner);
 
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         
         descriptionEditText = findViewById(R.id.OwnerExperimentNameTextView);
         regionEditText = findViewById(R.id.editTextRegion);

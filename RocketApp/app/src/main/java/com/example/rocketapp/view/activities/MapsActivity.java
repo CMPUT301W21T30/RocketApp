@@ -29,7 +29,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         TrialManager.listen(experiment, this::onUpdate);
     }
 

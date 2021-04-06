@@ -20,7 +20,7 @@ import java.util.Date;
  * Stores data on Firestore
  */
 public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnableDocument {
-
+    public static final String ID_KEY = "ID";
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
     protected ArrayList<TrialType> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
     private ArrayList<Question> questionsArrayList = new ArrayList<>();         //Comments posted on this experiment
