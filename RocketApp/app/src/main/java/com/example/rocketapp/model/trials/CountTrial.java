@@ -51,7 +51,7 @@ public class CountTrial extends Trial implements Comparable<CountTrial>{
      */
     @Exclude
     @Override
-    public String getValueString(){return Float.toString(count); }
+    public String getValueString(){return Integer.toString(count); }
 
     /**
      * @param trial trial to compare to

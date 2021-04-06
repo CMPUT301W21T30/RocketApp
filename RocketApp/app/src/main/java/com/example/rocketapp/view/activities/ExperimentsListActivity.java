@@ -75,8 +75,10 @@ public class ExperimentsListActivity extends AppCompatActivity{
                 Intent scanIntent = new Intent(this, ScanBarcodeActivity.class);
                 startActivity(scanIntent);
                 return true;
-//            case R.id.scanQRCode:
-//                Intent scanQRintent = new Intent(this, )
+            case R.id.scanQRCode:
+                Intent scanQRIntent = new Intent(this, ScanQRcodeActivity.class);
+                startActivity(scanQRIntent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

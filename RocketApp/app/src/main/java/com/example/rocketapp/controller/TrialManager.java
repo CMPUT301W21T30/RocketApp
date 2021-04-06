@@ -159,6 +159,44 @@ public class TrialManager {
         }
     }
 
+    private static Trial createTrial(String type, String value) {
+        switch(type) {
+            case BinomialTrial.TYPE:
+                return new BinomialTrial(value.equals("true"));
+            case IntCountTrial.TYPE:
+                return new IntCountTrial(Integer.parseInt(value));
+            case CountTrial.TYPE:
+                return new CountTrial(Integer.parseInt(value));
+            case MeasurementTrial.TYPE:
+                return new MeasurementTrial(Float.parseFloat(value));
+            default:
+                return null;
+        }
+
+    }
+
+    public static void readQRCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+
+        String[] data = code.split(" ");
+
+        if (data.length != 3) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+        Experiment<?> experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
+        Trial trial = createTrial(data[1], data[2]);
+        if (trial == null) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+        ((FirestoreDocument)trial).newTimestamp();
+        addTrial(trial, experiment, onComplete, onFailure);
+    }
+
 
     /**
      * Reads a barcode and adds the corresponding trial if it exists in the registry

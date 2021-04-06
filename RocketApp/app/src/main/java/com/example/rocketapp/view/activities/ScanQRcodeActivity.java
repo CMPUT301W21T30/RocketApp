@@ -51,11 +51,7 @@ public class ScanQRcodeActivity extends AppCompatActivity{
 
         if (result != null) {
             if (result.getContents() != null) {
-//                TrialManager.readBarcode(result.getContents(), trial-> {
-//                    Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show();
-//                }, exception -> {
-//                    Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
-//                });
+                TrialManager.readQRCode(result.getContents(), trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(), exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());
             } else {
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
             }

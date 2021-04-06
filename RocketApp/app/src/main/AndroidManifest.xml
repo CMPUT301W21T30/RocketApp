@@ -59,6 +59,7 @@
         <activity
             android:name=".view.activities.GenerateQRcodeActivity"/>
         <activity android:name=".view.activities.ScanBarcodeActivity"/>
+        <activity android:name=".view.activities.ScanQRcodeActivity"/>
 
         <activity
             android:name=".view.activities.ExperimentActivity" />
