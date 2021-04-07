@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:layout_marginTop="4dp"
-            android:text="HISTOGRAM"
+            android:text="TIME PLOT"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:layout_marginTop="352dp"
-            android:text="TIME PLOT"
+            android:text="HISTOGRAM"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
             android:id="@+id/histogram"
             android:layout_width="match_parent"
             android:layout_height="275dp"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="408dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView11"></com.github.mikephil.charting.charts.BarChart>
 
@@ -45,7 +45,7 @@
             android:id="@+id/time_plot"
             android:layout_width="match_parent"
             android:layout_height="275dp"
-            android:layout_marginTop="408dp"
+            android:layout_marginTop="55dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView11" >
 
