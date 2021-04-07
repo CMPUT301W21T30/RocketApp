@@ -1,15 +1,10 @@
 package com.example.rocketapp.view.activities;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,10 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.TrialManager;
-import com.example.rocketapp.model.Code;
-import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.view.TrialFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -36,14 +28,9 @@ import com.google.zxing.integration.android.IntentResult;
  */
 public class RegisterBarcodeActivity extends AppCompatActivity {
     private static final String TAG = "ExperimentScannerAct";
-    private Button scanBtn;
-    private TextView code;
     private Experiment<?> experiment;
-    private TextView experimentType;
-    private EditText trialsEditText;
-    private CheckBox registerpass;
-    private CheckBox registerfail;
-    private Button registerBtn;
+    private Button registerButton;
+    private TextView codePreviewTextView;
     private String scannedCode;
 
     @Override
@@ -53,33 +40,23 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        experimentType = findViewById(R.id.experimentType);
-        trialsEditText = findViewById(R.id.trialEditText);
-        registerfail = findViewById(R.id.registerfail);
-        registerpass = findViewById(R.id.registerpass);
-        code = findViewById(R.id.scanned_code);
-        registerBtn = findViewById(R.id.registerButton);
-        experimentType.setText(experiment.getType());
+        codePreviewTextView = findViewById(R.id.scanned_code);
 
-        scanBtn = findViewById(R.id.scanButton);
-        scanBtn.setOnClickListener(this::scanCode);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            trialsEditText.setVisibility(View.GONE);
-        } else {
-            registerpass.setVisibility(View.GONE);
-            registerfail.setVisibility(View.GONE);
-        }
-
-        registerBtn.setOnClickListener(v ->
+        registerButton = findViewById(R.id.registerButton);
+        registerButton.setVisibility(View.INVISIBLE);
+        registerButton.setOnClickListener(v ->
             new TrialFragment(experiment,
                     newTrial -> TrialManager.registerBarcode(scannedCode, experiment, newTrial,
                             barcode-> Toast.makeText(this, "Barcode registered.", Toast.LENGTH_LONG).show(),
                             exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show())
             ).show(getSupportFragmentManager(), "ADD_TRIAL"));
+
+        findViewById(R.id.scanButton).setOnClickListener(this::scanCode);
+        ((TextView) findViewById(R.id.experimentType)).setText(experiment.getType());
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -111,9 +88,10 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
         if (result != null) {
             if (result.getContents() != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                code = findViewById(R.id.scanned_code);
-                code.setText(result.getContents());
+                codePreviewTextView = findViewById(R.id.scanned_code);
+                codePreviewTextView.setText(result.getContents());
                 scannedCode = result.getContents();
+                registerButton.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
             }

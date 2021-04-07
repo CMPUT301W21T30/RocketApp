@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +22,6 @@ import androidx.core.app.ActivityCompat;
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.TrialManager;
-import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.view.TrialFragment;
 
@@ -33,67 +30,49 @@ import java.io.FileOutputStream;
 
 public class GenerateQRcodeActivity extends AppCompatActivity {
     private static final String TAG = "GenerateQRCodeActivity";
-    private ImageView qrcode;
-    private Button generateBtn;
-    private EditText trialsEditText;
-    private Experiment experiment;
-    private CheckBox registerpass;
-    private CheckBox registerfail;
-    private TextView experimentType;
-    private TextView checkGenerate;
-    private Button saveQRcodeBtn;
+    private Experiment<?> experiment;
+    private ImageView qrImageView;
+    private Button saveButton;
+    private TextView codeTextPreview;
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.generate_qrcode_activity);
-        registerpass = findViewById(R.id.registerpass2);
-        registerfail = findViewById(R.id.registerfail2);
-        experimentType = findViewById(R.id.experimentType2);
-        trialsEditText = findViewById(R.id.trialEditText2);
-        saveQRcodeBtn = findViewById(R.id.saveQRcodeBtn);
 
-        checkGenerate = findViewById(R.id.checkGenerate);
+        codeTextPreview = findViewById(R.id.generatedCodeTextView);
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        experimentType.setText(experiment.getType());
+        ((TextView) findViewById(R.id.experimentType2)).setText(experiment.getType());
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        qrImageView = findViewById(R.id.qrCodeImageView);
 
+        saveButton = findViewById(R.id.saveQRcodeBtn);
+        saveButton.setVisibility(View.INVISIBLE);
+        saveButton.setOnClickListener(v -> saveToGallery());
 
-        generateBtn = findViewById(R.id.generateQRcodeBtn);
-        qrcode = findViewById(R.id.QRcodeimageview);
-
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            trialsEditText.setVisibility(View.GONE);
-        } else {
-            registerpass.setVisibility(View.GONE);
-            registerfail.setVisibility(View.GONE);
-        }
-
-        generateBtn.setOnClickListener(v ->
+        findViewById(R.id.generateQRcodeBtn).setOnClickListener(v ->
                 new TrialFragment(
                         experiment,
                         newTrial -> {
                             TrialManager.createQRCodeBitmap(experiment, newTrial,
-                                    bitmap -> qrcode.setImageBitmap(bitmap),
-                                    generatedString -> checkGenerate.setText(generatedString),
+                                    bitmap -> qrImageView.setImageBitmap(bitmap),
+                                    generatedString -> codeTextPreview.setText(generatedString),
                                     exception -> Log.e(TAG, exception.toString()));
 
                             giveConfirmation();
+                            saveButton.setVisibility(View.VISIBLE);
                         }
                 ).show(getSupportFragmentManager(), "ADD_TRIAL"));
 
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
-        saveQRcodeBtn.setOnClickListener(v -> saveToGallery());
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -103,10 +82,6 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void giveError(){
-        Toast.makeText(this, "Cannot do this", Toast.LENGTH_LONG).show();
     }
 
     public void giveConfirmation(){
@@ -122,7 +97,8 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
      * Author: Shravan DG  https://stackoverflow.com/users/6646750/shravan-dg
      */
     private void saveToGallery(){
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) qrcode.getDrawable();
+        //TODO move this functionality to TrialManager class
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) qrImageView.getDrawable();
         Bitmap bitmap = bitmapDrawable.getBitmap();
 
         FileOutputStream outputStream = null;
