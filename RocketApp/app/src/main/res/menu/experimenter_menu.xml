@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/experimentStatisticsMenuItem"
+        android:title="Experiment Statistics" />
+    <item
         android:id="@+id/forumButton"
         android:icon="@drawable/ic_baseline_comment_24"
         android:title="Discussion Forum"

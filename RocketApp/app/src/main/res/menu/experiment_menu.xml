@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/experimentStatisticsMenuItem"
+        android:title="Experiment Statistics" />
+    <item
         android:id="@+id/forumButton"
         android:icon="@drawable/ic_baseline_comment_24"
         android:title="Discussion Forum"
@@ -24,6 +27,12 @@
         android:id="@+id/generateQRcode"
         android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
+    <item
+        android:id="@+id/publishMenuButton"
+        android:title="Publish Experiment" />
+    <item
+        android:id="@+id/endExperimentMenuButton"
+        android:title="End Experiment" />
 
 
 </menu>
