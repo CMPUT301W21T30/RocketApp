@@ -50,6 +50,8 @@ public class ExperimentActivity extends AppCompatActivity {
     private Button addTrialButton;
     private Button endExperimentButton;
     private Button publishExperimentButton;
+    private MenuItem publishExperimentMenuItem;
+    private MenuItem endExperimentMenuItem;
 
     /**
      * Setup the view for Experiment
@@ -84,7 +86,7 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton = findViewById(R.id.addTrialButton);
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
-        findViewById(R.id.graphbtn).setOnClickListener(this::onGraphClicked);
+        findViewById(R.id.graphbtn).setOnClickListener(v -> onGraphClicked());
 
         Button mapButton = findViewById(R.id.mapbtn);
         if (experiment.info.isGeoLocationEnabled()) {
@@ -95,9 +97,10 @@ public class ExperimentActivity extends AppCompatActivity {
 
         endExperimentButton = findViewById(R.id.endExperimentButton);
         publishExperimentButton = findViewById(R.id.publishExperimentButton);
+        publishExperimentMenuItem = findViewById(R.id.publishMenuButton);
         if (UserManager.getUser().isOwner(experiment)) {
-            publishExperimentButton.setOnClickListener(this::onPublishClicked);
-            endExperimentButton.setOnClickListener(this::onEndClicked);
+            publishExperimentButton.setOnClickListener(v -> onPublishClicked());
+            endExperimentButton.setOnClickListener(v -> onEndClicked());
         } else {
             endExperimentButton.setVisibility(View.GONE);
             publishExperimentButton.setVisibility(View.GONE);
@@ -121,13 +124,14 @@ public class ExperimentActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(UserManager.getUser())) {
+        if (UserManager.getUser().isOwner(experiment)) {
             getMenuInflater().inflate(R.menu.experiment_menu, menu);
-            return super.onCreateOptionsMenu(menu);
+            publishExperimentMenuItem = menu.findItem(R.id.publishMenuButton);
+            publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
         } else {
             getMenuInflater().inflate(R.menu.experimenter_menu, menu);
-            return super.onCreateOptionsMenu(menu);
         }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -156,9 +160,18 @@ public class ExperimentActivity extends AppCompatActivity {
                 qrcodeIntent.putExtra(Experiment.ID_KEY, experiment.getId());
                 startActivity(qrcodeIntent);
                 return true;
-
+            case R.id.publishMenuButton:
+                onPublishClicked();
+                return true;
+            case R.id.endExperimentMenuButton:
+                onEndClicked();
+                return true;
+            case R.id.experimentStatisticsMenuItem:
+                onGraphClicked();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -169,7 +182,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onPublishClicked(View view) {
+    void onPublishClicked() {
         if (experiment.isPublished()) {
             ExperimentManager.unpublishExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
         } else {
@@ -178,7 +191,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onGraphClicked(View view) {
+    void onGraphClicked() {
         //TODO: debug
         Intent intent = new Intent(this, GraphsActivity.class);
         intent.putExtra(Experiment.ID_KEY, experiment.getId());
@@ -186,7 +199,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onEndClicked(View view) {
+    void onEndClicked() {
         ExperimentManager.endExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
     }
 
@@ -283,6 +296,8 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
         if (UserManager.getUser().isOwner(experiment)) {
+            if (publishExperimentMenuItem != null) publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
+            if (endExperimentMenuItem != null && !experiment.isActive()) endExperimentMenuItem.setVisible(false);
             publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");
             endExperimentButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.GONE);
         }

@@ -4,8 +4,8 @@
 
     <item
         android:id="@+id/scanCode"
-        android:title="Scan Code"
-        app:showAsAction="never|withText"/>
+        android:title="Scan"
+        app:showAsAction="never|withText" />
 
 
 </menu>

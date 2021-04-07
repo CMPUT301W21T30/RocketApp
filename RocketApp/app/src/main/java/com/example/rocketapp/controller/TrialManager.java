@@ -1,6 +1,8 @@
 package com.example.rocketapp.controller;
 
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
@@ -11,13 +13,20 @@ import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
@@ -92,6 +101,7 @@ public class TrialManager {
             return trial;
         }
 
+        @Exclude
         public String getCode() {
             return code;
         }
@@ -126,6 +136,81 @@ public class TrialManager {
             Log.e(TAG, "Failed to register barcode.");
             onFailure.callBack(e);
         });
+    }
+
+
+    public static void createQRCodeBitmap(Experiment<?> experiment, Trial trial, ObjectCallback<Bitmap> bitmap, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
+
+        String code = experiment.getId().getKey() + " " + trial.getType() + " " + trial.getValueString();
+
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            //Initialize bit matrix
+            BitMatrix matrix = writer.encode(code, BarcodeFormat.QR_CODE, 800,800);
+            //Initialize barcode encoder
+            BarcodeEncoder encoder = new BarcodeEncoder();
+
+            // Return string representation
+            generatedString.callBack(code);
+
+            //Return bitmap
+            bitmap.callBack(encoder.createBitmap(matrix));
+
+        } catch (WriterException e) {
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            onFailure.callBack(e);
+        }
+    }
+
+
+    public static void readCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+        switch(code.split(" ").length) {
+            case 3:
+                TrialManager.readQRCode(code, onComplete, onFailure);
+                break;
+            case 1:
+                TrialManager.readBarcode(code, onComplete, onFailure);
+                break;
+            default:
+                Log.d(TAG, "Code does not correspond to an experiment: " + code);
+                onFailure.callBack(new Exception("Code does not correspond to an experiment."));
+        }
+    }
+
+
+    public static void readQRCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+
+        if (code == null) {
+            Log.e(TAG, "Invalid code: code was null");
+            onFailure.callBack(new Exception("Invalid code: code was null"));
+            return;
+        }
+
+        String[] data = code.split(" ");
+
+        if (data.length != 3) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+        Experiment<?> experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
+        if (experiment == null) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+
+        Trial trial = createTrial(data[1], data[2]);
+        if (trial == null) {
+            Log.e(TAG, "Invalid code: " + code);
+            onFailure.callBack(new Exception("Invalid code: " + code));
+            return;
+        }
+
+        ((FirestoreDocument)trial).newTimestamp();
+        addTrial(trial, experiment, onComplete, onFailure);
     }
 
 
@@ -251,6 +336,23 @@ public class TrialManager {
             });
         }
     }
+
+
+    private static Trial createTrial(String type, String value) {
+        switch(type) {
+            case BinomialTrial.TYPE:
+                return new BinomialTrial(value.equals("true"));
+            case IntCountTrial.TYPE:
+                return new IntCountTrial(Integer.parseInt(value));
+            case CountTrial.TYPE:
+                return new CountTrial(Integer.parseInt(value));
+            case MeasurementTrial.TYPE:
+                return new MeasurementTrial(Float.parseFloat(value));
+            default:
+                return null;
+        }
+    }
+
 
     /**
      * Parses a trials list snapshot from firestore and adds them to an experiment.

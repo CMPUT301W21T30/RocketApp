@@ -16,7 +16,7 @@ import com.example.rocketapp.controller.TrialManager;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-public class ScanCodeActivity extends AppCompatActivity{
+public class ScanQRcodeActivity extends AppCompatActivity{
     private Button scanBtn;
 
     @Override
@@ -51,11 +51,7 @@ public class ScanCodeActivity extends AppCompatActivity{
 
         if (result != null) {
             if (result.getContents() != null) {
-                TrialManager.readBarcode(result.getContents(), trial-> {
-                    Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show();
-                }, exception -> {
-                    Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                TrialManager.readQRCode(result.getContents(), trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(), exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());
             } else {
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
             }

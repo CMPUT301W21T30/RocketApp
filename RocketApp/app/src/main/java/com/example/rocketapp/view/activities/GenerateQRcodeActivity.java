@@ -1,166 +1,84 @@
 package com.example.rocketapp.view.activities;
 
+import android.Manifest;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.model.experiments.BinomialExperiment;
+import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.trials.BinomialTrial;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.example.rocketapp.view.TrialFragment;
 
-import io.grpc.Context;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class GenerateQRcodeActivity extends AppCompatActivity {
-    private ImageView qrcode;
-    private Button generateBtn;
-    private EditText trialsEditText;
-    private Experiment experiment;
-    private CheckBox registerpass;
-    private CheckBox registerfail;
-    private TextView experimentType;
-    private TextView checkGenerate;
+    private static final String TAG = "GenerateQRCodeActivity";
+    private Experiment<?> experiment;
+    private ImageView qrImageView;
+    private Button saveButton;
+    private TextView codeTextPreview;
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.generate_qrcode_activity);
-        registerfail = findViewById(R.id.registerpass2);
-        registerpass = findViewById(R.id.registerfail2);
-        experimentType = findViewById(R.id.experimentType2);
-        trialsEditText = findViewById(R.id.trialEditText2);
 
-        checkGenerate = findViewById(R.id.checkGenerate);
+        codeTextPreview = findViewById(R.id.generatedCodeTextView);
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        experimentType.setText(experiment.getType());
+        ((TextView) findViewById(R.id.experimentType2)).setText(experiment.getType() + " Trial");
+
+        qrImageView = findViewById(R.id.qrCodeImageView);
+
+        saveButton = findViewById(R.id.saveQRcodeBtn);
+        saveButton.setVisibility(View.INVISIBLE);
+        saveButton.setOnClickListener(v -> saveToGallery());
+
+        findViewById(R.id.generateQRcodeBtn).setOnClickListener(v -> generateQRCode());
+
+        ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
-        generateBtn = findViewById(R.id.generateQRcodeBtn);
-        qrcode = findViewById(R.id.QRcodeimageview);
-
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            trialsEditText.setVisibility(View.GONE);
-        } else {
-            registerpass.setVisibility(View.GONE);
-            registerfail.setVisibility(View.GONE);
-        }
-
-
-        generateBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View v) {
-                if (experiment.getType().equals(BinomialTrial.TYPE)){
-                    if(registerpass.isChecked() && !(registerfail.isChecked())){
-
-                        String sText = experiment.info.getDescription() + experiment.info.getRegion() + "pass";
-                        //Initialize multi format writer
-                        MultiFormatWriter writer = new MultiFormatWriter();
-                        try {
-                            //Initialize bit matrix
-                            BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                            //Initialize barcode encoder
-                            BarcodeEncoder encoder = new BarcodeEncoder();
-                            //Initialize bitmap
-                            Bitmap bitmap = encoder.createBitmap(matrix);
-                            //Set bitmap on image view
-                            qrcode.setImageBitmap(bitmap);
-
-
-
-                        } catch (WriterException e) {
-                            e.printStackTrace();
-                        }
-                        checkGenerate.setText(sText);
-                        giveConfirmation();
-
-                    }
-                    else if (registerfail.isChecked() && !(registerpass.isChecked())){
-                        String sText = experiment.info.getDescription() + experiment.info.getRegion() + "fail";
-                        //Initialize multi format writer
-                        MultiFormatWriter writer = new MultiFormatWriter();
-                        try {
-                            //Initialize bit matrix
-                            BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                            //Initialize barcode encoder
-                            BarcodeEncoder encoder = new BarcodeEncoder();
-                            //Initialize bitmap
-                            Bitmap bitmap = encoder.createBitmap(matrix);
-                            //Set bitmap on image view
-                            qrcode.setImageBitmap(bitmap);
-
-
-
-                        } catch (WriterException e) {
-                            e.printStackTrace();
-                        }
-                        checkGenerate.setText(sText);
-                        giveConfirmation();
-                    }
-                    else{
-                        //cannot select both
-                        giveError();
-                    }
-                }
-                else {
-                    String sText = experiment.info.getDescription() + experiment.info.getRegion() + trialsEditText.getText().toString();
-                    //Initialize multi format writer
-                    MultiFormatWriter writer = new MultiFormatWriter();
-                    try {
-                        //Initialize bit matrix
-                        BitMatrix matrix = writer.encode(sText, BarcodeFormat.QR_CODE, 800,800);
-                        //Initialize barcode encoder
-                        BarcodeEncoder encoder = new BarcodeEncoder();
-                        //Initialize bitmap
-                        Bitmap bitmap = encoder.createBitmap(matrix);
-                        //Set bitmap on image view
-                        qrcode.setImageBitmap(bitmap);
-
-
-
-                    } catch (WriterException e) {
-                        e.printStackTrace();
-                    }
-                    checkGenerate.setText(sText);
-                    giveConfirmation();
-
-                }
-
-                //Get input value from edit text
-
-            }
-        });
-
-
+        generateQRCode();
     }
 
+    private void generateQRCode() {
+        new TrialFragment(
+                experiment.getType() + " Trial",
+                experiment,
+                newTrial -> {
+                    TrialManager.createQRCodeBitmap(experiment, newTrial,
+                            bitmap -> qrImageView.setImageBitmap(bitmap),
+                            generatedString -> codeTextPreview.setText(generatedString),
+                            exception -> Log.e(TAG, exception.toString()));
 
+                    giveConfirmation();
+                    saveButton.setVisibility(View.VISIBLE);
+                }
+        ).show(getSupportFragmentManager(), "ADD_TRIAL");
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -172,12 +90,51 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void giveError(){
-        Toast.makeText(this, "Cannot do this", Toast.LENGTH_LONG).show();
-    }
-
     public void giveConfirmation(){
         Toast.makeText(this, "Generated!", Toast.LENGTH_LONG).show();
+    }
+
+
+    /*
+     * https://www.youtube.com/watch?v=FcCtT1C7NGI
+     * Author: Ketul Patel
+     *
+     * https://stackoverflow.com/questions/26718374/save-image-from-imageview-to-device-gallery
+     * Author: Shravan DG  https://stackoverflow.com/users/6646750/shravan-dg
+     */
+    private void saveToGallery(){
+        //TODO move this functionality to TrialManager class
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) qrImageView.getDrawable();
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+
+        FileOutputStream outputStream = null;
+        File file = Environment.getExternalStorageDirectory();
+        File dir = new File(file.getAbsolutePath() + "/QRcodes");
+
+        dir.mkdirs();
+        String filename = String.format("%d.png", System.currentTimeMillis());
+        File outFile = new File(dir, filename);
+        try {
+            outputStream = new FileOutputStream(outFile);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+        try {
+            outputStream.flush();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            outputStream.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(file));
+        sendBroadcast(intent);
+
     }
 
 

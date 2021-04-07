@@ -50,7 +50,7 @@ public class BinomialTrial extends Trial {
     @Exclude
     @Override
     public String getValueString() {
-        return value ? "True" : "False";
+        return value ? "true" : "false";
     }
 
     @Override

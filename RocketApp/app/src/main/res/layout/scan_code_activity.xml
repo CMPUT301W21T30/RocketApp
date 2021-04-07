@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_background"
-    tools:context=".view.activities.ScanCodeActivity">
+    tools:context=".view.activities.ScanBarcodeActivity">
 
     <Button
         android:id="@+id/scanPreExistingCodeBtn"

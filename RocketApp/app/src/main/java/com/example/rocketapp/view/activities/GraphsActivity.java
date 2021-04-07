@@ -1,7 +1,10 @@
 package com.example.rocketapp.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
@@ -33,5 +36,20 @@ public class GraphsActivity extends AppCompatActivity {
         histogram.createHistogramView(trials);
         timePlot.setLineChart(findViewById(R.id.time_plot));
         timePlot.createTimePlotView(trials);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

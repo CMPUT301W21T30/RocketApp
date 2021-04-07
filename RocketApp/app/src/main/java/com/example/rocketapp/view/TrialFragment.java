@@ -39,10 +39,17 @@ import com.example.rocketapp.model.trials.Trial;
 public class TrialFragment extends DialogFragment {
     private final Experiment<?> experiment;
     private final ObjectCallback<Trial> callback;
+    private String title;
     private EditText inputEditText;
 
-
     public TrialFragment(Experiment<?> experiment, ObjectCallback<Trial> callback) {
+        this.title = "";
+        this.experiment = experiment;
+        this.callback = callback;
+    }
+
+    public TrialFragment(String title, Experiment<?> experiment, ObjectCallback<Trial> callback) {
+        this.title = title;
         this.experiment = experiment;
         this.callback = callback;
     }
@@ -53,9 +60,12 @@ public class TrialFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.trial_fragment_layout, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle(experiment.getType()).create();
+
+        if (title.isEmpty()) title = experiment.getType();
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle(title).create();
 
         inputEditText = view.findViewById(R.id.inputEditText);
+        inputEditText.setHint(experiment.getType().toLowerCase() + "...");
         view.findViewById(R.id.button_cancel).setOnClickListener(i -> alertDialog.dismiss());
 
         if(!experiment.info.isGeoLocationEnabled()){
