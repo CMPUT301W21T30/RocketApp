@@ -49,6 +49,8 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView descriptionTextView;
     private TextView ownerTextView;
     private TextView publishedTextView;
+    private TextView Q1TextView;
+    private TextView Q3TextView;
     private TextView experimentTypeTextView;
     private TextView trialCountTextView;
     private Button addTrialButton;
@@ -73,6 +75,8 @@ public class ExperimentActivity extends AppCompatActivity {
         meanTextView = findViewById(R.id.meanView);
         medianTextView = findViewById(R.id.medianValue);
         stdDevTextView = findViewById(R.id.stdDevVal);
+        Q1TextView = findViewById(R.id.Q1View);
+        Q3TextView = findViewById(R.id.Q3View);
         regionTextView = findViewById(R.id.regionView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
@@ -274,6 +278,8 @@ public class ExperimentActivity extends AppCompatActivity {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
         meanTextView.setText(String.valueOf(experiment.getMean()));
+        Q1TextView.setText(String.valueOf(experiment.getBottomQuartile()));
+        Q3TextView.setText(String.valueOf(experiment.getTopQuartile()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
         stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
