@@ -23,6 +23,10 @@ public class GraphsActivity extends AppCompatActivity {
     Histogram histogram;
     TimePlot timePlot;
 
+    /**
+     * Creates GraphActivity view based on input
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +46,11 @@ public class GraphsActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Access GraphsActivity from options menu
+     * @param item
+     * @return boolean indicating activity status
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
