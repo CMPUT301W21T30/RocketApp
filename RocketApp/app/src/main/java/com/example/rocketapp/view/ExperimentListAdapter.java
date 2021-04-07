@@ -1,4 +1,5 @@
 package com.example.rocketapp.view;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rocketapp.R;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.google.android.material.card.MaterialCardView;
@@ -84,6 +86,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
         private final TextView regionTextView;
         private final TextView statusTextView;
         private final TextView ownerTextView;
+        private final TextView publishedTextView;
         private final MaterialCardView experimentListItemLayout;
 
         /**
@@ -93,9 +96,12 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
          */
         public void set(Experiment<?> experiment, View.OnClickListener onClick) {
             experimentNameTextView.setText(experiment.info.getDescription());
-            regionTextView.setText(experiment.info.getRegion());
-            ownerTextView.setText(experiment.getOwner().getName());
+            regionTextView.setText("Region: " + experiment.info.getRegion());
+            ownerTextView.setText("Owner: " +experiment.getOwner().getName());
             statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
+            statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);
+            publishedTextView.setText(UserManager.getUser().isOwner(experiment) ? experiment.isPublished() ? "Published" : "Not Published" : "");
+            publishedTextView.setTextColor(experiment.isPublished() ? Color.GREEN : Color.RED);
             experimentListItemLayout.setOnClickListener(onClick);
         }
 
@@ -106,6 +112,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
             statusTextView = itemView.findViewById(R.id.statusTextView);
             ownerTextView = itemView.findViewById(R.id.ownerTextView);
             experimentListItemLayout = itemView.findViewById(R.id.experimentListItemLayout);
+            publishedTextView = itemView.findViewById(R.id.publishedTextView);
         }
 
 

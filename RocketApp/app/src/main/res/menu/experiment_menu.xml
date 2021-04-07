@@ -6,32 +6,32 @@
         android:id="@+id/experimentStatisticsMenuItem"
         android:title="Experiment Statistics" />
     <item
-        android:id="@+id/forumButton"
+        android:id="@+id/experimentForumMenuItem"
         android:icon="@drawable/ic_baseline_comment_24"
         android:title="Discussion Forum"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menuButton"
+        android:id="@+id/editExperimentMenuItem"
         android:icon="@drawable/ic_round_menu_24"
         android:title="Edit Experiment"
         app:showAsAction="never|withText" />
 
     <item
-        android:id="@+id/registerMenu"
+        android:id="@+id/registerBarcodeMenuItem"
         android:icon="@drawable/ic_baseline_document_scanner_24"
         android:title="Register Bar Code"
         app:showAsAction="never|withText" />
 
     <item
-        android:id="@+id/generateQRcode"
+        android:id="@+id/generateQRcodeMenuItem"
         android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
     <item
-        android:id="@+id/publishMenuButton"
+        android:id="@+id/publishExperimentMenuItem"
         android:title="Publish Experiment" />
     <item
-        android:id="@+id/endExperimentMenuButton"
+        android:id="@+id/endExperimentMenuItem"
         android:title="End Experiment" />
 
 

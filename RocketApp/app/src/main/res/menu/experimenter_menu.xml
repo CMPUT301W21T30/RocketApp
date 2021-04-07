@@ -6,21 +6,21 @@
         android:id="@+id/experimentStatisticsMenuItem"
         android:title="Experiment Statistics" />
     <item
-        android:id="@+id/forumButton"
+        android:id="@+id/experimentForumMenuItem"
         android:icon="@drawable/ic_baseline_comment_24"
         android:title="Discussion Forum"
         app:showAsAction="never"/>
 
 
     <item
-        android:id="@+id/registerMenu"
+        android:id="@+id/registerBarcodeMenuItem"
         android:icon="@drawable/ic_baseline_document_scanner_24"
         android:title="Register Bar Code"
         app:showAsAction="never" />
 
 
     <item
-        android:id="@+id/generateQRcode"
+        android:id="@+id/generateQRcodeMenuItem"
         android:title="Generate QR Code"
         app:showAsAction="never|withText"/>
 
