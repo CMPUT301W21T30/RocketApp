@@ -34,29 +34,20 @@ public class LoginActivity extends AppCompatActivity {
 
         // set up login Button
         findViewById(R.id.loginBtn).setOnClickListener(v -> {
-            usernameEditText = findViewById(R.id.usernameEditText);
+            usernameEditText = findViewById(R.id.userNameEditText);
             if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
                 createUser(usernameEditText.getText().toString());
             }
         });
 
-        findViewById(R.id.inputGroup).setVisibility(View.GONE);
+        findViewById(R.id.createUserCardView).setVisibility(View.INVISIBLE);
 
         login(()-> {
+            findViewById(R.id.createUserCardView).setVisibility(View.VISIBLE);
             findViewById(R.id.inputGroup).setVisibility(View.VISIBLE);
-            findViewById(R.id.loadingGroup).setVisibility(View.GONE);
-            Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
-
+            findViewById(R.id.loadingMessageTextView).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
         });
-
-//        if (!getPreferences(MODE_PRIVATE).getString("userId", "noId").equals("noId")) {
-//            Log.e(TAG, "userId found!");
-//            login(getPreferences(MODE_PRIVATE));
-//        } else {
-//            findViewById(R.id.inputGroup).setVisibility(View.VISIBLE);
-//            findViewById(R.id.loadingGroup).setVisibility(View.GONE);
-//            Log.e(TAG, "userId not found");
-//        }
     }
 
 
@@ -71,16 +62,19 @@ public class LoginActivity extends AppCompatActivity {
         }, e -> onFailure.callBack());
     }
 
+
     /**
      * Creates a new user and login
      * @param userName Name of user to create
      */
     private void createUser(String userName) {
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         UserManager.createUser(userName, this, user -> {
             Intent ExperimentsListActivityIntent = new Intent(this, MainActivity.class);
             startActivity(ExperimentsListActivityIntent);
             finish();
         }, e -> {
+            findViewById(R.id.progressBar).setVisibility(View.GONE);
             usernameEditText.setError("Username not available.");
             usernameEditText.requestFocus();
         });

@@ -43,7 +43,7 @@
                     android:text="Mean"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toBottomOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/meanText2"
@@ -88,7 +88,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/medianText" />
 
                 <TextView
-                    android:id="@+id/trialCountLabel"
+                    android:id="@+id/userNameEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -106,7 +106,7 @@
                     android:text="0"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toTopOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/medianValue"
@@ -129,7 +129,7 @@
                     app:layout_constraintTop_toTopOf="@+id/stdDevText" />
 
                 <Button
-                    android:id="@+id/viewGraphsTextViewButton"
+                    android:id="@+id/loginBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00FFFFFF"

@@ -2,7 +2,6 @@ package com.example.rocketapp.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -11,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.trials.Geolocation;
-import com.example.rocketapp.model.trials.Trial;
 import com.example.rocketapp.view.fragments.TrialFragment;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -85,7 +82,7 @@ public class ExperimentActivity extends RocketAppActivity {
         experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
         trialCountTextView = findViewById(R.id.trialCountTextView);
 
-        findViewById(R.id.viewGraphsTextViewButton).setOnClickListener(v -> openExperimentIntent(ExperimentStatisticsActivity.class));
+        findViewById(R.id.loginBtn).setOnClickListener(v -> openExperimentIntent(ExperimentStatisticsActivity.class));
 
         if (!UserManager.getUser().isOwner(experiment))
             publishedTextView.setVisibility(View.GONE);
@@ -126,12 +123,12 @@ public class ExperimentActivity extends RocketAppActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (UserManager.getUser().isOwner(experiment)) {
-            getMenuInflater().inflate(R.menu.experiment_menu, menu);
+            getMenuInflater().inflate(R.menu.menu_experiment, menu);
             endExperimentMenuItem = menu.findItem(R.id.endExperimentMenuItem);
             publishExperimentMenuItem = menu.findItem(R.id.publishExperimentMenuItem);
             publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
         } else {
-            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
+            getMenuInflater().inflate(R.menu.menu_experimenter, menu);
         }
         return super.onCreateOptionsMenu(menu);
     }

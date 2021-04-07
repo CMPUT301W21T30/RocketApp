@@ -141,7 +141,7 @@ public class UserManager {
                     return;
                 }
             }
-            
+
             Log.e(TAG, "Login failed. User not found.");
             onFailure.callBack(new Exception("User not found."));
 
