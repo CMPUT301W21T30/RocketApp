@@ -138,6 +138,7 @@ public class IntCountExperiment extends Experiment<IntCountTrial> {
         float quart;
         ArrayList<IntCountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
+        if (trials.size() == 1) {return trials.get(0).getPCount();}
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
@@ -165,6 +166,7 @@ public class IntCountExperiment extends Experiment<IntCountTrial> {
     public float getBottomQuartile() {
         float quart;
         ArrayList<IntCountTrial> trials = getFilteredTrials();
+        if (trials.size() == 1) {return trials.get(0).getPCount();}
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch (trials.size()%4){

@@ -65,6 +65,7 @@ public class CountExperiment extends Experiment<CountTrial> {
     }
 
     /**
+     * IMPORTANT NOTE: this method returns the total instead of the mean unlike the other classes, this is to simplify the code
      * Excluded from getting stored inside firestore.
      * Calculates the mean from all trials present in this experiment
      * @return the mean of experiment
@@ -81,13 +82,14 @@ public class CountExperiment extends Experiment<CountTrial> {
         for(int i = 0; i<trials.size(); i++){
             sum = sum + trials.get(i).getCount();
         }
-        return ((float) sum)/((float) trials.size());
+        return ((float) sum);
     }
 
     /**
+     * IMPORTANT NOTE: this method returns the total instead of the mean unlike the other classes, this is to simplify the code
      * Excluded from getting stored inside firestore.
-     * Calculates the mean from all trials present in this experiment up to a certain date
-     * @return the mean of experiment to given date
+     * Calculates the total from all trials present in this experiment up to a certain date
+     * @return the total of experiment to given date
      */
     @Exclude
     @Override
@@ -104,7 +106,7 @@ public class CountExperiment extends Experiment<CountTrial> {
             sum = sum + trials.get(i).getCount();
             trialCounter++;
         }
-        return sum / trialCounter;
+        return (float) sum;
     }
 
     /**
@@ -139,6 +141,7 @@ public class CountExperiment extends Experiment<CountTrial> {
         float quart;
         ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
+        if (trials.size() == 1) {return (float) trials.get(0).getCount();}
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
@@ -167,6 +170,7 @@ public class CountExperiment extends Experiment<CountTrial> {
         float quart;
         ArrayList<CountTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
+        if (trials.size() == 1) {return (float) trials.get(0).getCount();}
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):

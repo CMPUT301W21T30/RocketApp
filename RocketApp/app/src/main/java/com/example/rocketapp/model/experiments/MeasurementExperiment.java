@@ -139,6 +139,7 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
         float quart;
         ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
+        if (trials.size() == 1) {return trials.get(0).getMeasurement();}
         Collections.sort(trials);
         switch(trials.size()%4){
             case (0):
@@ -167,6 +168,7 @@ public class MeasurementExperiment extends Experiment<MeasurementTrial> {
         float quart;
         ArrayList<MeasurementTrial> trials = getFilteredTrials();
         if (trials.size() == 0) {return 0;}
+        if (trials.size() == 1) {return trials.get(0).getMeasurement();}
         Collections.sort(trials);
         switch (trials.size()%4){
             case (0):
