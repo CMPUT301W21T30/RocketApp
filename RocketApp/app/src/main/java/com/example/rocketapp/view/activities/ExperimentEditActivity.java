@@ -44,9 +44,9 @@ public class ExperimentEditActivity extends RocketAppActivity {
         minTrialsEditText = findViewById(R.id.editTextMinTrials);
 
         findViewById(R.id.textViewUpdate).setOnClickListener(v -> {
-            if (Validate.lengthInRange(descriptionEditText, 3, 50, true) &&
-                Validate.lengthInRange(regionEditText, 2, 50, true) &&
-                Validate.intInRange(minTrialsEditText, 1, 1000, true)) {
+            if (Validate.lengthInRange(descriptionEditText, 3, 100, true) &&
+                Validate.lengthInRange(regionEditText, 2, 40, true) &&
+                Validate.intInRange(minTrialsEditText, 1, Integer.MAX_VALUE, true)) {
 
                 experiment.info.setDescription(descriptionEditText.getText().toString());
                 experiment.info.setRegion(regionEditText.getText().toString());

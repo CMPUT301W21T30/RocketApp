@@ -2,24 +2,56 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/dark_background">
+    android:background="#FFFFFF">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16sp"
+        android:layout_marginLeft="16sp"
+        android:layout_marginTop="16sp"
+        android:layout_marginEnd="16sp"
+        android:layout_marginRight="16sp"
+        android:layout_marginBottom="16sp">
+
+        <Button
+            android:id="@+id/cancel_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="#00FFFFFF"
+            android:text="CANCEL"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@color/green_soft"
+            app:backgroundTintMode="add"
+            app:layout_constraintEnd_toStartOf="@+id/add_exp"
+            app:layout_constraintTop_toBottomOf="@+id/geolocation" />
+
+        <Button
+            android:id="@+id/add_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="CONFIRM"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:backgroundTint="@color/green_soft"
+            app:backgroundTintMode="add"
+            app:layout_constraintBottom_toBottomOf="@+id/cancel_exp"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Spinner
             android:id="@+id/select_exp"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="@android:drawable/btn_dropdown"
             android:prompt="@string/dropdown_prompt"
             android:spinnerMode="dialog"
@@ -32,11 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:autofillHints=""
             android:hint="@string/description"
             android:inputType="text"
@@ -48,11 +76,7 @@
             android:id="@+id/region_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
             android:autofillHints=""
             android:hint="@string/region"
             android:inputType="text"
@@ -64,11 +88,7 @@
             android:id="@+id/min_trial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
             android:autofillHints=""
             android:hint="@string/min_trial"
             android:inputType="number"
@@ -80,41 +100,11 @@
             android:id="@+id/geolocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/geolocation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/min_trial" />
 
-        <Button
-            android:id="@+id/add_exp"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/publish"
-            app:backgroundTint="@color/dark_pink"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cancel_exp" />
-
-        <Button
-            android:id="@+id/cancel_exp"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/cancel"
-            app:backgroundTint="@color/dark_pink"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/add_exp"
-            app:layout_constraintHorizontal_bias="0.94"
-            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Source: StackOverFlow, Title: Android spinner prompt, Asked By: atapi19, Answered by: Nabin, Link: https://stackoverflow.com/questions/26543408/android-spinner-prompt  -->

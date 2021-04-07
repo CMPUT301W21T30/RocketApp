@@ -1,7 +1,7 @@
 package com.example.rocketapp.view.fragments;
 
-import android.content.Context;
-import android.os.Build;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +16,6 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.rocketapp.R;
@@ -36,50 +35,31 @@ import java.util.Objects;
  */
 
 public class CreateExperimentFragment extends DialogFragment {
-
-    //Forces implementing class to create a function that handles experiment returned from fragment
-
     private static final String TAG = "ExperimentDialog";
+    private EditText descriptionEditText, regionEditText, minTrialsEditText;      //Add experiment info
+    private Button publishButton, cancelButton;                                   //Confirm or Cancel information
+    private CheckBox geoCheckBox;                                                 //Handle boolean geoLocationEnabled
+    private Spinner experimentTypeSpinner;                                        //Dropdown box to select experiment type
 
-    private EditText descriptionET, regionET, minTrialsET;      //Add experiment info
-    private Button publishBtn, cancelButton;                      //Confirm or Cancel information
-    private CheckBox geoBox;                                    //Handle boolean geoLocationEnabled
-    private Boolean geolocationEnabled = false;                         //Set through geoBox
-    private Spinner expType;                                    //Dropdown box to select experiment type
 
-    /**
-     *
-     * @param inflater
-     *          Instantiates a layout XML file into its corresponding View objects.     //https://developer.android.com/reference/android/view/LayoutInflater
-     * @param container
-     *          a view used to contain other views
-     * @param savedInstanceState
-     *          save the state of the application
-     * @return
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_create_experiment, container, false);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_create_experiment, null);
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle("Create Experiment").create();
+
         initialSetup(view);
 
-        geoBox.setOnClickListener(v -> geolocationEnabled = geoBox.isChecked());
-
-        publishBtn.setOnClickListener(v -> {          //Confirm button is clicked
+        publishButton.setOnClickListener(v -> {
             if (checkInputsValid()) {
-                Log.d(TAG, "onClick: capturing input");
-                returnExperiment(getExperiment(expType.getSelectedItem().toString()));
-                Objects.requireNonNull(getDialog()).dismiss();
+                publishExperiment(createExperiment(experimentTypeSpinner.getSelectedItem().toString()));
+                dismiss();
             }
-        });         //Validates input and adds experiment
+        });
 
-        cancelButton.setOnClickListener(v -> {      //Cancel button is clicked
-            Log.d(TAG, "onClick: Closing Dialog");
-            Objects.requireNonNull(getDialog()).dismiss();
-        });         //Does not add the experiment
+        cancelButton.setOnClickListener(v -> dismiss());
 
-        return view;
+        return alertDialog;
     }
 
     /**
@@ -93,36 +73,25 @@ public class CreateExperimentFragment extends DialogFragment {
         //How to add a checkbox: https://developer.android.com/guide/topics/ui/controls/checkbox
         //how to add a dropdown list: https://developer.android.com/guide/topics/ui/controls/spinner
 
-        descriptionET = view.findViewById(R.id.description_input);      //description
-        regionET = view.findViewById(R.id.region_input);                //region
-        minTrialsET = view.findViewById(R.id.min_trial);                //minimum number of trials
-        geoBox = view.findViewById(R.id.geolocation);                   //geoLocation enabled or disabled
-        publishBtn = view.findViewById(R.id.add_exp);                     //Confirm experiment
-        cancelButton = view.findViewById(R.id.cancel_exp);              //Do not create experiment
-        expType = view.findViewById(R.id.select_exp);                   //Type of experiment ("Binomial", "Count", "IntCount", "Measurement")
+        descriptionEditText = view.findViewById(R.id.description_input);                            //description
+        regionEditText = view.findViewById(R.id.region_input);                                      //region
+        minTrialsEditText = view.findViewById(R.id.min_trial);                                      //minimum number of trials
+        geoCheckBox = view.findViewById(R.id.geolocation);                                          //geoLocation enabled or disabled
+        publishButton = view.findViewById(R.id.add_exp);                                            //Confirm experiment
+        cancelButton = view.findViewById(R.id.cancel_exp);                                          //Do not create experiment
+        experimentTypeSpinner = view.findViewById(R.id.select_exp);                                 //Type of experiment ("Binomial", "Count", "IntCount", "Measurement")
         ArrayAdapter<String> myAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.experiments));
-        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);       //dropdown for experiment types
-        expType.setAdapter(myAdapter);                                  //set experiment type from selected item inside dropdown
-    }
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try{
-            /*dialogListener = (OnInputListener) getActivity();*/
-        }catch(ClassCastException e){
-            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
-        }
+        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);           //dropdown for experiment types
+        experimentTypeSpinner.setAdapter(myAdapter);                                                //set experiment type from selected item inside dropdown
     }
 
     /**
-     * Exception handler which checks if Experiment is valid and published or not
-     * @param newExperiment<?> experiment to be published.
+     * Publishes a new experiment
+     * @param newExperiment experiment to be published.
      */
-    public void returnExperiment(Experiment newExperiment){
-        ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, "Experiment not published"));
+    public void publishExperiment(Experiment<?> newExperiment){
+        ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, exception.getMessage()));
     }
 
     /**
@@ -132,32 +101,26 @@ public class CreateExperimentFragment extends DialogFragment {
      * @return
      *          experiment of said type based on user input
      */
-    public Experiment getExperiment(String type){
-        Experiment<?> exp;
+    public Experiment<?> createExperiment(String type){
         switch(type) {
             case ("Count Experiment"):
-                exp = new CountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
+                return new CountExperiment(descriptionEditText.getText().toString(),
+                        regionEditText.getText().toString(), Integer.parseInt(minTrialsEditText.getText().toString()), geoCheckBox.isChecked());
             case ("Integer Count Experiment"):
-                exp = new IntCountExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
+                return new IntCountExperiment(descriptionEditText.getText().toString(),
+                        regionEditText.getText().toString(), Integer.parseInt(minTrialsEditText.getText().toString()), geoCheckBox.isChecked());
             case ("Measurement Experiment"):
-                exp = new MeasurementExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
+                return new MeasurementExperiment(descriptionEditText.getText().toString(),
+                        regionEditText.getText().toString(), Integer.parseInt(minTrialsEditText.getText().toString()), geoCheckBox.isChecked());
             default:
-                exp = new BinomialExperiment(descriptionET.getText().toString(),
-                        regionET.getText().toString(), Integer.parseInt(minTrialsET.getText().toString()), geolocationEnabled);
-                return exp;
-
+                return new BinomialExperiment(descriptionEditText.getText().toString(),
+                        regionEditText.getText().toString(), Integer.parseInt(minTrialsEditText.getText().toString()), geoCheckBox.isChecked());
         }
     }
 
     /**
      * Validates user input
-     * description must be within [1,40] characters
+     * description must be within [5,100] characters
      * minimum amount of trials before an experiment can be ENDED must be described
      * region length must be within [1,40] characters
      * @return
@@ -165,8 +128,8 @@ public class CreateExperimentFragment extends DialogFragment {
      *      False if user input is invalid
      */
     private boolean checkInputsValid() {
-        return  Validate.lengthInRange(descriptionET, 1, 100, true) &&
-                Validate.intInRange(minTrialsET, 0, Integer.MAX_VALUE, true) &&
-                Validate.lengthInRange(regionET, 1, 40, true);
+        return  Validate.lengthInRange(descriptionEditText, 5, 100, true) &&
+                Validate.intInRange(minTrialsEditText, 0, Integer.MAX_VALUE, true) &&
+                Validate.lengthInRange(regionEditText, 1, 40, true);
     }
 }
