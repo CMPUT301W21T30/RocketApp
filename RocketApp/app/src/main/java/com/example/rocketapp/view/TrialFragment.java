@@ -69,7 +69,7 @@ public class TrialFragment extends DialogFragment {
         view.findViewById(R.id.button_cancel).setOnClickListener(i -> alertDialog.dismiss());
 
         if(!experiment.info.isGeoLocationEnabled()){
-            view.findViewById(R.id.warning).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.warning).setVisibility(View.GONE);
         }
 
         if (experiment.getType().equals(BinomialTrial.TYPE)) {

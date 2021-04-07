@@ -11,6 +11,7 @@
     <string name="fail">Fail</string>
     <string name="pass">pass</string>
     <string name="title_activity_maps">Map</string>
+    <string name="barcode_not_registered">Barcode not registered.</string>
     <string-array name="experiments">
         <item>Binomial Experiment</item>
         <item>Count Experiment</item>

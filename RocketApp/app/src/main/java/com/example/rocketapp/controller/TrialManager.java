@@ -2,7 +2,6 @@ package com.example.rocketapp.controller;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
@@ -35,12 +34,41 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
  */
 public class TrialManager {
     private static final String TAG = "TrialManager";
-    private static ListenerRegistration trialsListener;
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String EXPERIMENTS = "Experiments";
     private static final String BARCODES = "Barcodes";
     private static final String TRIALS = "Trials";
-    private static final ArrayList<Barcode> barCodes = new ArrayList<>();
+    private static ListenerRegistration trialsListener;
+
+
+    /**
+     * Represents a barcode and its associated experiment and trial. Stored in firestore when a barcode is registered.
+     */
+    public static class Barcode {
+
+        private FirestoreDocument.Id experimentId;
+        private Trial trial;
+        private String code;
+
+        public Barcode() { }
+
+        public Barcode(String barcode, FirestoreDocument.Id experimentId, Trial trial) {
+            this.code = barcode;
+            this.experimentId = experimentId;
+            this.trial = trial;
+        }
+
+        public FirestoreDocument.Id getExperimentId() {
+            return experimentId;
+        }
+
+        /**
+         * @return trial associated with this barcode
+         */
+        public Trial getTrial() {
+            return trial;
+        }
+    }
 
     // TODO Add any new Trial types to this map
     static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
@@ -79,35 +107,6 @@ public class TrialManager {
         });
     }
 
-    public static class Barcode {
-
-        private FirestoreDocument.Id experimentId;
-        private Trial trial;
-        private String code;
-
-        public Barcode() { }
-
-        public Barcode(String barcode, Experiment<?> experiment, Trial trial) {
-            this.code = barcode;
-            this.experimentId = experiment.getId();
-            this.trial = trial;
-        }
-
-        public FirestoreDocument.Id getExperimentId() {
-            return experimentId;
-        }
-
-        public Trial getTrial() {
-            return trial;
-        }
-
-        @Exclude
-        public String getCode() {
-            return code;
-        }
-    }
-
-
     /**
      * Registers a barcode to be used for uploading trials to an experiment
      * @param code the barcode
@@ -117,7 +116,7 @@ public class TrialManager {
      * @param onFailure callback for when registration fails
      */
     public static void registerBarcode(String code, Experiment<?> experiment, Trial trial, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
-        registerBarcode(new Barcode(code, experiment, trial), onComplete, onFailure);
+        registerBarcode(new Barcode(code, experiment.getId(), trial), onComplete, onFailure);
     }
 
     /**
@@ -139,7 +138,15 @@ public class TrialManager {
     }
 
 
-    public static void createQRCodeBitmap(Experiment<?> experiment, Trial trial, ObjectCallback<Bitmap> bitmap, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
+    /**
+     * Generates a bitmap representing a trial for an experiment
+     * @param experiment experiment trial is for
+     * @param trial trial to generate bitmap for
+     * @param bitmapCallback callback returning the generated bitmap
+     * @param generatedString callback returning the string representation of the bitmap
+     * @param onFailure callback for when generating bitmap fails
+     */
+    public static void createQRCodeBitmap(Experiment<?> experiment, Trial trial, ObjectCallback<Bitmap> bitmapCallback, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
 
         String code = experiment.getId().getKey() + " " + trial.getType() + " " + trial.getValueString();
 
@@ -154,7 +161,7 @@ public class TrialManager {
             generatedString.callBack(code);
 
             //Return bitmap
-            bitmap.callBack(encoder.createBitmap(matrix));
+            bitmapCallback.callBack(encoder.createBitmap(matrix));
 
         } catch (WriterException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
@@ -162,14 +169,19 @@ public class TrialManager {
         }
     }
 
-
+    /**
+     * Reads a barcode or QR code and adds the corresponding trial if code is valid
+     * @param code the barcode being read
+     * @param onComplete callback returning the trial that was added
+     * @param onFailure callback for when read fails
+     */
     public static void readCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
         switch(code.split(" ").length) {
             case 3:
-                TrialManager.readQRCode(code, onComplete, onFailure);
+                TrialManager.processQRCode(code, onComplete, onFailure);
                 break;
             case 1:
-                TrialManager.readBarcode(code, onComplete, onFailure);
+                TrialManager.processBarcode(code, onComplete, onFailure);
                 break;
             default:
                 Log.d(TAG, "Code does not correspond to an experiment: " + code);
@@ -177,35 +189,34 @@ public class TrialManager {
         }
     }
 
-
-    public static void readQRCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+    /**
+     * Reads a qrCode and adds the corresponding trial
+     * @param code the barcode being read
+     * @param onComplete callback returning the trial that was added
+     * @param onFailure callback for when read fails
+     */
+    public static void processQRCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+        String failMessage = "Invalid code: " + code;
 
         if (code == null) {
-            Log.e(TAG, "Invalid code: code was null");
-            onFailure.callBack(new Exception("Invalid code: code was null"));
+            Log.e(TAG, failMessage);
+            onFailure.callBack(new Exception(failMessage));
             return;
         }
 
         String[] data = code.split(" ");
 
         if (data.length != 3) {
-            Log.e(TAG, "Invalid code: " + code);
-            onFailure.callBack(new Exception("Invalid code: " + code));
+            Log.e(TAG, failMessage);
+            onFailure.callBack(new Exception(failMessage));
             return;
         }
 
         Experiment<?> experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
-        if (experiment == null) {
-            Log.e(TAG, "Invalid code: " + code);
-            onFailure.callBack(new Exception("Invalid code: " + code));
-            return;
-        }
-
-
         Trial trial = createTrial(data[1], data[2]);
-        if (trial == null) {
-            Log.e(TAG, "Invalid code: " + code);
-            onFailure.callBack(new Exception("Invalid code: " + code));
+        if (experiment == null || trial == null) {
+            Log.e(TAG, failMessage);
+            onFailure.callBack(new Exception(failMessage));
             return;
         }
 
@@ -220,31 +231,51 @@ public class TrialManager {
      * @param onComplete
      * @param onFailure
      */
-    public static void readBarcode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+    public static void processBarcode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+        readBarcode(code, barcode->{
+            Experiment<?> experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
+            ((FirestoreDocument) barcode.trial).newTimestamp();
+            addTrial(barcode.trial, experiment, onComplete, onFailure);
+        }, onFailure);
+    }
 
-        CollectionReference barCodesRef = db.collection(BARCODES);
+     /**
+     * Reads a barcode and returns registered barcode information if it is registered
+     * @param code the barcode being read
+     * @param onComplete
+     * @param onFailure
+     */
+    public static void readBarcode(String code, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
+        String failMessage = "Barcode not registered to experiment.";
 
-        barCodesRef.document(code).get().addOnSuccessListener(snapshot -> {
+        db.collection(BARCODES).document(code).get().addOnSuccessListener(snapshot -> {
 
-            String trialType = (String) ((Map<String, Object>)snapshot.getData().get("trial")).get("type");
-            Experiment<?> experiment = ExperimentManager.getExperiment(snapshot.get("experimentId", FirestoreDocument.Id.class));
+            if (!snapshot.exists()) {
+                Log.e(TAG, failMessage);
+                onFailure.callBack(new Exception(failMessage));
+                return;
+            }
+
+            String trialType = (String) ((Map<String, Object>) snapshot.getData().get("trial")).get("type");
 
             Barcode barcode = new Barcode(
                     snapshot.getString("code"),
-                    experiment,
+                    snapshot.get("experimentId", FirestoreDocument.Id.class),
                     snapshot.get("trial", trialClassMap.get(trialType))
             );
 
-            ((FirestoreDocument) barcode.trial).newTimestamp();
-            addTrial(barcode.trial, experiment, onComplete, onFailure);
+            if (ExperimentManager.getExperiment(barcode.getExperimentId()) == null) {
+                Log.e(TAG, failMessage);
+                onFailure.callBack(new Exception(failMessage));
+            } else {
+                onComplete.callBack(barcode);
+            }
 
         }).addOnFailureListener(e -> {
-            Log.e(TAG, "Failed to read barcode.");
+            Log.e(TAG, failMessage);
             onFailure.callBack(e);
         });
-
     }
-
 
     /**
      * Add a new trial for an experiment.

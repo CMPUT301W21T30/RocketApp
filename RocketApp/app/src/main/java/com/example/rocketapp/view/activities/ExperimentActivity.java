@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,9 +48,11 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView statusTextView;
     private TextView descriptionTextView;
     private TextView ownerTextView;
+    private TextView publishedTextView;
+    private TextView experimentTypeTextView;
+    private TextView trialCountTextView;
     private Button addTrialButton;
-    private Button endExperimentButton;
-    private Button publishExperimentButton;
+
     private MenuItem publishExperimentMenuItem;
     private MenuItem endExperimentMenuItem;
 
@@ -73,12 +76,19 @@ public class ExperimentActivity extends AppCompatActivity {
         regionTextView = findViewById(R.id.regionView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
-        statusTextView = findViewById(R.id.endedTextView);
+        statusTextView = findViewById(R.id.statusTextView);
+        publishedTextView = findViewById(R.id.publishedTextView);
+        experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
+        trialCountTextView = findViewById(R.id.trialCountTextView);
 
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
+        findViewById(R.id.viewGraphsTextViewButton).setOnClickListener(v -> openExperimentIntent(GraphsActivity.class));
+
+        if (!UserManager.getUser().isOwner(experiment))
+            publishedTextView.setVisibility(View.GONE);
+
+        if (experiment.getType().equals(BinomialExperiment.TYPE))
             ((TextView) findViewById(R.id.meanText)).setText("Success Ratio");
-        }
-        ((TextView) findViewById(R.id.experimentTypeTextView)).setText(experiment.getType());
+
 
         ownerTextView = findViewById(R.id.ownerTextView);
         ownerTextView.setOnClickListener(this::onOwnerClicked);
@@ -86,24 +96,11 @@ public class ExperimentActivity extends AppCompatActivity {
         addTrialButton = findViewById(R.id.addTrialButton);
         addTrialButton.setOnClickListener(this::onAddTrialClicked);
 
-        findViewById(R.id.graphbtn).setOnClickListener(v -> onGraphClicked());
-
         Button mapButton = findViewById(R.id.mapbtn);
         if (experiment.info.isGeoLocationEnabled()) {
             mapButton.setOnClickListener(this::mapClicked);
         } else {
             mapButton.setVisibility(View.GONE);
-        }
-
-        endExperimentButton = findViewById(R.id.endExperimentButton);
-        publishExperimentButton = findViewById(R.id.publishExperimentButton);
-        publishExperimentMenuItem = findViewById(R.id.publishMenuButton);
-        if (UserManager.getUser().isOwner(experiment)) {
-            publishExperimentButton.setOnClickListener(v -> onPublishClicked());
-            endExperimentButton.setOnClickListener(v -> onEndClicked());
-        } else {
-            endExperimentButton.setVisibility(View.GONE);
-            publishExperimentButton.setVisibility(View.GONE);
         }
 
         ActionBar actionBar = getSupportActionBar();
@@ -126,7 +123,8 @@ public class ExperimentActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (UserManager.getUser().isOwner(experiment)) {
             getMenuInflater().inflate(R.menu.experiment_menu, menu);
-            publishExperimentMenuItem = menu.findItem(R.id.publishMenuButton);
+            endExperimentMenuItem = menu.findItem(R.id.endExperimentMenuItem);
+            publishExperimentMenuItem = menu.findItem(R.id.publishExperimentMenuItem);
             publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
         } else {
             getMenuInflater().inflate(R.menu.experimenter_menu, menu);
@@ -140,38 +138,36 @@ public class ExperimentActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.menuButton:
-                Intent intent = new Intent(this, ExperimentEditActivity.class);
-                intent.putExtra(Experiment.ID_KEY, experiment.getId());
-                startActivity(intent);
+            case R.id.editExperimentMenuItem:
+                openExperimentIntent(ExperimentEditActivity.class);
                 return true;
-            case R.id.registerMenu:
-                Intent scannerIntent = new Intent(this, RegisterBarcodeActivity.class);
-                scannerIntent.putExtra(Experiment.ID_KEY, experiment.getId());
-                startActivity(scannerIntent);
+            case R.id.registerBarcodeMenuItem:
+                openExperimentIntent(RegisterBarcodeActivity.class);
                 return true;
-            case R.id.forumButton:
-                Intent forumintent = new Intent(this, ExperimentForumActivity.class);
-                forumintent.putExtra(Experiment.ID_KEY, experiment.getId());
-                startActivity(forumintent);
+            case R.id.experimentForumMenuItem:
+                openExperimentIntent(ExperimentForumActivity.class);
                 return true;
-            case R.id.generateQRcode:
-                Intent qrcodeIntent = new Intent(this, GenerateQRcodeActivity.class);
-                qrcodeIntent.putExtra(Experiment.ID_KEY, experiment.getId());
-                startActivity(qrcodeIntent);
+            case R.id.generateQRcodeMenuItem:
+                openExperimentIntent(GenerateQRcodeActivity.class);
                 return true;
-            case R.id.publishMenuButton:
-                onPublishClicked();
+            case R.id.publishExperimentMenuItem:
+                onPublishExperimentClicked();
                 return true;
-            case R.id.endExperimentMenuButton:
-                onEndClicked();
+            case R.id.endExperimentMenuItem:
+                onEndExperimentClicked();
                 return true;
             case R.id.experimentStatisticsMenuItem:
-                onGraphClicked();
+                openExperimentIntent(GraphsActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    void openExperimentIntent(Class<?> experimentClass) {
+        Intent experimentIntent = new Intent(this, experimentClass);
+        experimentIntent.putExtra(Experiment.ID_KEY, experiment.getId());
+        startActivity(experimentIntent);
     }
 
 
@@ -182,7 +178,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onPublishClicked() {
+    void onPublishExperimentClicked() {
         if (experiment.isPublished()) {
             ExperimentManager.unpublishExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
         } else {
@@ -191,22 +187,14 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onGraphClicked() {
-        //TODO: debug
-        Intent intent = new Intent(this, GraphsActivity.class);
-        intent.putExtra(Experiment.ID_KEY, experiment.getId());
-        startActivity(intent);
-    }
-
-
-    void onEndClicked() {
+    void onEndExperimentClicked() {
         ExperimentManager.endExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
     }
 
 
     void onAddTrialClicked(View view) {
         if (!experiment.info.isGeoLocationEnabled()) {
-            new TrialFragment(experiment, newTrial ->
+            new TrialFragment("Add " + experiment.getType() + " Trial", experiment, newTrial ->
                 TrialManager.addTrial(newTrial, experiment,
                         t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),
                         e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show())
@@ -285,21 +273,24 @@ public class ExperimentActivity extends AppCompatActivity {
     void update(Experiment<?> experiment) {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
-
         meanTextView.setText(String.valueOf(experiment.getMean()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
         stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
         regionTextView.setText(experiment.info.getRegion());
+        experimentTypeTextView.setText(experiment.getType() + " Experiment");
+        trialCountTextView.setText(String.valueOf(experiment.getTrials().size()));
 
-        statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
+        statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
+        statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);
+
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
         if (UserManager.getUser().isOwner(experiment)) {
             if (publishExperimentMenuItem != null) publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
             if (endExperimentMenuItem != null && !experiment.isActive()) endExperimentMenuItem.setVisible(false);
-            publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");
-            endExperimentButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.GONE);
+            publishedTextView.setText(experiment.isPublished() ? "Published" : "Not Published");
+            publishedTextView.setTextColor(experiment.isPublished() ? Color.GREEN : Color.RED);
         }
     }
 }
