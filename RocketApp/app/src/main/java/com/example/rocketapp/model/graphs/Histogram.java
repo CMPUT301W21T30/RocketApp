@@ -81,9 +81,9 @@ public class Histogram extends AppCompatActivity {
                 }
 
                 //Handling Binomial case:
-                if (trials.get(i).getValueString().equals("True")) {
+                if (trials.get(i).getValueString().equals("true")) {
                     barEntries.add(new BarEntry(Float.parseFloat("1"), freq));
-                } else if (trials.get(i).getValueString().equals("False")) {
+                } else if (trials.get(i).getValueString().equals("false")) {
                     barEntries.add(new BarEntry(Float.parseFloat("0"), freq));
                 }
 
