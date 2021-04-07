@@ -54,6 +54,7 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView experimentTypeTextView;
     private TextView trialCountTextView;
     private Button addTrialButton;
+    private TextView totalText;
 
     private MenuItem publishExperimentMenuItem;
     private MenuItem endExperimentMenuItem;
@@ -84,7 +85,10 @@ public class ExperimentActivity extends AppCompatActivity {
         publishedTextView = findViewById(R.id.publishedTextView);
         experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
         trialCountTextView = findViewById(R.id.trialCountTextView);
-
+        totalText = findViewById(R.id.meanText);
+        if(experiment.getType().equals("Count")) {
+            isItCount();
+        }
         findViewById(R.id.viewGraphsTextViewButton).setOnClickListener(v -> openExperimentIntent(GraphsActivity.class));
 
         if (!UserManager.getUser().isOwner(experiment))
@@ -114,6 +118,18 @@ public class ExperimentActivity extends AppCompatActivity {
         ExperimentManager.listen(experiment, this::update);
         TrialManager.listen(experiment, this::update);
         update(experiment);
+    }
+
+    private void isItCount() {
+        medianTextView.setVisibility(View.GONE);
+        stdDevTextView.setVisibility(View.GONE);
+        Q1TextView.setVisibility(View.GONE);
+        Q3TextView.setVisibility(View.GONE);
+        findViewById(R.id.medianText).setVisibility(View.GONE);
+        findViewById(R.id.stdDevText).setVisibility(View.GONE);
+        findViewById(R.id.Q3Text).setVisibility(View.GONE);
+        findViewById(R.id.Q1Text).setVisibility(View.GONE);
+        totalText.setText("Total");
     }
 
 

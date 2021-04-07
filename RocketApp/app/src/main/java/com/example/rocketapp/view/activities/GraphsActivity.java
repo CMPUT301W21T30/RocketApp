@@ -3,6 +3,8 @@ package com.example.rocketapp.view.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,8 @@ public class GraphsActivity extends AppCompatActivity {
     Experiment<?> experiment;
     Histogram histogram;
     TimePlot timePlot;
+    BarChart histo;
+    TextView ht;
 
     /**
      * Creates GraphActivity view based on input
@@ -36,10 +40,16 @@ public class GraphsActivity extends AppCompatActivity {
         histogram = new Histogram(experiment);
         timePlot = new TimePlot(experiment);
         ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
+        histo = findViewById(R.id.histogram);
+        ht = findViewById(R.id.textView12);
         histogram.setBarChart(findViewById(R.id.histogram));
         histogram.createHistogramView(trials);
         timePlot.setLineChart(findViewById(R.id.time_plot));
         timePlot.createTimePlotView(trials);
+        if(experiment.getType().equals("Count")){
+            histo.setVisibility(View.GONE);
+            ht.setVisibility(View.GONE);
+        }
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
