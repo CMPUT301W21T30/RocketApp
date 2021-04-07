@@ -47,12 +47,14 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
         registerButton.setOnClickListener(v ->
             new TrialFragment(experiment,
                     newTrial -> TrialManager.registerBarcode(scannedCode, experiment, newTrial,
-                            barcode-> Toast.makeText(this, "Barcode registered.", Toast.LENGTH_LONG).show(),
+                            barcode-> {
+                                Toast.makeText(this, "Barcode registered.", Toast.LENGTH_LONG).show();
+                                ((TextView) findViewById(R.id.registeredStatusTextView)).setText("Barcode registered as:\n" + newTrial.getType() + " trial: " + newTrial.getValueString());
+                            },
                             exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show())
             ).show(getSupportFragmentManager(), "ADD_TRIAL"));
 
         findViewById(R.id.scanButton).setOnClickListener(this::scanCode);
-        ((TextView) findViewById(R.id.experimentType)).setText(experiment.getType());
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
