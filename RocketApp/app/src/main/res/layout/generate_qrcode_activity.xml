@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Generate QR Code"
+        android:text="Generate New QR Code"
         app:backgroundTint="@color/dark_pink"
         app:layout_constraintBottom_toTopOf="@+id/saveQRcodeBtn"
         app:layout_constraintEnd_toEndOf="parent"

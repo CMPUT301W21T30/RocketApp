@@ -44,7 +44,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        ((TextView) findViewById(R.id.experimentType2)).setText(experiment.getType());
+        ((TextView) findViewById(R.id.experimentType2)).setText(experiment.getType() + " Trial");
 
         qrImageView = findViewById(R.id.qrCodeImageView);
 
@@ -52,19 +52,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
         saveButton.setVisibility(View.INVISIBLE);
         saveButton.setOnClickListener(v -> saveToGallery());
 
-        findViewById(R.id.generateQRcodeBtn).setOnClickListener(v ->
-                new TrialFragment(
-                        experiment,
-                        newTrial -> {
-                            TrialManager.createQRCodeBitmap(experiment, newTrial,
-                                    bitmap -> qrImageView.setImageBitmap(bitmap),
-                                    generatedString -> codeTextPreview.setText(generatedString),
-                                    exception -> Log.e(TAG, exception.toString()));
-
-                            giveConfirmation();
-                            saveButton.setVisibility(View.VISIBLE);
-                        }
-                ).show(getSupportFragmentManager(), "ADD_TRIAL"));
+        findViewById(R.id.generateQRcodeBtn).setOnClickListener(v -> generateQRCode());
 
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -72,6 +60,24 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        generateQRCode();
+    }
+
+    private void generateQRCode() {
+        new TrialFragment(
+                experiment.getType() + " Trial",
+                experiment,
+                newTrial -> {
+                    TrialManager.createQRCodeBitmap(experiment, newTrial,
+                            bitmap -> qrImageView.setImageBitmap(bitmap),
+                            generatedString -> codeTextPreview.setText(generatedString),
+                            exception -> Log.e(TAG, exception.toString()));
+
+                    giveConfirmation();
+                    saveButton.setVisibility(View.VISIBLE);
+                }
+        ).show(getSupportFragmentManager(), "ADD_TRIAL");
     }
 
     @Override

@@ -27,12 +27,9 @@ public class ScanBarcodeActivity extends AppCompatActivity{
         scanBtn = findViewById(R.id.scanPreExistingCodeBtn);
         scanBtn.setOnClickListener(this::scanCode);
 
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     @Override
