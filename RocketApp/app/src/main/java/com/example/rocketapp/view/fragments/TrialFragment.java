@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.rocketapp.R;
-import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.experiments.Experiment;
@@ -59,7 +57,7 @@ public class TrialFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.trial_fragment_layout, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_create_trial, null);
 
         if (title.isEmpty()) title = experiment.getType();
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle(title).create();

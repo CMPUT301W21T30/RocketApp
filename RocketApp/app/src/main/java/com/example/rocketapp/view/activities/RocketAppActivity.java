@@ -1,10 +1,15 @@
 package com.example.rocketapp.view.activities;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
+
+import com.example.rocketapp.controller.callbacks.Callback;
 
 public class RocketAppActivity extends AppCompatActivity {
     private InputMethodManager input;
@@ -26,5 +31,14 @@ public class RocketAppActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+
+    public boolean hasPermission(String permission, int requestCode) {
+        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {permission}, requestCode);
+            return false;
+        }
+        return true;
     }
 }

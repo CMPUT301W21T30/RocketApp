@@ -1,12 +1,7 @@
 package com.example.rocketapp.view.activities;
 
 import android.Manifest;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +16,10 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.controller.TrialManager;
+import com.example.rocketapp.controller.ScannerManager;
+import com.example.rocketapp.helpers.Device;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.TrialFragment;
-
-import java.io.File;
-import java.io.FileOutputStream;
+import com.example.rocketapp.view.fragments.TrialFragment;
 
 public class GenerateQRcodeActivity extends AppCompatActivity {
     private static final String TAG = "GenerateQRCodeActivity";
@@ -38,7 +31,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-        setContentView(R.layout.generate_qrcode_activity);
+        setContentView(R.layout.activity_qr_code_generator);
 
         codeTextPreview = findViewById(R.id.generatedCodeTextView);
 
@@ -50,7 +43,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
 
         saveButton = findViewById(R.id.saveQRcodeBtn);
         saveButton.setVisibility(View.INVISIBLE);
-        saveButton.setOnClickListener(v -> saveToGallery());
+        saveButton.setOnClickListener(v -> Device.saveToGallery(qrImageView.getDrawable(), this));
 
         findViewById(R.id.generateQRcodeBtn).setOnClickListener(v -> generateQRCode());
 
@@ -69,7 +62,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
                 "Create QR Code for " + experiment.getType() + " Trial",
                 experiment,
                 newTrial -> {
-                    TrialManager.createQRCodeBitmap(experiment, newTrial,
+                    ScannerManager.createQRCodeBitmap(experiment, newTrial,
                             bitmap -> qrImageView.setImageBitmap(bitmap),
                             generatedString -> codeTextPreview.setText(generatedString),
                             exception -> Log.e(TAG, exception.toString()));
@@ -93,49 +86,5 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
     public void giveConfirmation(){
         Toast.makeText(this, "Generated!", Toast.LENGTH_LONG).show();
     }
-
-
-    /*
-     * https://www.youtube.com/watch?v=FcCtT1C7NGI
-     * Author: Ketul Patel
-     *
-     * https://stackoverflow.com/questions/26718374/save-image-from-imageview-to-device-gallery
-     * Author: Shravan DG  https://stackoverflow.com/users/6646750/shravan-dg
-     */
-    private void saveToGallery(){
-        //TODO move this functionality to TrialManager class
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) qrImageView.getDrawable();
-        Bitmap bitmap = bitmapDrawable.getBitmap();
-
-        FileOutputStream outputStream = null;
-        File file = Environment.getExternalStorageDirectory();
-        File dir = new File(file.getAbsolutePath() + "/QRcodes");
-
-        dir.mkdirs();
-        String filename = String.format("%d.png", System.currentTimeMillis());
-        File outFile = new File(dir, filename);
-        try {
-            outputStream = new FileOutputStream(outFile);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
-        try {
-            outputStream.flush();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        try {
-            outputStream.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(file));
-        sendBroadcast(intent);
-
-    }
-
 
 }

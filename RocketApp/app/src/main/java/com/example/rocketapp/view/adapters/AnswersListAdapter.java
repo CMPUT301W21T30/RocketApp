@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,7 +52,7 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
     @NonNull
     @Override
     public AnswersListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.answer_recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_answer, parent, false);
         return new AnswersListAdapter.ViewHolder(view);
     }
 

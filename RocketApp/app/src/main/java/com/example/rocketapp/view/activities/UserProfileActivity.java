@@ -14,7 +14,6 @@ import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
-import com.example.rocketapp.view.activities.RocketAppActivity;
 
 /**
  * User has the ability to update their email or phone number through this page
@@ -26,7 +25,7 @@ public class UserProfileActivity extends RocketAppActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile);
+        setContentView(R.layout.activity_profile);
 
         User user = UserManager.getUser(getIntent().getSerializableExtra(Experiment.ID_KEY));
 

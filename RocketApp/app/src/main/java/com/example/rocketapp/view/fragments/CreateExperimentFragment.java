@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.fragments;
 
 import android.content.Context;
 import android.os.Build;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -36,7 +35,7 @@ import java.util.Objects;
  * User selects type of experiment and enters details of experiment
  */
 
-public class CreateExperimentDialog extends DialogFragment {
+public class CreateExperimentFragment extends DialogFragment {
 
     //Forces implementing class to create a function that handles experiment returned from fragment
 
@@ -62,7 +61,7 @@ public class CreateExperimentDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.create_experiment_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_experiment, container, false);
         initialSetup(view);
 
         geoBox.setOnClickListener(v -> geolocationEnabled = geoBox.isChecked());

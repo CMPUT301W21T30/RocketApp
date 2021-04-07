@@ -67,9 +67,9 @@
             android:name=".view.activities.ExperimentSearchActivity" />
         <activity
 
-            android:name=".view.activities.GraphsActivity" />
+            android:name=".view.activities.ExperimentStatisticsActivity" />
         <activity
-            android:name=".view.activities.LogInActivity">
+            android:name=".view.activities.LoginActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -83,7 +83,7 @@
         <activity
             android:name=".view.activities.UserProfileActivity"/>
         <activity
-            android:name=".view.activities.ExperimentsListActivity" />
+            android:name=".view.activities.MainActivity" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

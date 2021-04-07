@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +51,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
     @NonNull
     @Override
     public QuestionListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_question, parent, false);
         return new QuestionListAdapter.ViewHolder(view);
     }
 

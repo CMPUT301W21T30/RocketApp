@@ -2,11 +2,14 @@ package com.example.rocketapp.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,13 +18,15 @@ import android.widget.Toast;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.ScannerManager;
 import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.CreateExperimentDialog;
-import com.example.rocketapp.view.ExperimentListAdapter;
+import com.example.rocketapp.view.fragments.CreateExperimentFragment;
+import com.example.rocketapp.view.adapters.ExperimentListAdapter;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 import java.util.ArrayList;
 
@@ -29,11 +34,11 @@ import java.util.ArrayList;
  * Home page for a user. Displays owned experiments, subscribed experiments, and provides interface to edit profile,
  * create new experiments, subscribe to experiments, and open experiments.
  */
-public class ExperimentsListActivity extends AppCompatActivity{
+public class MainActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentsListActivity";
     private ArrayList<Experiment<?>> experimentsOwned, experimentsSubscribed;
     private ExperimentListAdapter adapterOwned, adapterSubscribed;
-
+    private int cameraPermissionRequestCode = 100;
     /**
      * - Contains Navigation to the profile
      * - inits for the subscribed and owned experiment recycler views are called within
@@ -43,7 +48,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_experiments_list);
+        setContentView(R.layout.activity_main);
 
         initRecyclerViewOwned();
         initRecyclerViewSubscribed();
@@ -59,10 +64,7 @@ public class ExperimentsListActivity extends AppCompatActivity{
             startActivity(allExpIntent);
         });
 
-        findViewById(R.id.createExpBtn).setOnClickListener(v -> new CreateExperimentDialog().show(getSupportFragmentManager(), "Add_experiment"));
-
-
-
+        findViewById(R.id.createExpBtn).setOnClickListener(v -> new CreateExperimentFragment().show(getSupportFragmentManager(), "Add_experiment"));
     }
 
     @Override
@@ -81,7 +83,6 @@ public class ExperimentsListActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-
     /**
      * Update the the Experiments List every time it back from other fragment
      */
@@ -95,6 +96,21 @@ public class ExperimentsListActivity extends AppCompatActivity{
         });
         UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null && result.getContents() != null) {
+            ScannerManager.readCode(
+                    result.getContents(),
+                    trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(),
+                    exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     /**
      * set adapter to the recyclerView and populate it with
@@ -169,25 +185,25 @@ public class ExperimentsListActivity extends AppCompatActivity{
         }
     };
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (result != null && result.getContents() != null) {
-            TrialManager.readCode(
-                    result.getContents(),
-                    trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(),
-                    exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());
+        if (requestCode == cameraPermissionRequestCode) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(getApplicationContext(), "Must allow app access to Camera in device settings.", Toast.LENGTH_LONG).show();
+            } else {
+                scanCode();
+            }
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-
     private void scanCode() {
+        if (!hasPermission(Manifest.permission.CAMERA, cameraPermissionRequestCode)) return;
+
         IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCaptureActivity(CaptureAct.class);
+        integrator.setCaptureActivity(CaptureActivity.class);
         integrator.setOrientationLocked(false);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Scanning");
