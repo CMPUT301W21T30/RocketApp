@@ -66,7 +66,7 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
 
     private void generateQRCode() {
         new TrialFragment(
-                experiment.getType() + " Trial",
+                "Create QR Code for " + experiment.getType() + " Trial",
                 experiment,
                 newTrial -> {
                     TrialManager.createQRCodeBitmap(experiment, newTrial,

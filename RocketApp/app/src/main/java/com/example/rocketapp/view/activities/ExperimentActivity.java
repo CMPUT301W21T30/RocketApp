@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,9 @@ public class ExperimentActivity extends AppCompatActivity {
     private TextView statusTextView;
     private TextView descriptionTextView;
     private TextView ownerTextView;
+    private TextView publishedTextView;
+    private TextView experimentTypeTextView;
+    private TextView trialCountTextView;
     private Button addTrialButton;
 
     private MenuItem publishExperimentMenuItem;
@@ -72,12 +76,19 @@ public class ExperimentActivity extends AppCompatActivity {
         regionTextView = findViewById(R.id.regionView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
-        statusTextView = findViewById(R.id.endedTextView);
+        statusTextView = findViewById(R.id.statusTextView);
+        publishedTextView = findViewById(R.id.publishedTextView);
+        experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
+        trialCountTextView = findViewById(R.id.trialCountTextView);
 
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
+        findViewById(R.id.viewGraphsTextViewButton).setOnClickListener(v -> openExperimentIntent(GraphsActivity.class));
+
+        if (!UserManager.getUser().isOwner(experiment))
+            publishedTextView.setVisibility(View.GONE);
+
+        if (experiment.getType().equals(BinomialExperiment.TYPE))
             ((TextView) findViewById(R.id.meanText)).setText("Success Ratio");
-        }
-        ((TextView) findViewById(R.id.experimentTypeTextView)).setText(experiment.getType());
+
 
         ownerTextView = findViewById(R.id.ownerTextView);
         ownerTextView.setOnClickListener(this::onOwnerClicked);
@@ -146,7 +157,7 @@ public class ExperimentActivity extends AppCompatActivity {
                 onEndExperimentClicked();
                 return true;
             case R.id.experimentStatisticsMenuItem:
-                onGraphClicked();
+                openExperimentIntent(GraphsActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -176,14 +187,6 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onGraphClicked() {
-        //TODO: debug
-        Intent intent = new Intent(this, GraphsActivity.class);
-        intent.putExtra(Experiment.ID_KEY, experiment.getId());
-        startActivity(intent);
-    }
-
-
     void onEndExperimentClicked() {
         ExperimentManager.endExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
     }
@@ -191,7 +194,7 @@ public class ExperimentActivity extends AppCompatActivity {
 
     void onAddTrialClicked(View view) {
         if (!experiment.info.isGeoLocationEnabled()) {
-            new TrialFragment(experiment, newTrial ->
+            new TrialFragment("Add " + experiment.getType() + " Trial", experiment, newTrial ->
                 TrialManager.addTrial(newTrial, experiment,
                         t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),
                         e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show())
@@ -270,19 +273,24 @@ public class ExperimentActivity extends AppCompatActivity {
     void update(Experiment<?> experiment) {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
-
         meanTextView.setText(String.valueOf(experiment.getMean()));
         medianTextView.setText(String.valueOf(experiment.getMedian()));
         stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
         regionTextView.setText(experiment.info.getRegion());
+        experimentTypeTextView.setText(experiment.getType() + " Experiment");
+        trialCountTextView.setText(String.valueOf(experiment.getTrials().size()));
 
-        statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
+        statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
+        statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);
+
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
         if (UserManager.getUser().isOwner(experiment)) {
             if (publishExperimentMenuItem != null) publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
             if (endExperimentMenuItem != null && !experiment.isActive()) endExperimentMenuItem.setVisible(false);
+            publishedTextView.setText(experiment.isPublished() ? "Published" : "Not Published");
+            publishedTextView.setTextColor(experiment.isPublished() ? Color.GREEN : Color.RED);
         }
     }
 }

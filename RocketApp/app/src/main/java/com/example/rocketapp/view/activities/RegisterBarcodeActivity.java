@@ -2,6 +2,7 @@ package com.example.rocketapp.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
@@ -31,6 +31,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
     private Experiment<?> experiment;
     private Button registerButton;
     private TextView codePreviewTextView;
+    private TextView registeredStatusTextView;
     private String scannedCode;
 
     @Override
@@ -41,7 +42,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         codePreviewTextView = findViewById(R.id.scanned_code);
-
+        registeredStatusTextView = findViewById(R.id.registeredStatusTextView);
         registerButton = findViewById(R.id.registerButton);
         registerButton.setVisibility(View.INVISIBLE);
         registerButton.setOnClickListener(v ->
@@ -49,7 +50,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
                     newTrial -> TrialManager.registerBarcode(scannedCode, experiment, newTrial,
                             barcode-> {
                                 Toast.makeText(this, "Barcode registered.", Toast.LENGTH_LONG).show();
-                                ((TextView) findViewById(R.id.registeredStatusTextView)).setText("Barcode registered as:\n" + newTrial.getType() + " trial: " + newTrial.getValueString());
+                                registeredStatusTextView.setText(getRegistrationStatusString(barcode));
                             },
                             exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show())
             ).show(getSupportFragmentManager(), "ADD_TRIAL"));
@@ -87,18 +88,28 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-        if (result != null) {
-            if (result.getContents() != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                codePreviewTextView = findViewById(R.id.scanned_code);
-                codePreviewTextView.setText(result.getContents());
-                scannedCode = result.getContents();
-                registerButton.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
-            }
+        if (result != null && result.getContents() != null) {
+            codePreviewTextView = findViewById(R.id.scanned_code);
+            codePreviewTextView.setText(result.getContents());
+            scannedCode = result.getContents();
+            registerButton.setVisibility(View.VISIBLE);
+
+            TrialManager.readBarcode(scannedCode,
+                    barcode -> registeredStatusTextView.setText(getRegistrationStatusString(barcode)),
+                    e -> {
+                        registeredStatusTextView.setText(R.string.barcode_not_registered);
+                        Log.d(TAG, "Barcode not registered");
+            });
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    String getRegistrationStatusString(TrialManager.Barcode barcode) {
+        Experiment<?> experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
+        String status = "Barcode registered as:\n" +
+                barcode.getTrial().getType() + " Trial: " + barcode.getTrial().getValueString() +
+                "\nExperiment: " + experiment.info.getDescription();
+        return status;
     }
 }

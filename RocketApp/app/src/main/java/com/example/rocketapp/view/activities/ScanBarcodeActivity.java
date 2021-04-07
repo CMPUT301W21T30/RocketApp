@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.rocketapp.R;
@@ -48,7 +47,7 @@ public class ScanBarcodeActivity extends AppCompatActivity{
 
         if (result != null) {
             if (result.getContents() != null) {
-                TrialManager.readBarcode(result.getContents(), trial-> {
+                TrialManager.processBarcode(result.getContents(), trial-> {
                     Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show();
                 }, exception -> {
                     Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
