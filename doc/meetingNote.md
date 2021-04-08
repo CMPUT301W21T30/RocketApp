@@ -7,11 +7,12 @@
    * Mike will work on the database addressing the feedback and add extra testing to some of its features
    * Trevor will add a flagging feature to trials to ignore them (available only to owners)
    * Saif will update statistics to work with flagging, debug some methods (quartiles), and add some testing
-   * Soni and Saif will work on graphs summarizing statistics in the different ways required
+   * Archit and Saif will work on graphs summarizing statistics in the different ways required
    * Trevor will work on most featrues involving the QR code
 
 * Mar 23rd, 2021
    * Saif will work on statistics displays for experiments (histograms etc)
+   * Archit will work on geolocation
    * Other members are busy until thursday this week, but can assign themselves tasks on the project board if they have time.
 
 * Mar 18th, 2021
@@ -38,9 +39,8 @@
 
 * Mar 12, 2021
     * Aryan: Fix the Storyboard design
-    * Saif: Geo-location
     * Mike: Fix Firestore related to getting experiment and make adjustment to getting experiment
-    * Archit: Subscribe Experiment Fragment
+    * Archit and Saif: Subscribe Experiment Fragment
     * Trevor and Saji: Fix main Screen with update firestore from Mike, change experiment design on main screen to fit owner and experimenter, link to experiment dialog (create experiment dialog).
     * IMPORTANT: We changed the design of our app, instead of having a toggle to change between mode, we display everything together but seperate them with a flag
     
