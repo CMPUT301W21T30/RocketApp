@@ -23,14 +23,13 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
  */
 public class ExperimentManager {
     private static final String TAG = "ExperimentManager";
+    private static final String EXPERIMENTS = "Experiments";
     private static ArrayList<Experiment<?>> experimentArrayList;
     private static ListenerRegistration experimentListener;
     private static final FirebaseFirestore db;
     private static CollectionReference experimentsRef;
-    private static final String EXPERIMENTS = "Experiments";
     private static Callback updateCallback;
 
-    // TODO Add any new Experiment types to this map
     static final ImmutableMap<String, Class<? extends Experiment<?>>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment<?>>>builder()
             .put(IntCountExperiment.TYPE, IntCountExperiment.class)
             .put(CountExperiment.TYPE, CountExperiment.class)

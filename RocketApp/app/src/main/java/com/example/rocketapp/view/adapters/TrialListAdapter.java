@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -58,7 +58,7 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
      * @param viewType type of the view
      */
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.trial_recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_trial, parent, false);
         return new ViewHolder(view);
     }
 

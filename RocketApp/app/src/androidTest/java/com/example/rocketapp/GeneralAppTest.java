@@ -9,8 +9,8 @@ import androidx.test.rule.ActivityTestRule;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.view.activities.ExperimentEditActivity;
-import com.example.rocketapp.view.activities.ExperimentsListActivity;
-import com.example.rocketapp.view.activities.LogInActivity;
+import com.example.rocketapp.view.activities.MainActivity;
+import com.example.rocketapp.view.activities.LoginActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -27,7 +27,7 @@ public class GeneralAppTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule <LogInActivity> rule = new ActivityTestRule <LogInActivity>(LogInActivity.class, true, true);
+    public ActivityTestRule <LoginActivity> rule = new ActivityTestRule <LoginActivity>(LoginActivity.class, true, true);
 
     @Before
     public void setup() {
@@ -36,18 +36,18 @@ public class GeneralAppTest {
 
     @Test
     public void checkLogin(){
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
     @Test
     public void checkAddExperiment(){
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         ArrayList<Experiment<?>> array = ExperimentManager.getOwnedExperimentsArrayList();
         int initialSize = array.size();
         solo.clickOnButton("NEW");
@@ -66,24 +66,24 @@ public class GeneralAppTest {
 
     @Test
     public void checkSubscribed() throws InterruptedException {
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
         solo.clickOnButton("LOGIN");
         solo.clickOnButton("SUBSCRIBE");
         solo.clickOnText("Toss a coin");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         assertTrue(solo.waitForText("Toss a coin", 1, 1000));
     }
 
     @Test
     public void checkAddTrial() throws InterruptedException {
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
         solo.clickOnButton("LOGIN");
         if (!solo.searchText("Toss a coin", 1)) {
             solo.clickOnButton("SUBSCRIBE");
             solo.clickOnText("Toss a coin");
-            solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+            solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
             assertTrue(solo.waitForText("Toss a coin", 1, 1000));
         }
         solo.clickOnText("Toss a coin");
@@ -96,10 +96,10 @@ public class GeneralAppTest {
     @Test
     public void checkPublished() {
         // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         // Slide Experiment to published
         int fromX, toX, fromY, toY;
@@ -128,10 +128,10 @@ public class GeneralAppTest {
     @Test
     public void checkUnPublished() {
         // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         // Slide Experiment to published
         int fromX, toX, fromY, toY;
@@ -171,10 +171,10 @@ public class GeneralAppTest {
     @Test
     public void testOwnerActivity() {
         // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         // Check owned experiment
         solo.clickOnText("Throw distance experiment");
@@ -186,10 +186,10 @@ public class GeneralAppTest {
     @Test
     public void testOwnerActivityTrial() {
         // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         // Check owned experiment
         solo.clickOnText("Throw distance experiment");
@@ -202,10 +202,10 @@ public class GeneralAppTest {
     @Test
     public void testOwnerActivityEndExperiment() {
         // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
         // Pushed the experiment
         // Slide Experiment to published

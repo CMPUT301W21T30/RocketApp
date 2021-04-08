@@ -1,10 +1,12 @@
 package com.example.rocketapp.controller;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.Callback;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
+import com.example.rocketapp.helpers.Device;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.CollectionReference;
@@ -100,18 +102,16 @@ public class UserManager {
      * @param onFailure
      *      Callback for when username already exists fails
      */
-    public static void createUser(String userName, SharedPreferences sharedPreferences, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void createUser(String userName, Activity activity, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
-                Log.e(TAG, "Username not available.");
-                onFailure.callBack(new Exception("Username not available."));
+                String message = String.format("Username %s not available.", userName);
+                Log.e(TAG, message);
+                onFailure.callBack(new Exception(message));
             } else {
-                push(new User(userName), user -> {
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("userId", user.getId().getKey());
-                    editor.apply();
-                    login(sharedPreferences, onSuccess, onFailure);
-                    }, onFailure);
+                User newUser = new User(userName);
+                ((FirestoreDocument) newUser).setId(new FirestoreDocument.Id(Device.getAndroidId(activity)));
+                push(newUser, user -> login(activity, onSuccess, onFailure), onFailure);
             }
         }).addOnFailureListener(e -> {
             Log.e(TAG, e.getMessage());
@@ -127,23 +127,28 @@ public class UserManager {
      * @param onFailure
      *      Callback for when login fails (username does not exist)
      */
-    public static void login(SharedPreferences sharedPreferences, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
-        String userId = sharedPreferences.getString("userId", "not found");
-        Log.e(TAG, "Read UserID: "+ userId);
+    public static void login(Activity activity, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+        String userId = Device.getAndroidId(activity);
         usersRef.document(userId).get().addOnSuccessListener(snapshot -> {
-            Log.d(TAG, snapshot.toString());
+            if (snapshot != null) {
                 user = readFirebaseObjectSnapshot(User.class, snapshot, TAG);
                 if (user != null) {
-                    listen(user);  // Listen to subscriptions
+                    listen(user);
                     pullSubscriptions(()-> {
                         Log.d(TAG, "Login successful: " + user.toString());
                         onSuccess.callBack(user);
                     }, onFailure);
+                    return;
                 }
-            }).addOnFailureListener((e) -> {
-                Log.e(TAG, "Login failed: " + e.toString());
-                onFailure.callBack(e);
-            });
+            }
+
+            Log.e(TAG, "Login failed. User not found.");
+            onFailure.callBack(new Exception("User not found."));
+
+        }).addOnFailureListener((e) -> {
+            Log.e(TAG, "Login failed: " + e.toString());
+            onFailure.callBack(e);
+        });
     }
 
 

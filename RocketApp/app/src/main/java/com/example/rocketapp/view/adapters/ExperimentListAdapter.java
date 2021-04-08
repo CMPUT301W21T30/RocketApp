@@ -1,4 +1,4 @@
-package com.example.rocketapp.view;
+package com.example.rocketapp.view.adapters;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +51,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.experiment_recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_experiment, parent, false);
         return new ViewHolder(view);
     }
 

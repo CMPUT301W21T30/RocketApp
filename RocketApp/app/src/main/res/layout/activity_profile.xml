@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_background"
     android:padding="32dp"
-    tools:context=".view.activities.LoginActivity">
+    tools:context=".view.activities.UserProfileActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/createUserCardView"
@@ -18,21 +19,66 @@
         app:contentPadding="32dp"
         app:contentPaddingBottom="24dp"
         app:contentPaddingTop="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animationView2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/meanText2"
+                android:id="@+id/userNameLabel3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Phone Number"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userEmailEditText" />
+
+            <EditText
+                android:id="@+id/userEmailEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_bold"
+                android:inputType="textWebEmailAddress"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userNameLabel2" />
+
+            <EditText
+                android:id="@+id/userPhoneNumberEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_bold"
+                android:inputType="phone"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userNameLabel3" />
+
+            <TextView
+                android:id="@+id/userNameLabel2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="Email"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userNameEditText" />
+
+            <TextView
+                android:id="@+id/userNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_bold"
-                android:text="Create a username"
+                android:text="Username"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -41,18 +87,17 @@
                 android:id="@+id/userNameEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:fontFamily="@font/nunito_bold"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/meanText2" />
+                app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
 
             <Button
-                android:id="@+id/loginBtn"
+                android:id="@+id/updateProfileButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="200dp"
                 android:background="#00FFFFFF"
                 android:fontFamily="@font/nunito_bold"
                 android:insetTop="0dp"
@@ -66,7 +111,7 @@
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="0"
-                android:text="Submit"
+                android:text="Update"
                 android:textAllCaps="false"
                 android:textColor="@color/dark_pink"
                 android:textSize="18sp"
@@ -79,54 +124,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/loadingGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="progressBar,loadingMessageTextView"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="32dp" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/inputGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="32dp" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createUserCardView" />
-
-    <TextView
-        android:id="@+id/loadingMessageTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="checking credentials"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animationView2"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        app:layout_constraintBottom_toTopOf="@+id/createUserCardView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/rocket2"
-        tools:ignore="MissingClass" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

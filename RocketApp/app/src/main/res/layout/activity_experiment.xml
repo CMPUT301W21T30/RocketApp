@@ -17,8 +17,8 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
-            android:layout_width="360dp"
-            android:layout_height="316dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@color/dark_background"
             app:cardBackgroundColor="@color/green_soft"
@@ -31,36 +31,8 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView4">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="305dp"
-                android:layout_height="269dp">
-
-                <Button
-                    android:id="@+id/viewGraphsTextViewButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="64dp"
-                    android:background="#00FFFFFF"
-                    android:fontFamily="@font/nunito_bold"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:paddingLeft="0dp"
-                    android:paddingTop="0dp"
-                    android:paddingRight="0dp"
-                    android:paddingBottom="0dp"
-                    android:shadowColor="#00FFFFFF"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="0"
-                    android:text="View Graphs"
-                    android:textAllCaps="false"
-                    android:textColor="@color/dark_pink"
-                    android:textSize="18sp"
-                    app:backgroundTint="#FFFFFFFF"
-                    app:elevation="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/stdDevText"
-                    app:rippleColor="@color/dark_pink" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/meanText"
@@ -71,29 +43,7 @@
                     android:text="Mean"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trialCountLabel" />
-
-                <TextView
-                    android:id="@+id/Q1Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="84dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:text="1st Quartile"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trialCountLabel" />
-
-                <TextView
-                    android:id="@+id/Q3Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="108dp"
-                    android:fontFamily="@font/nunito_bold"
-                    android:text="3rd Quartile"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toBottomOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/meanText2"
@@ -114,26 +64,6 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/meanText" />
-
-                <TextView
-                    android:id="@+id/Q1View"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_bold"
-                    android:text="0.0"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/Q1Text" />
-
-                <TextView
-                    android:id="@+id/Q3View"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_bold"
-                    android:text="0.0"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/Q3Text" />
 
                 <TextView
                     android:id="@+id/medianText"
@@ -158,7 +88,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/medianText" />
 
                 <TextView
-                    android:id="@+id/trialCountLabel"
+                    android:id="@+id/userNameEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -176,7 +106,7 @@
                     android:text="0"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toTopOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/medianValue"
@@ -197,6 +127,33 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/stdDevText" />
+
+                <Button
+                    android:id="@+id/loginBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:fontFamily="@font/nunito_bold"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
+                    android:paddingLeft="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="0dp"
+                    android:shadowColor="#00FFFFFF"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="0"
+                    android:text="View Graphs"
+                    android:textAllCaps="false"
+                    android:textColor="@color/dark_pink"
+                    android:textSize="18sp"
+                    app:backgroundTint="#FFFFFFFF"
+                    app:elevation="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/stdDevText"
+                    app:rippleColor="@color/dark_pink" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
