@@ -60,7 +60,7 @@ public class CountExperiment extends Experiment<CountTrial> {
             return 0;
         }
         for(int i = 0; i<trials.size(); i++){
-            sum = sum + trials.get(i).getCount();
+            sum = sum + trials.get(i).getValue().intValue();
         }
         return ((float) sum);
     }
@@ -83,7 +83,7 @@ public class CountExperiment extends Experiment<CountTrial> {
         int trialCounter = 0;
         for(int i = 0; i<trials.size() ; i++){
             if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
-            sum = sum + trials.get(i).getCount();
+            sum = sum + trials.get(i).getValue();
             trialCounter++;
         }
         return (float) sum;

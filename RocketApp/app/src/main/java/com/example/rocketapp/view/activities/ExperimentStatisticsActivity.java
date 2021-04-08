@@ -14,6 +14,7 @@ import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.graphs.Histogram;
 import com.example.rocketapp.model.graphs.TimePlot;
 import com.example.rocketapp.model.trials.Trial;
+import com.github.mikephil.charting.charts.BarChart;
 
 import java.util.ArrayList;
 
