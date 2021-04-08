@@ -1,3 +1,8 @@
+* Apr 5, 2021
+   * Mike doing code refactoring and UI updates
+   * Saif and Archit working on Graphs
+   * Aryan working on Storyboard and barcode/QRcode
+
 * Mar 29, 2021
    * Aryan, Saji, and Trevor working on QR codes
    * Mike working on automatic login
