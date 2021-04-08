@@ -43,4 +43,50 @@ public class CountExperiment extends Experiment<CountTrial> {
         return TYPE;
     }
 
+
+    /**
+     * IMPORTANT NOTE: this method returns the total instead of the mean unlike the other classes, this is to simplify the code
+     * Excluded from getting stored inside firestore.
+     * Calculates the mean from all trials present in this experiment
+     * @return the mean of experiment
+     */
+    @Exclude
+    @Override
+    public float getMean() {
+        ArrayList<CountTrial> trials = getFilteredTrials();
+        if (trials.size() == 0) {return 0;}
+        int sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
+        for(int i = 0; i<trials.size(); i++){
+            sum = sum + trials.get(i).getValue().intValue();
+        }
+        return ((float) sum);
+    }
+
+    /**
+     * IMPORTANT NOTE: this method returns the total instead of the mean unlike the other classes, this is to simplify the code
+     * Excluded from getting stored inside firestore.
+     * Calculates the total from all trials present in this experiment up to a certain date
+     * @return the total of experiment to given date
+     */
+    @Exclude
+    @Override
+    public float getMean(Date date) {
+        ArrayList<CountTrial> trials = getFilteredTrials();
+        if (trials.size() == 0) {return 0;}
+        float sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
+        int trialCounter = 0;
+        for(int i = 0; i<trials.size() ; i++){
+            if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
+            sum = sum + trials.get(i).getValue();
+            trialCounter++;
+        }
+        return (float) sum;
+    }
+
 }
