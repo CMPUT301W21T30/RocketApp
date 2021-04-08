@@ -21,18 +21,34 @@ public class TimePlot {
     private LineChart lineChart; //Source: https://www.youtube.com/watch?v=yrbgN2UvKGQ&list=PLFh8wpMiEi89LcBupeftmAcgDKCeC24bJ&ab_channel=SarthiTechnology
     private final Experiment<?> experiment;
 
+    /**
+     * Initialize a time plot for a given experiment
+     * @param experiment
+     */
     public TimePlot(Experiment<?> experiment){
         this.experiment = experiment;
     }
 
+    /**
+     *
+     * @return time plot line chart
+     */
     public LineChart getLineChart() {
         return lineChart;
     }
 
+    /**
+     * Sets time plot line chart
+     * @param lineChart
+     */
     public void setLineChart(LineChart lineChart) {
         this.lineChart = lineChart;
     }
 
+    /**
+     * Create time plot view for a given experiment
+     * @param trials
+     */
     public void createTimePlotView(ArrayList<Trial> trials) {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {

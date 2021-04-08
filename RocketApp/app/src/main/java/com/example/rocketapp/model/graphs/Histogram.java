@@ -26,14 +26,26 @@ public class Histogram extends AppCompatActivity {
         return barChart;
     }
 
+    /**
+     * Sets time plot line chart
+     * @param barChart
+     */
     public void setBarChart(BarChart barChart) {
         this.barChart = barChart;
     }
 
+    /**
+     * Initialize a histogram for a given experiment
+     * @param experiment
+     */
     public Histogram(Experiment<?> experiment){
         this.experiment = experiment;
     }
 
+    /**
+     * Creates histogram view for a given experiment
+     * @param trials
+     */
     public void createHistogramView(ArrayList<Trial> trials){
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<Trial> done = new ArrayList<Trial>();
@@ -69,9 +81,9 @@ public class Histogram extends AppCompatActivity {
                 }
 
                 //Handling Binomial case:
-                if (trials.get(i).getValueString().equals("True")) {
+                if (trials.get(i).getValueString().equals("true")) {
                     barEntries.add(new BarEntry(Float.parseFloat("1"), freq));
-                } else if (trials.get(i).getValueString().equals("False")) {
+                } else if (trials.get(i).getValueString().equals("false")) {
                     barEntries.add(new BarEntry(Float.parseFloat("0"), freq));
                 }
 
