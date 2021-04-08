@@ -37,7 +37,7 @@ public class GeneralAppTest {
     @Test
     public void checkLogin(){
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "saif");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
@@ -45,7 +45,7 @@ public class GeneralAppTest {
     @Test
     public void checkAddExperiment(){
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "saif");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         ArrayList<Experiment<?>> array = ExperimentManager.getOwnedExperimentsArrayList();
@@ -67,7 +67,7 @@ public class GeneralAppTest {
     @Test
     public void checkSubscribed() throws InterruptedException {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "archit");
         solo.clickOnButton("LOGIN");
         solo.clickOnButton("SUBSCRIBE");
         solo.clickOnText("Toss a coin");
@@ -78,7 +78,7 @@ public class GeneralAppTest {
     @Test
     public void checkAddTrial() throws InterruptedException {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "archit");
         solo.clickOnButton("LOGIN");
         if (!solo.searchText("Toss a coin", 1)) {
             solo.clickOnButton("SUBSCRIBE");
@@ -97,7 +97,7 @@ public class GeneralAppTest {
     public void checkPublished() {
         // Login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -129,7 +129,7 @@ public class GeneralAppTest {
     public void checkUnPublished() {
         // Login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -172,7 +172,7 @@ public class GeneralAppTest {
     public void testOwnerActivity() {
         // Login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -187,7 +187,7 @@ public class GeneralAppTest {
     public void testOwnerActivityTrial() {
         // Login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
@@ -203,7 +203,7 @@ public class GeneralAppTest {
     public void testOwnerActivityEndExperiment() {
         // Login
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mike Greber");
         solo.clickOnButton("LOGIN");
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
 
