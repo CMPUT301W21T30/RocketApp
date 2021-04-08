@@ -22,11 +22,11 @@ public class ExperimentStatisticsActivity extends AppCompatActivity {
     Experiment<?> experiment;
     Histogram histogram;
     TimePlot timePlot;
-    BarChart histo;
-    TextView ht;
+    BarChart histo; //To disable view if Count
+    TextView ht;    //To disable title if Count
 
     /**
-     * Creates GraphActivity view based on input
+     * Creates Histogram and Timeplot
      * @param savedInstanceState
      */
     @Override

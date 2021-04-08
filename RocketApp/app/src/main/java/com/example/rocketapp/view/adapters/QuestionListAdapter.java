@@ -110,6 +110,10 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
             ownerUsernameTextView.setOnClickListener(onClickUser);
         }
 
+        /**
+         *  implementing the view holder
+         * @param itemView the item that we are going to view on the list
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             commentTitleTextView = itemView.findViewById(R.id.typeTextView);

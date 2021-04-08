@@ -16,9 +16,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+//Citation - https://www.youtube.com/watch?v=yrbgN2UvKGQ
+//Youtube
+//Sarthi Technology - https://www.youtube.com/channel/UCWOpKx--cc-48bze5T4vYUg
+//Sep 9, 2018
 
+/**
+ * Creates and displays mean of experiment over time at an interval of 1 day.
+ */
 public class TimePlot {
-    private LineChart lineChart; //Source: https://www.youtube.com/watch?v=yrbgN2UvKGQ&list=PLFh8wpMiEi89LcBupeftmAcgDKCeC24bJ&ab_channel=SarthiTechnology
+    private LineChart lineChart;
     private final Experiment<?> experiment;
 
     /**
@@ -49,14 +56,19 @@ public class TimePlot {
      * Create time plot view for a given experiment
      * @param trials
      */
+    //Citation - https://stackoverflow.com/a/54861945
+    //stackoverflow
+    //Gayathri - https://stackoverflow.com/users/9890588/gayathri
+    //Feb 25 '19
+    //License - cc by-sa
     public void createTimePlotView(ArrayList<Trial> trials) {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                Date date = new Date((long) value);
-                DateFormat df = new SimpleDateFormat("dd/MM");
-                return (df).format(date);// xVal is a string array
+                Date date = new Date((long) value);     //Citation - https://stackoverflow.com/a/31624874
+                DateFormat df = new SimpleDateFormat("dd/MM");  //TheStoneFox - https://stackoverflow.com/users/1219336/thestonefox
+                return (df).format(date);   //License - cc by-sa
             }
         });
         ArrayList<Entry> dataValue = new ArrayList<Entry>();
@@ -65,7 +77,6 @@ public class TimePlot {
         ArrayList<String> done = new ArrayList<>();
         for (int i = 0; i < trials.size(); i++) {
             mean = experiment.getMean(trials.get(i).getTimestamp().toDate());
-            System.out.println("the mean is " + mean);//testing getMean(Date), tests confirm it works.
             Entry entry = new Entry(trials.get(i).getTimestamp().toDate().getTime(), mean);
             DateFormat df = new SimpleDateFormat("dd/MM");
             String sdf = (df).format(trials.get(i).getTimestamp().toDate().getTime());
@@ -99,6 +110,5 @@ public class TimePlot {
         dataSets.add(lineDataSet);
         LineData data = new LineData(dataSets);
         lineChart.setData(data);
-        //System.out.println(lineChart.getData().getDataSets());
     }
 }

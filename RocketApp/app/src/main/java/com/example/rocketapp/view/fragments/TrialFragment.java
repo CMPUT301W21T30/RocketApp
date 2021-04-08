@@ -53,7 +53,9 @@ public class TrialFragment extends DialogFragment {
     }
 
 
-    // Setup and alert dialog and button callbacks
+    /**
+     * Setup and alert dialog and button callbacks
+     **/
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
