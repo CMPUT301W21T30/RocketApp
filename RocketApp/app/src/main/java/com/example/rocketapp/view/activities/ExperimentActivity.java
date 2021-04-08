@@ -1,15 +1,15 @@
 package com.example.rocketapp.view.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.trials.Geolocation;
-import com.example.rocketapp.view.TrialFragment;
+import com.example.rocketapp.view.fragments.TrialFragment;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -37,8 +37,9 @@ import com.example.rocketapp.model.experiments.Experiment;
 /**
  * Display view for Experiment
  */
-public class ExperimentActivity extends AppCompatActivity {
+public class ExperimentActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentActivity";
+    private final int locationPermissionRequestCode = 100;
     private Experiment<?> experiment;
     private TextView meanTextView;
     private TextView medianTextView;
@@ -85,24 +86,21 @@ public class ExperimentActivity extends AppCompatActivity {
         publishedTextView = findViewById(R.id.publishedTextView);
         experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
         trialCountTextView = findViewById(R.id.trialCountTextView);
-        totalText = findViewById(R.id.meanText);
-        if(experiment.getType().equals("Count")) {
-            isItCount();
-        }
-        findViewById(R.id.viewGraphsTextViewButton).setOnClickListener(v -> openExperimentIntent(GraphsActivity.class));
+
+        findViewById(R.id.loginBtn).setOnClickListener(v -> openExperimentIntent(ExperimentStatisticsActivity.class));
 
         if (!UserManager.getUser().isOwner(experiment))
             publishedTextView.setVisibility(View.GONE);
 
         if (experiment.getType().equals(BinomialExperiment.TYPE))
-            ((TextView) findViewById(R.id.meanText)).setText("Success Ratio");
+            ((TextView) findViewById(R.id.meanText)).setText(R.string.mean_label_binomial_trial);
 
 
         ownerTextView = findViewById(R.id.ownerTextView);
         ownerTextView.setOnClickListener(this::onOwnerClicked);
 
         addTrialButton = findViewById(R.id.addTrialButton);
-        addTrialButton.setOnClickListener(this::onAddTrialClicked);
+        addTrialButton.setOnClickListener(v -> onAddTrialClicked());
 
         Button mapButton = findViewById(R.id.mapbtn);
         if (experiment.info.isGeoLocationEnabled()) {
@@ -142,12 +140,12 @@ public class ExperimentActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (UserManager.getUser().isOwner(experiment)) {
-            getMenuInflater().inflate(R.menu.experiment_menu, menu);
+            getMenuInflater().inflate(R.menu.menu_experiment, menu);
             endExperimentMenuItem = menu.findItem(R.id.endExperimentMenuItem);
             publishExperimentMenuItem = menu.findItem(R.id.publishExperimentMenuItem);
             publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
         } else {
-            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
+            getMenuInflater().inflate(R.menu.menu_experimenter, menu);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -177,7 +175,7 @@ public class ExperimentActivity extends AppCompatActivity {
                 onEndExperimentClicked();
                 return true;
             case R.id.experimentStatisticsMenuItem:
-                openExperimentIntent(GraphsActivity.class);
+                openExperimentIntent(ExperimentStatisticsActivity.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -212,7 +210,7 @@ public class ExperimentActivity extends AppCompatActivity {
     }
 
 
-    void onAddTrialClicked(View view) {
+    void onAddTrialClicked() {
         if (!experiment.info.isGeoLocationEnabled()) {
             new TrialFragment("Add " + experiment.getType() + " Trial", experiment, newTrial ->
                 TrialManager.addTrial(newTrial, experiment,
@@ -232,18 +230,24 @@ public class ExperimentActivity extends AppCompatActivity {
         }
     }
 
-    
-    private void getLocation(ObjectCallback<Location> onSuccess) {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE))
-                    Toast.makeText(this.getApplicationContext(), "Must enable location permission in android settings.", Toast.LENGTH_LONG).show();
-
-            return;
+        if (requestCode == locationPermissionRequestCode) {
+            if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+                onAddTrialClicked();
+            } else {
+                Toast.makeText(getApplicationContext(), "Must enable location permission in android settings.", Toast.LENGTH_LONG).show();
+            }
         }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void getLocation(ObjectCallback<Location> onSuccess) {
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION, locationPermissionRequestCode)) return;
 
         // Get last location
         LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(location -> {

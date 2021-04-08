@@ -17,7 +17,7 @@ import com.example.rocketapp.controller.TrialManager;
 import com.example.rocketapp.helpers.Validate;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
-import com.example.rocketapp.view.TrialListAdapter;
+import com.example.rocketapp.view.adapters.TrialListAdapter;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class ExperimentEditActivity extends RocketAppActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_owner);
+        setContentView(R.layout.activity_experiment_edit);
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         
@@ -44,9 +44,9 @@ public class ExperimentEditActivity extends RocketAppActivity {
         minTrialsEditText = findViewById(R.id.editTextMinTrials);
 
         findViewById(R.id.textViewUpdate).setOnClickListener(v -> {
-            if (Validate.lengthInRange(descriptionEditText, 3, 50, true) &&
-                Validate.lengthInRange(regionEditText, 2, 50, true) &&
-                Validate.intInRange(minTrialsEditText, 1, 1000, true)) {
+            if (Validate.lengthInRange(descriptionEditText, 3, 100, true) &&
+                Validate.lengthInRange(regionEditText, 2, 40, true) &&
+                Validate.intInRange(minTrialsEditText, 1, Integer.MAX_VALUE, true)) {
 
                 experiment.info.setDescription(descriptionEditText.getText().toString());
                 experiment.info.setRegion(regionEditText.getText().toString());

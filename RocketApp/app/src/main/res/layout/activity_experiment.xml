@@ -71,7 +71,7 @@
                     android:text="Mean"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toBottomOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/Q1Text"
@@ -158,7 +158,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/medianText" />
 
                 <TextView
-                    android:id="@+id/trialCountLabel"
+                    android:id="@+id/userNameEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -176,7 +176,7 @@
                     android:text="0"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/trialCountLabel" />
+                    app:layout_constraintTop_toTopOf="@+id/userNameEditText" />
 
                 <TextView
                     android:id="@+id/medianValue"
@@ -197,6 +197,33 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/stdDevText" />
+
+                <Button
+                    android:id="@+id/loginBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:fontFamily="@font/nunito_bold"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
+                    android:paddingLeft="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="0dp"
+                    android:shadowColor="#00FFFFFF"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="0"
+                    android:text="View Graphs"
+                    android:textAllCaps="false"
+                    android:textColor="@color/dark_pink"
+                    android:textSize="18sp"
+                    app:backgroundTint="#FFFFFFFF"
+                    app:elevation="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/stdDevText"
+                    app:rippleColor="@color/dark_pink" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
