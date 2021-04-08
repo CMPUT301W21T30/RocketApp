@@ -206,7 +206,10 @@ public class ExperimentActivity extends RocketAppActivity {
                 new TrialFragment(experiment, newTrial -> {
                     newTrial.setLocation(new Geolocation(location));
                     TrialManager.addTrial(newTrial, experiment,
-                            t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),
+                            t -> {
+                                Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
+                                update(experiment);
+                            },
                             e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show());
                 }).show(getSupportFragmentManager(), "ADD_TRIAL");
             });
@@ -286,7 +289,7 @@ public class ExperimentActivity extends RocketAppActivity {
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
         regionTextView.setText(experiment.info.getRegion());
         experimentTypeTextView.setText(experiment.getType() + " Experiment");
-        trialCountTextView.setText(String.valueOf(experiment.getTrials().size()));
+        trialCountTextView.setText(String.valueOf(experiment.getFilteredTrials().size()));
 
         statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
         statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);

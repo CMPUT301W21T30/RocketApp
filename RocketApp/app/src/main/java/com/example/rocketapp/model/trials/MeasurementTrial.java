@@ -1,21 +1,17 @@
 package com.example.rocketapp.model.trials;
-import com.google.firebase.firestore.Exclude;
-import static java.lang.Math.ceil;
+
 
 /**
  * Class for Trials of 'Measurement' type.
  * The trials are either True(Success) or False(Fail)
  */
-public class MeasurementTrial extends Trial implements Comparable<MeasurementTrial>{
+public class MeasurementTrial extends Trial {
     public static final String TYPE = "Measurement";
-    private float measurement;
 
     /**
-     * Constructor for MeasurementTrial initialized with 0 if no value is passed
+     * Default constructor for firestore serialization. Do not use.
      */
-    public MeasurementTrial() {
-        measurement = 0;
-    }
+    public MeasurementTrial() { }
 
     /**
      * Constructor for MeasurementTrial where a value for count is passed.
@@ -23,18 +19,7 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
      *          value is set as the value of this trial.
      */
     public MeasurementTrial(float value){
-        setMeasurement(value);
-    }
-
-    /**
-     * @param trial
-     *          trial parameter is a different object of CountTrial class which gets compared to this trial based on their value
-     * @return the difference in (this object's trial value - passed object's trial value) rounded up to nearest integer
-     */
-    @Override
-    public int compareTo(MeasurementTrial trial) {
-        float compareCount = trial.getMeasurement();
-        return (int) ceil((this.getMeasurement() - compareCount));
+        this.value = value;
     }
 
     /**
@@ -43,29 +28,6 @@ public class MeasurementTrial extends Trial implements Comparable<MeasurementTri
     @Override
     public String getType() {
         return TYPE;
-    }
-
-    /**
-     * @return string representation of trial value
-     */
-    @Exclude
-    @Override
-    public String getValueString() { return Float.toString(measurement); }
-
-    /**
-     * @return the value of this trial
-     */
-    public float getMeasurement(){
-        return measurement;
-    }
-
-    /**
-     * setter for measurement
-     * @param value
-     *          Initialize the measurement with value
-     */
-    public void setMeasurement(float value){
-        measurement = value;
     }
 
 }
