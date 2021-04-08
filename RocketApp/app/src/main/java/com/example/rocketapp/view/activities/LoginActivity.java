@@ -7,17 +7,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
+import com.example.rocketapp.controller.callbacks.Callback;
 import com.example.rocketapp.helpers.Validate;
-import com.example.rocketapp.view.activities.ExperimentsListActivity;
 
 /**
  * This is the landing screen of RocketApp
  * User logs in with a username
  */
-public class LogInActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LogInActivity";
     EditText usernameEditText;
     /**
@@ -33,48 +34,47 @@ public class LogInActivity extends AppCompatActivity {
 
         // set up login Button
         findViewById(R.id.loginBtn).setOnClickListener(v -> {
-            usernameEditText = findViewById(R.id.usernameEditText);
+            usernameEditText = findViewById(R.id.userNameEditText);
             if (Validate.lengthInRange(usernameEditText, 3, 50, true)) {
                 createUser(usernameEditText.getText().toString());
             }
         });
 
-        findViewById(R.id.inputGroup).setVisibility(View.GONE);
+        findViewById(R.id.createUserCardView).setVisibility(View.INVISIBLE);
 
-        if (!getPreferences(MODE_PRIVATE).getString("userId", "noId").equals("noId")) {
-            Log.e(TAG, "userId found!");
-            login(getPreferences(MODE_PRIVATE));
-        } else {
+        login(()-> {
+            findViewById(R.id.createUserCardView).setVisibility(View.VISIBLE);
             findViewById(R.id.inputGroup).setVisibility(View.VISIBLE);
-            findViewById(R.id.loadingGroup).setVisibility(View.GONE);
-            Log.e(TAG, "userId not found");
-        }
+            findViewById(R.id.loadingMessageTextView).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+        });
     }
 
 
     /**
      * Logs into existing user's profile if username matches a user inside database
-     * @param preferences
-     *          username entered during login in the box.
      */
-    private void login(SharedPreferences preferences) {
-        UserManager.login(preferences, user -> {
-            Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
+    private void login(Callback onFailure) {
+        UserManager.login(this, user -> {
+            Intent ExperimentsListActivityIntent = new Intent(this, MainActivity.class);
             startActivity(ExperimentsListActivityIntent);
             finish();
-        }, e -> Log.d(TAG, e.toString()));
+        }, e -> onFailure.callBack());
     }
+
 
     /**
      * Creates a new user and login
      * @param userName Name of user to create
      */
     private void createUser(String userName) {
-        UserManager.createUser(userName, getPreferences(MODE_PRIVATE), user -> {
-            Intent ExperimentsListActivityIntent = new Intent(this, ExperimentsListActivity.class);
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        UserManager.createUser(userName, this, user -> {
+            Intent ExperimentsListActivityIntent = new Intent(this, MainActivity.class);
             startActivity(ExperimentsListActivityIntent);
             finish();
         }, e -> {
+            findViewById(R.id.progressBar).setVisibility(View.GONE);
             usernameEditText.setError("Username not available.");
             usernameEditText.requestFocus();
         });

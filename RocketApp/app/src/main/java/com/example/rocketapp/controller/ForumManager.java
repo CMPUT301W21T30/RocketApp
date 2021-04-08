@@ -19,14 +19,15 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 
 /**
- * Handles adding, retrieving, and modifying questions and answers for Experiment<?> experiment forums.
+ * Handles adding, retrieving, and modifying questions and answers for experiment forums.
  */
 public class ForumManager {
     private static final String TAG = "ForumManager";
-    private static ListenerRegistration forumListener;
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String EXPERIMENTS = "Experiments";
     private static final String COMMENTS = "Comments";
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static ListenerRegistration forumListener;
+
 
     /**
      * Private constructor, should not be instantiated

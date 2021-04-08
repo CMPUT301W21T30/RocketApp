@@ -1,6 +1,8 @@
 package com.example.rocketapp.view.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -9,16 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.controller.TrialManager;
+import com.example.rocketapp.controller.ScannerManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.TrialFragment;
+import com.example.rocketapp.view.fragments.TrialFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 /**
  * ScannerActivity implements the scanner feature
@@ -26,50 +30,38 @@ import com.google.zxing.integration.android.IntentResult;
  * https://youtu.be/wfucGSKngq4
  *
  */
-public class RegisterBarcodeActivity extends AppCompatActivity {
+public class RegisterBarcodeActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentScannerAct";
+    private final int cameraPermissionRequestCode = 100;
     private Experiment<?> experiment;
+    private TextView codePreviewTextView, registeredStatusTextView;
     private Button registerButton;
-    private TextView codePreviewTextView;
-    private TextView registeredStatusTextView;
     private String scannedCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_scanner);
+        setContentView(R.layout.activity_barcode_registration);
 
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         codePreviewTextView = findViewById(R.id.scanned_code);
         registeredStatusTextView = findViewById(R.id.registeredStatusTextView);
+
         registerButton = findViewById(R.id.registerButton);
         registerButton.setVisibility(View.INVISIBLE);
         registerButton.setOnClickListener(v ->
             new TrialFragment(experiment,
-                    newTrial -> TrialManager.registerBarcode(scannedCode, experiment, newTrial,
-                            barcode-> {
-                                Toast.makeText(this, "Barcode registered.", Toast.LENGTH_LONG).show();
-                                registeredStatusTextView.setText(getRegistrationStatusString(barcode));
-                            },
+                    newTrial -> ScannerManager.registerBarcode(scannedCode, experiment, newTrial,
+                            barcode-> registeredStatusTextView.setText(getRegistrationStatusString(barcode)),
                             exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show())
             ).show(getSupportFragmentManager(), "ADD_TRIAL"));
 
-        findViewById(R.id.scanButton).setOnClickListener(this::scanCode);
+        findViewById(R.id.scanButton).setOnClickListener(v -> scanCode());
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-
-    private void scanCode(View v) {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCaptureActivity(CaptureAct.class);
-        integrator.setOrientationLocked(false);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Scanning");
-        integrator.initiateScan();
     }
 
 
@@ -94,7 +86,7 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
             scannedCode = result.getContents();
             registerButton.setVisibility(View.VISIBLE);
 
-            TrialManager.readBarcode(scannedCode,
+            ScannerManager.readBarcode(scannedCode,
                     barcode -> registeredStatusTextView.setText(getRegistrationStatusString(barcode)),
                     e -> {
                         registeredStatusTextView.setText(R.string.barcode_not_registered);
@@ -105,11 +97,35 @@ public class RegisterBarcodeActivity extends AppCompatActivity {
         }
     }
 
-    String getRegistrationStatusString(TrialManager.Barcode barcode) {
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == cameraPermissionRequestCode) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(getApplicationContext(), "Must allow app access to Camera in device settings.", Toast.LENGTH_LONG).show();
+            } else {
+                scanCode();
+            }
+        }
+    }
+
+
+    private void scanCode() {
+        if (!hasPermission(Manifest.permission.CAMERA, cameraPermissionRequestCode)) return;
+
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator.setOrientationLocked(false);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Scanning");
+        integrator.initiateScan();
+    }
+
+
+    private String getRegistrationStatusString(ScannerManager.Barcode barcode) {
         Experiment<?> experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
-        String status = "Barcode registered as:\n" +
-                barcode.getTrial().getType() + " Trial: " + barcode.getTrial().getValueString() +
-                "\nExperiment: " + experiment.info.getDescription();
-        return status;
+        return String.format("Barcode registered as:\n%s Trial: %s\nExperiment: %s", barcode.getTrial().getType(), barcode.getTrial().getValueString(), experiment.info.getDescription());
     }
 }

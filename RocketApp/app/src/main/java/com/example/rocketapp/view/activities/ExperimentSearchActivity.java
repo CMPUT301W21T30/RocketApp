@@ -15,7 +15,7 @@ import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.view.ExperimentListAdapter;
+import com.example.rocketapp.view.adapters.ExperimentListAdapter;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class ExperimentSearchActivity extends RocketAppActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_experiments);
+        setContentView(R.layout.activity_experiments_search);
         initRecyclerView();
 
         EditText searchExperiments = findViewById(R.id.search_for_experiments);

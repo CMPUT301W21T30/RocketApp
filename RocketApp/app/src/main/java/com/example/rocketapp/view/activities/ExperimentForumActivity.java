@@ -17,7 +17,7 @@ import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.users.User;
-import com.example.rocketapp.view.QuestionListAdapter;
+import com.example.rocketapp.view.adapters.QuestionListAdapter;
 
 public class ExperimentForumActivity extends RocketAppActivity {
     private static final String TAG = "ForumActivity";
