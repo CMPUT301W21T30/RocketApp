@@ -33,7 +33,7 @@ import com.journeyapps.barcodescanner.CaptureActivity;
 public class RegisterBarcodeActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentScannerAct";
     private final int cameraPermissionRequestCode = 100;
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private TextView codePreviewTextView, registeredStatusTextView;
     private Button registerButton;
     private String scannedCode;
@@ -125,7 +125,7 @@ public class RegisterBarcodeActivity extends RocketAppActivity {
 
 
     private String getRegistrationStatusString(ScannerManager.Barcode barcode) {
-        Experiment<?> experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
+        Experiment experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
         return String.format("Barcode registered as:\n%s Trial: %s\nExperiment: %s", barcode.getTrial().getType(), barcode.getTrial().getValueString(), experiment.info.getDescription());
     }
 }

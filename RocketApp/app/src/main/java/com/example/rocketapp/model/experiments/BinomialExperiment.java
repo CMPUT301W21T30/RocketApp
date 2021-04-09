@@ -11,7 +11,7 @@ import com.google.firebase.firestore.Exclude;
  * Class for Experiments of 'Binomial' type.
  *Inherits from abstract class Experiment.
  */
-public class BinomialExperiment extends Experiment<BinomialTrial> {
+public class BinomialExperiment extends Experiment {
     public static final String TYPE = "Binomial";     //Type of experiment
 
     /**

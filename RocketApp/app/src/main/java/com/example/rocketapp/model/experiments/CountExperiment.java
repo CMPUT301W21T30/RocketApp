@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.example.rocketapp.model.trials.CountTrial;
+import com.example.rocketapp.model.trials.Trial;
 import com.google.firebase.firestore.Exclude;
 
 import static java.lang.Math.sqrt;
@@ -13,7 +14,7 @@ import static java.lang.Math.sqrt;
  * Class for experiments of type "Count".
  * Inherits from abstract class Experiment.
  */
-public class CountExperiment extends Experiment<CountTrial> {
+public class CountExperiment extends Experiment {
     public static final String TYPE = "Count";
 
     /**
@@ -53,16 +54,13 @@ public class CountExperiment extends Experiment<CountTrial> {
     @Exclude
     @Override
     public float getMean() {
-        ArrayList<CountTrial> trials = getFilteredTrials();
-        if (trials.size() == 0) {return 0;}
-        int sum = 0;
-        if(trials.size()==0){
-            return 0;
-        }
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) return 0;
+        float sum = 0;
         for(int i = 0; i<trials.size(); i++){
-            sum = sum + trials.get(i).getValue().intValue();
+            sum = sum + trials.get(i).getValue();
         }
-        return ((float) sum);
+        return sum;
     }
 
     /**
@@ -74,14 +72,11 @@ public class CountExperiment extends Experiment<CountTrial> {
     @Exclude
     @Override
     public float getMean(Date date) {
-        ArrayList<CountTrial> trials = getFilteredTrials();
-        if (trials.size() == 0) {return 0;}
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) return 0;
         float sum = 0;
-        if(trials.size()==0){
-            return 0;
-        }
         int trialCounter = 0;
-        for(int i = 0; i<trials.size() ; i++){
+        for(int i = 0; i < trials.size() ; i++) {
             if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
             sum = sum + trials.get(i).getValue();
             trialCounter++;

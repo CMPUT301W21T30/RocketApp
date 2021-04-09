@@ -23,10 +23,10 @@ import static java.lang.Math.sqrt;
  * Provides a toString() to describe display
  * Stores data on Firestore
  */
-public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnableDocument {
+public abstract class Experiment extends FirestoreOwnableDocument {
     public static final String ID_KEY = "ID";
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
-    protected ArrayList<TrialType> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
+    protected ArrayList<Trial> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
     private ArrayList<Question> questionsArrayList = new ArrayList<>();         //Comments posted on this experiment
     private boolean isPublished, isActive;
 
@@ -101,23 +101,18 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      * @return an array list featuring all trials submitted under this experiment
      */
     @Exclude
-    public ArrayList<TrialType> getTrials() {
-        return trialsArrayList;
-    }
-
-    /**
-     * @return An ArrayList of all the trials that are not ignored by the owner
-     */
-    @Exclude
-    public ArrayList<TrialType> getFilteredTrials() {
-        ArrayList<TrialType> trials = getTrials();
-        ArrayList<TrialType> filteredTrials = new ArrayList<>();
-        for(int i = 0; i < trials.size(); i++){
-            if(! trials.get(i).getIgnored()){
-                filteredTrials.add(trials.get(i));
+    public ArrayList<Trial> getTrials(boolean includeIgnored) {
+        if (includeIgnored) {
+            return trialsArrayList;
+        } else {
+            ArrayList<Trial> filteredTrials = new ArrayList<>();
+            for(int i = 0; i < trialsArrayList.size(); i++){
+                if(!trialsArrayList.get(i).getIgnored()){
+                    filteredTrials.add(trialsArrayList.get(i));
+                }
             }
+            return filteredTrials;
         }
-        return filteredTrials;
     }
 
     /**
@@ -136,7 +131,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      *          array list of trials which must be of the same type as experiment
      */
     @Exclude
-    public void setTrials(ArrayList<TrialType> trials) {
+    public void setTrials(ArrayList<Trial> trials) {
         trialsArrayList = trials;
     }
 
@@ -177,7 +172,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      */
     @Exclude
     public float getMedian(){
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         Collections.sort(trials);
         if (trials.size() == 0) return 0;
         int length = trials.size();
@@ -197,7 +192,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      */
     @Exclude
     public float getMean() {
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         if (trials.size() == 0) return 0;
 
         float sum = 0.0f;
@@ -215,7 +210,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      */
     @Exclude
     public float getMean(Date date) {
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         if (trials.size() == 0) {return 0;}
         float sum = 0;
         if(trials.size()==0){
@@ -235,7 +230,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
      * @return standard deviation
      */
     public float getStdDev() {
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         if (trials.size() == 0) return 0;
         float mean = getMean();
         float squareSum = 0;
@@ -255,7 +250,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
     @Exclude
     public float getTopQuartile() {
         float quart;
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         if (trials.size() == 0) {return 0;}
         Collections.sort(trials);
         switch(trials.size() % 4){
@@ -281,7 +276,7 @@ public abstract class Experiment<TrialType extends Trial> extends FirestoreOwnab
     @Exclude
     public float getBottomQuartile() {
         float quart;
-        ArrayList<TrialType> trials = getFilteredTrials();
+        ArrayList<Trial> trials = getTrials(false);
         if (trials.size() == 0) return 0;
         Collections.sort(trials);
         switch (trials.size() % 4){

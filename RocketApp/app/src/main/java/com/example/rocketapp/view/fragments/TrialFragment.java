@@ -35,18 +35,18 @@ import com.example.rocketapp.model.trials.Trial;
  * If no experiment is passed in, will create a new experiment and return a reference to it in OnOkCallback when OK is pressed.
  */
 public class TrialFragment extends DialogFragment {
-    private final Experiment<?> experiment;
+    private final Experiment experiment;
     private final ObjectCallback<Trial> callback;
     private String title;
     private EditText inputEditText;
 
-    public TrialFragment(Experiment<?> experiment, ObjectCallback<Trial> callback) {
+    public TrialFragment(Experiment experiment, ObjectCallback<Trial> callback) {
         this.title = "";
         this.experiment = experiment;
         this.callback = callback;
     }
 
-    public TrialFragment(String title, Experiment<?> experiment, ObjectCallback<Trial> callback) {
+    public TrialFragment(String title, Experiment experiment, ObjectCallback<Trial> callback) {
         this.title = title;
         this.experiment = experiment;
         this.callback = callback;

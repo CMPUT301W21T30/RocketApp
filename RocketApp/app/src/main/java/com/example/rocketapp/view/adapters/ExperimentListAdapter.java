@@ -18,23 +18,24 @@ import java.util.ArrayList;
  * Adapter for displaying experiments list in a recycler view.
  */
 public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAdapter.ViewHolder> {
-    private final ArrayList<Experiment<?>> experiments;
-    private final ObjectCallback<Experiment<?>> onClickListener;
+    private final ArrayList<Experiment> experiments;
+    private final ObjectCallback<Experiment> onClickListener;
 
     /**
      * ExperimentListAdapter is the custom adapter for the recyclerView that displays searched experiments
      * @param experiments the initial experiment list
      * @param onClickListener
      */
-    public ExperimentListAdapter(ArrayList<Experiment<?>> experiments, ObjectCallback<Experiment<?>> onClickListener) {
-        this.experiments = experiments;
+    public ExperimentListAdapter(ArrayList<Experiment> experiments, ObjectCallback<Experiment> onClickListener) {
+        this.experiments = new ArrayList<>();
+        this.experiments.addAll(experiments);
         this.onClickListener = onClickListener;
     }
 
     /**
      * @param experiments new list of experiments
      */
-    public void updateList(ArrayList<Experiment<?>> experiments) {
+    public void updateList(ArrayList<Experiment> experiments) {
         this.experiments.clear();
         this.experiments.addAll(experiments);
         notifyDataSetChanged();
@@ -62,7 +63,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
      */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Experiment<?> experiment = experiments.get(position);
+        Experiment experiment = experiments.get(position);
 
         holder.set(experiment, view -> {
             onClickListener.callBack(experiment);
@@ -94,7 +95,7 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
          * @param experiment The experiment to populate the viewholder with
          * @param onClick The click behaviour
          */
-        public void set(Experiment<?> experiment, View.OnClickListener onClick) {
+        public void set(Experiment experiment, View.OnClickListener onClick) {
             experimentNameTextView.setText(experiment.info.getDescription());
             regionTextView.setText("Region: " + experiment.info.getRegion());
             ownerTextView.setText("Owner: " +experiment.getOwner().getName());

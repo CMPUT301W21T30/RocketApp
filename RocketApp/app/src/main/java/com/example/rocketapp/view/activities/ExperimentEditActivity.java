@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class ExperimentEditActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentEditAct";
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private final ArrayList<Trial> trialsArrayList = new ArrayList<>();
     private TrialListAdapter trialListAdapter;
     private EditText descriptionEditText, regionEditText, minTrialsEditText;
@@ -104,8 +104,8 @@ public class ExperimentEditActivity extends RocketAppActivity {
      * Update the list according to the current experiment state
      * @param experiment experiment object
      */
-    void update(Experiment<?> experiment) {
-        trialListAdapter.updateList(experiment.getTrials());
+    void update(Experiment experiment) {
+        trialListAdapter.updateList(experiment.getTrials(true));
         minTrialsEditText.setText(String.valueOf(experiment.info.getMinTrials()));
         descriptionEditText.setText(experiment.info.getDescription());
         regionEditText.setText(experiment.info.getRegion());

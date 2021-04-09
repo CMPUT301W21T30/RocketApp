@@ -31,25 +31,25 @@ public class ExperimentUnitTest {
 
     @Test
     public void checkExperimentIsValid() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertFalse(experiment.isValid());
     }
 
     @Test
     public void checkExperimentOwnerIsValid() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertFalse(experiment.ownerIsValid());
     }
 
     @Test
     public void checkExperimentGetTrials() {
-        Experiment<?> experiment = createMockExperiment();
-        assertEquals(4, experiment.getTrials().size());
+        Experiment experiment = createMockExperiment();
+        assertEquals(4, experiment.getTrials(true).size());
     }
 
     @Test
     public void checkExperimentGetQuestions() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertEquals(4, experiment.getQuestions().size());
     }
 

@@ -19,13 +19,13 @@ import java.util.Date;
 
 public class TimePlot {
     private LineChart lineChart; //Source: https://www.youtube.com/watch?v=yrbgN2UvKGQ&list=PLFh8wpMiEi89LcBupeftmAcgDKCeC24bJ&ab_channel=SarthiTechnology
-    private final Experiment<?> experiment;
+    private final Experiment experiment;
 
     /**
      * Initialize a time plot for a given experiment
      * @param experiment
      */
-    public TimePlot(Experiment<?> experiment){
+    public TimePlot(Experiment experiment){
         this.experiment = experiment;
     }
 

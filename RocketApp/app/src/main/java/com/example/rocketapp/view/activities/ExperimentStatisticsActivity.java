@@ -19,7 +19,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import java.util.ArrayList;
 
 public class ExperimentStatisticsActivity extends AppCompatActivity {
-    Experiment<?> experiment;
+    Experiment experiment;
     Histogram histogram;
     TimePlot timePlot;
     BarChart histo;
@@ -37,7 +37,7 @@ public class ExperimentStatisticsActivity extends AppCompatActivity {
         experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
         histogram = new Histogram(experiment);
         timePlot = new TimePlot(experiment);
-        ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getFilteredTrials();
+        ArrayList<Trial> trials = (ArrayList<Trial>) experiment.getTrials(false);
         histo = findViewById(R.id.histogram);
         ht = findViewById(R.id.textView12);
         histogram.setBarChart(findViewById(R.id.histogram));

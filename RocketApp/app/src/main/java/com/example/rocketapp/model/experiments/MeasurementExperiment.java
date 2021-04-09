@@ -13,7 +13,7 @@ import static java.lang.Math.sqrt;
  * Inherits from abstract class Experiment.
  */
 
-public class MeasurementExperiment extends Experiment<MeasurementTrial> {
+public class MeasurementExperiment extends Experiment {
     public static final String TYPE = "Measurement";
 
     public MeasurementExperiment() {

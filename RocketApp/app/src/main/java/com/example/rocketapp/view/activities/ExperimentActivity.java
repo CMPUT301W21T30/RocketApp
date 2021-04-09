@@ -40,7 +40,7 @@ import com.example.rocketapp.model.experiments.Experiment;
 public class ExperimentActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentActivity";
     private final int locationPermissionRequestCode = 100;
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private TextView meanTextView;
     private TextView medianTextView;
     private TextView stdDevTextView;
@@ -280,7 +280,7 @@ public class ExperimentActivity extends RocketAppActivity {
      * @param experiment
      *          Experiment of current view
      */
-    void update(Experiment<?> experiment) {
+    void update(Experiment experiment) {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
         meanTextView.setText(String.valueOf(experiment.getMean()));
@@ -289,7 +289,7 @@ public class ExperimentActivity extends RocketAppActivity {
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
         regionTextView.setText(experiment.info.getRegion());
         experimentTypeTextView.setText(experiment.getType() + " Experiment");
-        trialCountTextView.setText(String.valueOf(experiment.getFilteredTrials().size()));
+        trialCountTextView.setText(String.valueOf(experiment.getTrials(false).size()));
 
         statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
         statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);

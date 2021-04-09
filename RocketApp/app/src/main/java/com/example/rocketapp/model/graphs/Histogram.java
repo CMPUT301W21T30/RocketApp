@@ -20,7 +20,7 @@ import java.util.Collections;
 public class Histogram extends AppCompatActivity {
 
     private BarChart barChart; //Source: https://www.youtube.com/watch?v=pi1tq-bp7uA
-    private final Experiment<?> experiment;
+    private final Experiment experiment;
 
     public BarChart getBarChart() {
         return barChart;
@@ -38,7 +38,7 @@ public class Histogram extends AppCompatActivity {
      * Initialize a histogram for a given experiment
      * @param experiment
      */
-    public Histogram(Experiment<?> experiment){
+    public Histogram(Experiment experiment){
         this.experiment = experiment;
     }
 

@@ -19,9 +19,7 @@ import java.util.Objects;
 
 public class ScannerManager {
     private static final String TAG = "ScannerManager";
-    private static final String EXPERIMENTS = "Experiments";
     private static final String BARCODES = "Barcodes";
-    private static final String TRIALS = "Trials";
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     /**
@@ -66,12 +64,17 @@ public class ScannerManager {
     }
 
     /**
+     * Private constructor, should not be instantiated
+     */
+    private ScannerManager() {}
+
+    /**
      * Reads a barcode or QR code and adds the corresponding trial if code is valid
      * @param code the barcode being read
      * @param onComplete callback returning the trial that was added
      * @param onFailure callback for when read fails
      */
-    public static void readCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+    public static void processCode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
         switch(code.split(" ").length) {
             case 3:
                 ScannerManager.processQRCode(code, onComplete, onFailure);
@@ -94,7 +97,7 @@ public class ScannerManager {
      * @param onComplete callback for when registration is complete
      * @param onFailure callback for when registration fails
      */
-    public static void registerBarcode(String code, Experiment<?> experiment, Trial trial, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
+    public static void registerBarcode(String code, Experiment experiment, Trial trial, ObjectCallback<Barcode> onComplete, ObjectCallback<Exception> onFailure) {
         registerBarcode(new Barcode(code, experiment.getId(), trial), onComplete, onFailure);
     }
 
@@ -126,7 +129,7 @@ public class ScannerManager {
      * @param generatedString callback returning the string representation of the bitmap
      * @param onFailure callback for when generating bitmap fails
      */
-    public static void createQRCodeBitmap(Experiment<?> experiment, Trial trial, ObjectCallback<Bitmap> bitmapCallback, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
+    public static void createQRCodeBitmap(Experiment experiment, Trial trial, ObjectCallback<Bitmap> bitmapCallback, ObjectCallback<String> generatedString, ObjectCallback<Exception> onFailure) {
         String code = experiment.getId().getKey() + " " + trial.getType() + " " + trial.getValueString();
         MultiFormatWriter writer = new MultiFormatWriter();
         try {
@@ -164,7 +167,7 @@ public class ScannerManager {
             return;
         }
 
-        Experiment<?> experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
+        Experiment experiment = ExperimentManager.getExperiment(new FirestoreDocument.Id(data[0]));
         Trial trial = TrialManager.createTrial(data[1], data[2]);
         if (experiment == null || trial == null) {
             Log.e(TAG, failMessage);
@@ -224,7 +227,7 @@ public class ScannerManager {
      */
     public static void processBarcode(String code, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
         readBarcode(code, barcode->{
-            Experiment<?> experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
+            Experiment experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
             ((FirestoreDocument) barcode.trial).newTimestamp();
             TrialManager.addTrial(barcode.trial, experiment, onComplete, onFailure);
         }, onFailure);

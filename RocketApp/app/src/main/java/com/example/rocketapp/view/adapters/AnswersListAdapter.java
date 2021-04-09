@@ -13,20 +13,21 @@ import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Answer;
+import com.example.rocketapp.model.users.User;
 
 import java.util.ArrayList;
 
 public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.ViewHolder> {
     private final ArrayList<Answer> answers;
     private final ObjectCallback<Answer> onClickAnswer;
-    private final UserManager.UserCallback onClickUser;
+    private final ObjectCallback<User> onClickUser;
 
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param answers the initial questions list
      * @param onClickListener
      */
-    public AnswersListAdapter(ArrayList<Answer> answers, ObjectCallback<Answer> onClickListener, UserManager.UserCallback onClickUser) {
+    public AnswersListAdapter(ArrayList<Answer> answers, ObjectCallback<Answer> onClickListener, ObjectCallback<User> onClickUser) {
         this.answers = answers;
         this.onClickAnswer = onClickListener;
         this.onClickUser = onClickUser;
@@ -73,7 +74,6 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
      */
     @Override
     public int getItemCount() {
-        Log.e("AnswersAdapter", "Size = " + answers.size());
         return answers.size();
     }
 
@@ -99,7 +99,7 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ownerUsernameTextView = itemView.findViewById(R.id.userTextView);
-            dialogueTextView = itemView.findViewById(R.id.dialogueTextView);
+            dialogueTextView = itemView.findViewById(R.id.answerDialogueTextView);
         }
     }
 }

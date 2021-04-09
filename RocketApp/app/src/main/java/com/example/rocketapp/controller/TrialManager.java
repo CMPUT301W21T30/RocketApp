@@ -35,10 +35,11 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 public class TrialManager {
     private static final String TAG = "TrialManager";
     private static final String EXPERIMENTS = "Experiments";
-    private static final String BARCODES = "Barcodes";
     private static final String TRIALS = "Trials";
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static ListenerRegistration trialsListener;
+    protected ObjectCallback<Experiment> onUpdate;
+    private static TrialManager instance;
 
     static final ImmutableMap<String, Class<? extends Trial>> trialClassMap = ImmutableMap.<String, Class<? extends Trial>>builder()
             .put(IntCountTrial.TYPE, IntCountTrial.class)
@@ -50,7 +51,16 @@ public class TrialManager {
     /**
      * Private constructor, should not be instantiated
      */
-    private TrialManager() {}
+    protected TrialManager() {}
+
+    public static void inject(TrialManager injection) {
+        instance = injection;
+    }
+
+    private static TrialManager getInstance() {
+        if (instance == null) instance = new TrialManager();
+        return instance;
+    }
 
     /**
      * Listens to firestore for changes to this experiment. You MUST use this to get the trials for an experiment.
@@ -60,7 +70,12 @@ public class TrialManager {
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment<?> experiment, ObjectCallback<Experiment<?>> onUpdate) {
+    public static void listen(Experiment experiment, ObjectCallback<Experiment> onUpdate) {
+        getInstance().listenImp(experiment, onUpdate);
+    }
+    protected void listenImp(Experiment experiment, ObjectCallback<Experiment> onUpdate) {
+        this.onUpdate = onUpdate;
+
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
@@ -71,7 +86,7 @@ public class TrialManager {
         if (trialsListener != null) trialsListener.remove();
         trialsListener = trialsRef.addSnapshotListener((snapshots, e) -> {
             parseTrialsSnapshot(experiment, snapshots);
-            Log.d(TAG, "Experiment Trials Updated: " + experiment.getTrials().size());
+            Log.d(TAG, "Experiment Trials Updated: " + experiment.getTrials(true).size());
             onUpdate.callBack(experiment);
         });
     }
@@ -88,7 +103,10 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addTrial(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void addTrial(Trial trial, Experiment experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().addTrialImp(trial, experiment, onSuccess, onFailure);
+    }
+    protected void addTrialImp(Trial trial, Experiment experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
         push(trial, experiment, onSuccess, onFailure);
     }
 
@@ -104,7 +122,10 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void update(Trial trial, Experiment experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().updateImp(trial, experiment, onSuccess, onFailure);
+    }
+    protected void updateImp(Trial trial, Experiment experiment, ObjectCallback<Trial> onSuccess, ObjectCallback<Exception> onFailure) {
         push(trial, experiment, onSuccess, onFailure);
     }
 
@@ -119,7 +140,7 @@ public class TrialManager {
      * @param onFailure
      *      Callback for when trial push fails
      */
-    private static void push(Trial trial, Experiment<?> experiment, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
+    private static void push(Trial trial, Experiment experiment, ObjectCallback<Trial> onComplete, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "Push failed. Must be logged in to push.");
             onFailure.callBack(new Exception("Push failed. Must be logged in to push."));
@@ -144,7 +165,7 @@ public class TrialManager {
             return;
         }
 
-        CollectionReference trialsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(TRIALS);
+        CollectionReference trialsRef = instance.db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(TRIALS);
 
         if (trial.getId() != null) {
             trialsRef.document(trial.getId().getKey()).set(trial).addOnSuccessListener(trialSnapshot -> {
@@ -193,12 +214,12 @@ public class TrialManager {
      * @param userSnapshots
      *      The snapshot from firestore to parse
      */
-    private static <TrialType extends Trial> void parseTrialsSnapshot(Experiment<TrialType> experiment, QuerySnapshot userSnapshots) {
-        ArrayList<TrialType> array = new ArrayList<>();
+    private void parseTrialsSnapshot(Experiment experiment, QuerySnapshot userSnapshots) {
+        ArrayList<Trial> array = new ArrayList<>();
 
         for (QueryDocumentSnapshot snapshot : userSnapshots) {
             Class<? extends Trial> classType = trialClassMap.get(snapshot.getString("type"));
-            if (classType != null) array.add((TrialType) readFirebaseObjectSnapshot(classType, snapshot, TAG));
+            if (classType != null) array.add( readFirebaseObjectSnapshot(classType, snapshot, TAG));
             else Log.e(TAG, "classType null in parseTrialsSnapshot.");
         }
 
