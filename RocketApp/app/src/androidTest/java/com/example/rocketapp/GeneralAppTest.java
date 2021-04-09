@@ -262,6 +262,7 @@ public class GeneralAppTest {
         solo.clickOnButton("SUBSCRIBE");
         solo.assertCurrentActivity("Wrong Activity", ExperimentSearchActivity.class);
         solo.enterText((EditText) solo.getView(R.id.search_for_experiments), "eggs");
+        solo.waitForText("eggs", 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.waitForText("Welcome", 1, 2000);
