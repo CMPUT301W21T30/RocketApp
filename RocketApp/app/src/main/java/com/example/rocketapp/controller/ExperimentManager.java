@@ -20,13 +20,14 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 /**
  * Class that handles adding, retrieving, and modifying experiments from firestore.
+ * Singleton with static methods for convenience.
  */
 public class ExperimentManager {
     private static final String TAG = "ExperimentManager";
     private static final String EXPERIMENTS = "Experiments";
     protected ArrayList<Experiment> experimentArrayList;
     private ListenerRegistration experimentListener;
-    private static final FirebaseFirestore db;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference experimentsRef;
     protected static Callback updateCallback;
     private static ExperimentManager instance;
@@ -38,25 +39,29 @@ public class ExperimentManager {
             .put(MeasurementExperiment.TYPE, MeasurementExperiment.class)
             .build();
 
-    static {
-        db = FirebaseFirestore.getInstance();
-//        initializeExperiments();
-    }
 
-    private static ExperimentManager getInstance() {
-        if (instance == null) instance = new ExperimentManager();
-        return instance;
-    }
+
 
     /**
-     * Private constructor, should not be instantiated
+     * Protected constructor, should not be instantiated
      */
     protected ExperimentManager() {
         initializeExperiments();
     }
 
+    /**
+     * @param injection for testing
+     */
     public static void inject(ExperimentManager injection) {
         instance = injection;
+    }
+
+    /**
+     * @return returns the current singleton instance
+     */
+    private static ExperimentManager getInstance() {
+        if (instance == null) instance = new ExperimentManager();
+        return instance;
     }
 
     public interface ExperimentSearch {

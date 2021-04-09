@@ -4,7 +4,9 @@ com.example.rocketapp.controller.callbacks
 com.example.rocketapp.helpers
 com.example.rocketapp.model.comments
 com.example.rocketapp.model.experiments
+com.example.rocketapp.model.graphs
 com.example.rocketapp.model.trials
 com.example.rocketapp.model.users
-com.example.rocketapp.view
 com.example.rocketapp.view.activities
+com.example.rocketapp.view.adapters
+com.example.rocketapp.view.fragments

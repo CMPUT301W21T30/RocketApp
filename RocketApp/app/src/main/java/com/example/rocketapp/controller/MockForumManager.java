@@ -11,6 +11,10 @@ import com.example.rocketapp.model.experiments.Experiment;
 import java.util.ArrayList;
 import java.util.Random;
 
+
+/**
+ * Mock ForumManager to be injected into ForumManager for unit testing, simulates database interactions
+ */
 public class MockForumManager extends ForumManager {
     Random rand = new Random();
 

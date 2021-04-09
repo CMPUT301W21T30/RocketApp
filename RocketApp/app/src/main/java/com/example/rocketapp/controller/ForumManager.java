@@ -20,25 +20,33 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 /**
  * Handles adding, retrieving, and modifying questions and answers for experiment forums.
+ * Singleton with static methods for convenience.
  */
 public class ForumManager {
     private static final String TAG = "ForumManager";
     private static final String EXPERIMENTS = "Experiments";
     private static final String COMMENTS = "Comments";
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static ListenerRegistration forumListener;
     private static ForumManager instance;
     protected Callback onUpdate;
 
     /**
-     * Private constructor, should not be instantiated
+     * Protected constructor, should not be instantiated
      */
     protected ForumManager() { }
 
+    /**
+     * Use to mock
+     * @param injection instance for testing
+     */
     public static void inject(ForumManager injection) {
         instance = injection;
     }
 
+    /**
+     * @return returns the current singleton instance
+     */
     private static ForumManager getInstance() {
         if (instance == null) instance = new ForumManager();
         return instance;
@@ -187,7 +195,7 @@ public class ForumManager {
             return;
         }
 
-        CollectionReference commentsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(COMMENTS);
+        CollectionReference commentsRef = getInstance().db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(COMMENTS);
 
         if (comment.getId() != null) {
             commentsRef.document(comment.getId().getKey()).set(comment).addOnSuccessListener(questionSnapshot -> {

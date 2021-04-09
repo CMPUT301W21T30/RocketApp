@@ -12,6 +12,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ExperimentUnitTest {
+    private Experiment experiment;
+
+    public ExperimentUnitTest() {
+        experiment = createMockExperiment();
+    }
 
     private Experiment createMockExperiment() {
         BinomialExperiment experiment = new BinomialExperiment();
@@ -32,25 +37,21 @@ public class ExperimentUnitTest {
 
     @Test
     public void checkExperimentIsValid() {
-        Experiment experiment = createMockExperiment();
         assertFalse(experiment.isValid());
     }
 
     @Test
     public void checkExperimentOwnerIsValid() {
-        Experiment experiment = createMockExperiment();
         assertFalse(experiment.ownerIsValid());
     }
 
     @Test
     public void checkExperimentGetTrials() {
-        Experiment experiment = createMockExperiment();
         assertEquals(4, experiment.getTrials(true).size());
     }
 
     @Test
     public void checkExperimentGetQuestions() {
-        Experiment experiment = createMockExperiment();
         assertEquals(4, experiment.getQuestions().size());
     }
 
