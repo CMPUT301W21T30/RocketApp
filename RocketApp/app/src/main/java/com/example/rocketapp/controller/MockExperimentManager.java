@@ -11,6 +11,10 @@ import com.example.rocketapp.model.trials.Trial;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Mock ExperimentManager to be injected into ExperimentManager for unit testing, simulates database interactions
+ * Creates initial database containing one owned experiment, and 3 experiments from other users.
+ */
 public class MockExperimentManager extends ExperimentManager {
     private static Random rand = new Random();
 

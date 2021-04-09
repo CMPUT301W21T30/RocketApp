@@ -8,9 +8,12 @@ import com.example.rocketapp.model.users.User;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Mock UserManager to be injected into UserManager for unit testing, simulates database interactions
+ * Creates initial database containing one 4 users. Logs in as first user.
+ */
 public class MockUserManager extends UserManager {
     private static final String TAG = "MockUserManager";
-    private Random rand = new Random();
 
     public MockUserManager() {
         super();
@@ -34,13 +37,7 @@ public class MockUserManager extends UserManager {
     }
 
     @Override
-    protected void listenImp(User user) {
-    }
-
-    @Override
-    protected void setUpdateCallbackImp(Callback callback) {
-        super.setUpdateCallbackImp(callback);
-    }
+    protected void listenImp(User user) {}
 
     @Override
     protected void createUserImp(String userName, Activity activity, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
@@ -59,11 +56,6 @@ public class MockUserManager extends UserManager {
     @Override
     protected void updateUserImp(ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
         onSuccess.callBack(user);
-    }
-
-    @Override
-    protected ArrayList<FirestoreDocument.Id> getSubscriptionsIdListImp() {
-        return super.getSubscriptionsIdListImp();
     }
 
     @Override

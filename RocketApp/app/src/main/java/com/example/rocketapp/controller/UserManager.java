@@ -19,6 +19,7 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 /**
  * Handles creating, retrieving, and modifying users as well as signing in to firestore.
+ * Singleton with static methods for convenience.
  */
 public class UserManager {
     private static final String TAG = "UserManager";
@@ -30,14 +31,14 @@ public class UserManager {
     private static ListenerRegistration subscriptionsListener;
     private static ListenerRegistration usersListener;
     private static CollectionReference usersRef;
-    private static final FirebaseFirestore db;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();;
     private static Callback updateCallback;
     private static UserManager instance;
 
-    static {
-        db = FirebaseFirestore.getInstance();
-    }
 
+    /**
+     * @return returns the current singleton instance
+     */
     private static UserManager getInstance() {
         if (instance == null) instance = new UserManager();
         return instance;
@@ -50,6 +51,10 @@ public class UserManager {
         initializeUsers();
     }
 
+    /**
+     * Use to mock
+     * @param injection instance for testing
+     */
     public static void inject(UserManager injection) {
         instance = injection;
     }

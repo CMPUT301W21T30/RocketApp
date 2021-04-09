@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 
 public class CountExperimentUnitTest {
+    private Experiment experiment;
+
+    public CountExperimentUnitTest() {
+        experiment = createMockExperiment();
+    }
+
     public Experiment createMockExperiment() {
 
         CountExperiment experiment = new CountExperiment();
@@ -26,32 +32,21 @@ public class CountExperimentUnitTest {
 
     @Test
     public void checkMean() {
-        Experiment experiment = createMockExperiment();
         assertEquals(60.0, experiment.getMean(), 0.1);
     }
 
     @Test
     public void checkMedian() {
-        Experiment experiment = createMockExperiment();
         assertEquals(15.0, experiment.getMedian(),0.1);
     }
 
-    //Test removed due to modification in mean, test and method are meaningless
-//    @Test
-//    public void checkStdDev() {
-//        Experiment experiment = createMockExperiment();
-//        assertEquals(3.54, experiment.getStdDev(),0.1);
-//    }
-
     @Test
     public void checkTopQuartile() {
-        Experiment experiment = createMockExperiment();
         assertEquals(17.5, experiment.getTopQuartile(),0.1);
     }
 
     @Test
     public void checkBottomQuartile() {
-        Experiment experiment = createMockExperiment();
         assertEquals(12.5, experiment.getBottomQuartile(),0.1);
     }
 

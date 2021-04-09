@@ -1,6 +1,4 @@
 package com.example.rocketapp.controller;
-
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
@@ -12,25 +10,17 @@ import com.example.rocketapp.model.trials.MeasurementTrial;
 import com.example.rocketapp.model.trials.Trial;
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
-
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
 
 import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObjectSnapshot;
 
 /**
  * Class that handles adding, retrieving, and modifying experiment trials from firestore.
+ * Singleton with static methods for convenience.
  */
 public class TrialManager {
     private static final String TAG = "TrialManager";
@@ -53,10 +43,17 @@ public class TrialManager {
      */
     protected TrialManager() {}
 
+    /**
+     * Use to mock
+     * @param injection instance for testing
+     */
     public static void inject(TrialManager injection) {
         instance = injection;
     }
 
+    /**
+     * @return returns the current singleton instance
+     */
     private static TrialManager getInstance() {
         if (instance == null) instance = new TrialManager();
         return instance;

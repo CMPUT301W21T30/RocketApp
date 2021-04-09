@@ -4,6 +4,9 @@ import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.trials.Trial;
 
+/**
+ * Mock MockTrialManager to be injected into TrialManager for unit testing, simulates database interactions
+ */
 public class MockTrialManager extends TrialManager {
 
     public MockTrialManager() {}

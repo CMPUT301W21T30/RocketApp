@@ -2,18 +2,13 @@ package com.example.rocketapp;
 
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.android.dx.command.Main;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.controller.MockExperimentManager;
 import com.example.rocketapp.controller.MockManager;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.experiments.MeasurementExperiment;
 import com.example.rocketapp.view.activities.ExperimentActivity;
 import com.example.rocketapp.view.activities.ExperimentEditActivity;
 import com.example.rocketapp.view.activities.ExperimentForumActivity;
@@ -46,8 +41,19 @@ class MyActivityTestRule extends ActivityTestRule<LoginActivity> {
     }
 }
 
+/**
+ * Test user stories in the application
+ */
 public class GeneralAppTest {
     private Solo solo;
+    private final String failedCurrentActivity = "Wrong Activity";
+    private final String trial = "TRIAL";
+    private final String failure = "FAILURE";
+    private final String success = "SUCCESS";
+    private final String alberta = "Alberta";
+    private final String trueString = "true";
+    private final String subscribe = "SUBSCRIBE";
+    private final String welcome = "Welcome";
 
     @Rule
     public MyActivityTestRule rule = new MyActivityTestRule(LoginActivity.class, true, true);
@@ -60,15 +66,17 @@ public class GeneralAppTest {
 
     @Test
     public void signIn() {
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, LoginActivity.class);
         solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mock User");
         solo.clickOnText("Submit");
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
     }
 
     @Test
     public void checkAddExperiment(){
         String experimentName = "Toss a coin";
+        String confirm = "CONFIRM";
+        String minTrialInput = "10";
         ExperimentManager.getExperimentArrayList().clear();
 
         signIn();
@@ -78,30 +86,32 @@ public class GeneralAppTest {
         solo.pressSpinnerItem(0, 0);
         solo.enterText((EditText) solo.getView(R.id.description_input), experimentName);
         solo.enterText((EditText) solo.getView(R.id.region_input), "AB");
-        solo.enterText((EditText) solo.getView(R.id.min_trial), "10");
+        solo.enterText((EditText) solo.getView(R.id.min_trial), minTrialInput);
         solo.hideSoftKeyboard();
-        solo.waitForText("10", 1, 2000);
-        solo.waitForText("CONFIRM", 1, 2000);
-        solo.clickOnText("CONFIRM");
+        solo.waitForText(minTrialInput, 1, 2000);
+        solo.waitForText(confirm, 1, 2000);
+        solo.clickOnText(confirm);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
     }
 
     @Test
     public void checkAddTrials(){
+
+        
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
-        solo.waitForText("TRIAL", 1, 2000);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText(trial, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addTrialButton));
         solo.hideSoftKeyboard();
-        solo.waitForText("SUCCESS");
+        solo.waitForText(success);
         solo.clickOnView(solo.getView(R.id.addSuccess));
-        solo.waitForText("TRIAL", 1, 2000);
+        solo.waitForText(trial, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addTrialButton));
-        solo.waitForText("FAILURE", 1, 2000);
+        solo.waitForText(failure, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addFailure));
         solo.waitForText("Number", 1, 2000);
 
@@ -110,147 +120,171 @@ public class GeneralAppTest {
 
     @Test
     public void checkChangeExperimentState(){
+        String notPublished = "Not Published";
+        String published = "Published";
+        String ended = "Ended";
+        String unpublishMenuItem = "Un-publish Experiment";
+        String publishMenuItem = "Publish Experiment";
+        String endMenuItem = "End Experiment";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Un-publish Experiment");
-        solo.waitForText("Not published", 1, 2000);
-        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), "Not Published");
+        solo.clickOnMenuItem(unpublishMenuItem);
+        solo.waitForText(notPublished, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), notPublished);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Publish Experiment");
-        solo.waitForText("Published", 1, 2000);
-        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), "Published");
+        solo.clickOnMenuItem(publishMenuItem);
+        solo.waitForText(published, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), published);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("End Experiment");
-        solo.waitForText("Ended", 1, 2000);
-        assertEquals(((TextView) solo.getView(R.id.statusTextView)).getText().toString(), "Ended");
+        solo.clickOnMenuItem(endMenuItem);
+        solo.waitForText(ended, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.statusTextView)).getText().toString(), ended);
         assertEquals((solo.getView(R.id.addTrialButton).getVisibility()), 4);
     }
 
     @Test
     public void checkOpenGraphs(){
+        String statisticsMenuItem = "Experiment Statistics";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Experiment Statistics");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentStatisticsActivity.class);
+        solo.clickOnMenuItem(statisticsMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentStatisticsActivity.class);
     }
 
 
     @Test
     public void checkGenerateQRCode(){
+        String qrMenuItem = "Generate QR Code";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Generate QR Code");
-        solo.assertCurrentActivity("Wrong Activity", GenerateQRcodeActivity.class);
-        solo.waitForText("SUCCESS", 1, 2000);
+        solo.clickOnMenuItem(qrMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, GenerateQRcodeActivity.class);
+        solo.waitForText(success, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addSuccess));
-        solo.waitForText("true", 1, 2000);
+        solo.waitForText(trueString, 1, 2000);
         assertTrue(((TextView) solo.getView(R.id.generatedCodeTextView)).getText().toString().contains("Binomial true"));
     }
 
     @Test
     public void checkEditExperiment(){
+        String editMenuItem = "Edit Experiment";
+        String modification = "modified";
+        String updateText = "Update";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Edit Experiment");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.editTextRegion), " modified");
-        solo.waitForText("Update", 1, 2000);
+        solo.clickOnMenuItem(editMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.editTextRegion), modification);
+        solo.waitForText(updateText, 1, 2000);
         solo.clickOnView(solo.getView(R.id.textViewUpdate));
         solo.goBack();
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
-        solo.waitForText("modified", 1, 2000);
-        assertTrue(((TextView) solo.getView(R.id.regionView)).getText().toString().contains("modified"));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText(modification, 1, 2000);
+        assertTrue(((TextView) solo.getView(R.id.regionView)).getText().toString().contains(modification));
     }
 
     @Test
     public void checkIgnoreTrial(){
+        String menuItem = "Edit Experiment";
+
+        String expectedCount = "3";
+        String expectedMean = "0.333";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Edit Experiment");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
-        solo.waitForText("true", 1, 2000);
-        solo.clickOnText("true");
+        solo.clickOnMenuItem(menuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
+        solo.waitForText(trueString, 1, 2000);
+        solo.clickOnText(trueString);
         solo.goBack();
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.waitForText("Trial Count", 1, 2000);
-        assertEquals(((TextView) solo.getView(R.id.trialCountTextView)).getText().toString(), "3");
-        assertTrue(((TextView) solo.getView(R.id.meanView)).getText().toString().contains("0.333"));
-
+        assertEquals(expectedCount, ((TextView) solo.getView(R.id.trialCountTextView)).getText().toString());
+        assertTrue(((TextView) solo.getView(R.id.meanView)).getText().toString().contains(expectedMean));
     }
 
     @Test
     public void checkEditProfile(){
+        String profileMenuItem = "Profile";
+        String mockEmail = "mock@gmail.com";
+        String mockNumber = "9998887777";
         signIn();
 
-        solo.waitForText("Welcome", 1, 2000);
+        solo.waitForText(welcome, 1, 2000);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Profile");
+        solo.clickOnMenuItem(profileMenuItem);
 
-        solo.assertCurrentActivity("Wrong Activity", UserProfileActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.userEmailEditText), "mock@gmail.com");
-        solo.enterText((EditText) solo.getView(R.id.userPhoneNumberEditText), "9998887777");
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.userEmailEditText), mockEmail);
+        solo.enterText((EditText) solo.getView(R.id.userPhoneNumberEditText), mockNumber);
         solo.clickOnView(solo.getView(R.id.updateProfileButton));
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.waitForText("Welcome", 1, 2000);
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
+        solo.waitForText(welcome, 1, 2000);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Profile");
-        solo.assertCurrentActivity("Wrong Activity", UserProfileActivity.class);
+        solo.clickOnMenuItem(profileMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
 
-        assertTrue(((TextView) solo.getView(R.id.userEmailEditText)).getText().toString().contains("mock@gmail.com"));
-        assertTrue(((TextView) solo.getView(R.id.userPhoneNumberEditText)).getText().toString().contains("9998887777"));
+        assertTrue(((TextView) solo.getView(R.id.userEmailEditText)).getText().toString().contains(mockEmail));
+        assertTrue(((TextView) solo.getView(R.id.userPhoneNumberEditText)).getText().toString().contains(mockNumber));
     }
 
     @Test
     public void checkDiscussionForum(){
+        String menuItem = "Discussion Forum";
+        String submit = "SUBMIT";
+        String question = "Hello there";
+        String response = "Howdy";
+        String addResponse = "Add Response";
+        String addQuestion = "ADD QUESTION";
         signIn();
 
-        solo.waitForText("Alberta", 1, 2000);
+        solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem("Discussion Forum");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentForumActivity.class);
-        solo.waitForText("ADD QUESTION", 1, 2000);
+        solo.clickOnMenuItem(menuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentForumActivity.class);
+        solo.waitForText(addQuestion, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addQuestionButton));
-        solo.enterText((EditText) solo.getView(R.id.commentInput), "Hello there");
-        solo.waitForText("Hello there",1, 2000);
-        solo.waitForText("SUBMIT", 1, 2000);
+        solo.enterText((EditText) solo.getView(R.id.commentInput), question);
+        solo.waitForText(question,1, 2000);
+        solo.waitForText(submit, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addQuestionButton));
-        solo.waitForText("Hello there", 1, 2000);
-        solo.waitForText("Add Response", 1, 2000);
-        solo.clickOnText("Add Response");
-        solo.enterText((EditText) solo.getView(R.id.commentInput), "Howdy");
-        solo.waitForText("Howdy", 1, 2000);
-        solo.waitForText("SUBMIT", 1, 3000);
+        solo.waitForText(question, 1, 2000);
+        solo.waitForText(addResponse, 1, 2000);
+        solo.clickOnText(addResponse);
+        solo.enterText((EditText) solo.getView(R.id.commentInput), response);
+        solo.waitForText(response, 1, 2000);
+        solo.waitForText(submit, 1, 3000);
         solo.clickOnView(solo.getView(R.id.addQuestionButton));
 
-        assertTrue(((TextView) solo.getView(R.id.dialogueTextView)).getText().toString().contains("Hello there"));
-        assertTrue(((TextView) solo.getView(R.id.answerDialogueTextView)).getText().toString().contains("Howdy"));
+        assertTrue(((TextView) solo.getView(R.id.dialogueTextView)).getText().toString().contains(question));
+        assertTrue(((TextView) solo.getView(R.id.answerDialogueTextView)).getText().toString().contains(response));
     }
 
 
     @Test
     public void checkSearchAndSubscribeExperiment(){
+        String search = "eggs";
         signIn();
         for (Experiment e: ExperimentManager.getExperimentArrayList()) {
             if (UserManager.getUser().isOwner(e)) {
@@ -258,16 +292,17 @@ public class GeneralAppTest {
                 break;
             }
         }
-        solo.waitForText("Welcome", 1, 2000);
-        solo.clickOnButton("SUBSCRIBE");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentSearchActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.search_for_experiments), "eggs");
-        solo.waitForText("eggs", 1, 2000);
+        solo.waitForText(welcome, 1, 2000);
+        solo.clickOnButton(subscribe);
+        solo.waitForText(search, 1, 2000);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentSearchActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.search_for_experiments), search);
+        solo.waitForText(search, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.waitForText("Welcome", 1, 2000);
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
+        solo.waitForText(welcome, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
-        solo.assertCurrentActivity("Wrong Activity", ExperimentActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
     }
 
     @Test
@@ -275,7 +310,7 @@ public class GeneralAppTest {
         checkSearchAndSubscribeExperiment();
         solo.waitForText("Owner", 1, 2000);
         solo.clickOnView(solo.getView(R.id.ownerTextView));
-        solo.assertCurrentActivity("Wrong Activity", UserProfileActivity.class);
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
     }
 
     @After
