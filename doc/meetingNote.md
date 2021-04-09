@@ -1,3 +1,8 @@
+* Apr 9, 2021
+   * Mike implementing Intent Tests and UML
+   * Aryan working on story board and UML
+   * Saif and Archit working on graphs and statistics tests
+  
 * Apr 5, 2021
    * Mike doing code refactoring and UI updates
    * Saif and Archit working on Graphs
