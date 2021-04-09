@@ -13,7 +13,7 @@ Android project for CMPUT 301 at the University of Alberta Winter 2021.
 - [Scrum notes](https://github.com/CMPUT301W21T30/RocketApp/blob/main/doc/meetingNote.md)
 
 ## Project Part 4 Wiki Links
-- [UML Diagram]()
-- [Storyboard]()
+- [UML Diagram](https://github.com/CMPUT301W21T30/RocketApp/wiki/Part-4-UML-Diagram)
+- [Storyboard](https://github.com/CMPUT301W21T30/RocketApp/wiki/Part-4-storyboard)
 - [Scrum notes](https://github.com/CMPUT301W21T30/RocketApp/blob/main/doc/meetingNote.md)
 - [Demo Video]()
