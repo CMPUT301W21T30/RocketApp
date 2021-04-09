@@ -283,12 +283,12 @@ public class ExperimentActivity extends RocketAppActivity {
     void update(Experiment experiment) {
         descriptionTextView.setText(experiment.info.getDescription());
         ownerTextView.setText(experiment.getOwner().getName());
-        meanTextView.setText(String.valueOf(experiment.getMean()));
-        medianTextView.setText(String.valueOf(experiment.getMedian()));
-        stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
+        meanTextView.setText(String.format("%.2f",experiment.getMean()));
+        medianTextView.setText(String.format("%.2f", experiment.getMedian()));
+        stdDevTextView.setText(String.format("%.2f", experiment.getStdDev()));
         minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
         regionTextView.setText(experiment.info.getRegion());
-        experimentTypeTextView.setText(experiment.getType() + " Experiment");
+        experimentTypeTextView.setText(experiment.getType());
         trialCountTextView.setText(String.valueOf(experiment.getTrials(false).size()));
 
         statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
