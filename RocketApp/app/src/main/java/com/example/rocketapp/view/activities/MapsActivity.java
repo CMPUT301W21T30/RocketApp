@@ -18,12 +18,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
+//Citation - https://developers.google.com/maps/documentation/android-sdk/start
+//Google
+//Last updated 2021-04-07 UTC.
+//License - Apache 2.0 License.
+
+/**
+ * Displays and adds markers to locations of all trials
+ * If multiple trials have same location then clicking on marker will alternate between their info
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Experiment experiment;
     private ArrayList<? extends Trial> trialList;
 
+    /**
+     * Set up for map and gets ArrayList of trials
+     * @param savedInstanceState
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +47,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TrialManager.listen(experiment, this::onUpdate);
     }
 
+    
+    /**
+     * Obtain the SupportMapFragment and get notified when the map is ready to be used.
+     * @param experiment - Experiment
+     */
     private void onUpdate(Experiment experiment) {
-        trialList = experiment.getTrials(false);
+        trialList = experiment.getTrials();
 
         try {
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
@@ -50,7 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.

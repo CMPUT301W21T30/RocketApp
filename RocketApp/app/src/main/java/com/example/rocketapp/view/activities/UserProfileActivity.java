@@ -73,6 +73,11 @@ public class UserProfileActivity extends RocketAppActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Selecting an option from burger menu
+     * @param item - MenuItem
+     * @return super.OnOptionsItemSelected(item)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

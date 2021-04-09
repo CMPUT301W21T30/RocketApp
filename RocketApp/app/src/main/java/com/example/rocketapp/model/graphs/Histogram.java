@@ -17,6 +17,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Create and display Histogram of trial results
+ */
 public class Histogram extends AppCompatActivity {
 
     private BarChart barChart; //Source: https://www.youtube.com/watch?v=pi1tq-bp7uA
@@ -36,7 +39,7 @@ public class Histogram extends AppCompatActivity {
 
     /**
      * Initialize a histogram for a given experiment
-     * @param experiment
+     * @param experiment - Experiment
      */
     public Histogram(Experiment experiment){
         this.experiment = experiment;
@@ -44,7 +47,7 @@ public class Histogram extends AppCompatActivity {
 
     /**
      * Creates histogram view for a given experiment
-     * @param trials
+     * @param trials - ArrayList of type Trial
      */
     public void createHistogramView(ArrayList<Trial> trials){
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
