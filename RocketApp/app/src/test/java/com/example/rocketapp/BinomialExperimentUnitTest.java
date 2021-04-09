@@ -38,7 +38,7 @@ public class BinomialExperimentUnitTest {
     @Test
     public void checkStdDev() {
         Experiment experiment = createMockExperiment();
-//        assertEquals(0.75, experiment.getStdDev(),0.1);
+        assertEquals(0.433, experiment.getStdDev(),0.1);
     }
 
     @Test
