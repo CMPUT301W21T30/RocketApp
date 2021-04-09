@@ -34,7 +34,7 @@ import java.util.ArrayList;
  */
 public class MainActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentsListActivity";
-    private ArrayList<Experiment<?>> experimentsOwned, experimentsSubscribed;
+    private ArrayList<Experiment> experimentsOwned, experimentsSubscribed;
     private ExperimentListAdapter adapterOwned, adapterSubscribed;
     private int cameraPermissionRequestCode = 100;
     /**
@@ -63,6 +63,12 @@ public class MainActivity extends RocketAppActivity {
         });
 
         findViewById(R.id.createExpBtn).setOnClickListener(v -> new CreateExperimentFragment().show(getSupportFragmentManager(), "Add_experiment"));
+
+        ExperimentManager.setUpdateCallback(()-> {
+            adapterOwned.updateList(ExperimentManager.getOwnedExperimentsArrayList());
+            adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList());
+        });
+        UserManager.setUpdateCallback(()-> adapterSubscribed.updateList(ExperimentManager.getSubscribedExperimentArrayList()));
     }
 
     @Override
@@ -76,6 +82,11 @@ public class MainActivity extends RocketAppActivity {
         switch (item.getItemId()){
             case R.id.scanCode:
                 scanCode();
+                return true;
+            case R.id.profileMenuItem:
+                Intent userProfileIntent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                userProfileIntent.putExtra(Experiment.ID_KEY, UserManager.getUser().getId());
+                startActivity(userProfileIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -100,7 +111,7 @@ public class MainActivity extends RocketAppActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
         if (result != null && result.getContents() != null) {
-            ScannerManager.readCode(
+            ScannerManager.processCode(
                     result.getContents(),
                     trial -> Toast.makeText(this, "Trial added.", Toast.LENGTH_LONG).show(),
                     exception -> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show());

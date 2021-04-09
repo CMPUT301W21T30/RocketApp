@@ -25,14 +25,14 @@ import java.util.Date;
  * Creates and displays mean of experiment over time at an interval of 1 day.
  */
 public class TimePlot {
-    private LineChart lineChart;
-    private final Experiment<?> experiment;
+    private LineChart lineChart; //Source: https://www.youtube.com/watch?v=yrbgN2UvKGQ&list=PLFh8wpMiEi89LcBupeftmAcgDKCeC24bJ&ab_channel=SarthiTechnology
+    private final Experiment experiment;
 
     /**
      * Initialize a time plot for a given experiment
      * @param experiment
      */
-    public TimePlot(Experiment<?> experiment){
+    public TimePlot(Experiment experiment){
         this.experiment = experiment;
     }
 

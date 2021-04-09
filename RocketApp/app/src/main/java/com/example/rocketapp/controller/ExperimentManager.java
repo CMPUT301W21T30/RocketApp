@@ -24,13 +24,14 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 public class ExperimentManager {
     private static final String TAG = "ExperimentManager";
     private static final String EXPERIMENTS = "Experiments";
-    private static ArrayList<Experiment<?>> experimentArrayList;
-    private static ListenerRegistration experimentListener;
+    protected ArrayList<Experiment> experimentArrayList;
+    private ListenerRegistration experimentListener;
     private static final FirebaseFirestore db;
     private static CollectionReference experimentsRef;
-    private static Callback updateCallback;
+    protected static Callback updateCallback;
+    private static ExperimentManager instance;
 
-    static final ImmutableMap<String, Class<? extends Experiment<?>>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment<?>>>builder()
+    static final ImmutableMap<String, Class<? extends Experiment>> experimentClassMap = ImmutableMap.<String, Class<? extends Experiment>>builder()
             .put(IntCountExperiment.TYPE, IntCountExperiment.class)
             .put(CountExperiment.TYPE, CountExperiment.class)
             .put(BinomialExperiment.TYPE, BinomialExperiment.class)
@@ -39,17 +40,29 @@ public class ExperimentManager {
 
     static {
         db = FirebaseFirestore.getInstance();
-        initializeExperiments();
+//        initializeExperiments();
+    }
+
+    private static ExperimentManager getInstance() {
+        if (instance == null) instance = new ExperimentManager();
+        return instance;
     }
 
     /**
      * Private constructor, should not be instantiated
      */
-    private ExperimentManager() {}
+    protected ExperimentManager() {
+        initializeExperiments();
+    }
+
+    public static void inject(ExperimentManager injection) {
+        instance = injection;
+    }
 
     public interface ExperimentSearch {
-        boolean match(Experiment<?> experiment);
+        boolean match(Experiment experiment);
     }
+
 
 
     /**
@@ -58,9 +71,13 @@ public class ExperimentManager {
      *      Callback for when experiments are updated from firestore.
      */
     public static void setUpdateCallback(Callback callback) {
+        getInstance().setUpdateCallbackImp(callback);
+    }
+    private void setUpdateCallbackImp(Callback callback) {
         Log.d(TAG, "Set Update Callback");
 
         updateCallback = callback;
+        callback.callBack();
     }
 
 
@@ -69,7 +86,10 @@ public class ExperimentManager {
      * @return
      *      List of all experiments
      */
-    public static ArrayList<Experiment<?>> getExperimentArrayList() {
+    public static ArrayList<Experiment> getExperimentArrayList() {
+        return getInstance().getExperimentArrayListImp();
+    }
+    private ArrayList<Experiment> getExperimentArrayListImp() {
         return experimentArrayList;
     }
 
@@ -81,7 +101,10 @@ public class ExperimentManager {
      * @return
      *      filtered list of experiments
      */
-    public static ArrayList<Experiment<?>> getExperimentArrayList(String searchWords, boolean includeSubscribed, boolean includeOwned) {
+    public static ArrayList<Experiment> getExperimentArrayList(String searchWords, boolean includeSubscribed, boolean includeOwned) {
+        return getInstance().getExperimentArrayListImp(searchWords, includeSubscribed, includeOwned);
+    }
+    private ArrayList<Experiment> getExperimentArrayListImp(String searchWords, boolean includeSubscribed, boolean includeOwned) {
         String[] words = searchWords.split(" ");
         ArrayList<FirestoreDocument.Id> ignored = new ArrayList<>();
         if (!includeSubscribed)
@@ -100,6 +123,7 @@ public class ExperimentManager {
     }
 
 
+
     /**
      * Get a filtered list of all experiments
      * @param find
@@ -107,10 +131,14 @@ public class ExperimentManager {
      * @return
      *      filtered list of experiments
      */
-    public static ArrayList<Experiment<?>> getExperimentArrayList(ExperimentSearch find) {
-        ArrayList<Experiment<?>> filteredExperiments = new ArrayList<>();
+    public static ArrayList<Experiment> getExperimentArrayList(ExperimentSearch find) {
+        return getInstance().getExperimentArrayListImp(find);
+    }
 
-        for (Experiment<?> experiment : experimentArrayList) {
+    protected ArrayList<Experiment> getExperimentArrayListImp(ExperimentSearch find) {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
             if (find.match(experiment))
                 filteredExperiments.add(experiment);
         }
@@ -119,15 +147,21 @@ public class ExperimentManager {
     }
 
 
+
+
     /**
      * Gets all experiments owned by current user
      * @return
      *      list of owned experiments
      */
-    public static ArrayList<Experiment<?>> getOwnedExperimentsArrayList() {
-        ArrayList<Experiment<?>> filteredExperiments = new ArrayList<>();
+    public static ArrayList<Experiment> getOwnedExperimentsArrayList() {
+        return getInstance().getOwnedExperimentsArrayListImp();
+    }
 
-        for (Experiment<?> experiment : experimentArrayList) {
+    protected ArrayList<Experiment> getOwnedExperimentsArrayListImp() {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
+
+        for (Experiment experiment : experimentArrayList) {
             if (experiment.isValid() && experiment.getOwnerId().equals(UserManager.getUser().getId()))
                 filteredExperiments.add(experiment);
         }
@@ -136,26 +170,33 @@ public class ExperimentManager {
     }
 
 
-    /**
-     * Gets all experiments not subscribed by current user
-     * @return
-     *      list of not subscribed
-     */
-    public static ArrayList<Experiment<?>> getNotSubscribedExperimentsArrayList() {
-        return getExperimentArrayList(experiment -> !UserManager.getSubscriptionsIdList().contains(experiment.getId()));
-    }
-
+//    /**
+//     * Gets all experiments not subscribed by current user
+//     * @return
+//     *      list of not subscribed
+//     */
+//    public static ArrayList<Experiment> getNotSubscribedExperimentsArrayList() {
+//        return getInstance().getNotSubscribedExperimentsArrayListImp();
+//    }
+//
+//    protected ArrayList<Experiment> getNotSubscribedExperimentsArrayListImp() {
+//        return getExperimentArrayList(experiment -> !UserManager.getSubscriptionsIdList().contains(experiment.getId()));
+//    }
 
     /**
      * Gets all experiments subscribed to by current user
      * @return
      *      list of subscribed experiments
      */
-    public static ArrayList<Experiment<?>> getSubscribedExperimentArrayList() {
-        ArrayList<Experiment<?>> filteredExperiments = new ArrayList<>();
+    public static ArrayList<Experiment> getSubscribedExperimentArrayList() {
+        return getInstance().getSubscribedExperimentArrayListImp();
+    }
+
+    protected ArrayList<Experiment> getSubscribedExperimentArrayListImp() {
+        ArrayList<Experiment> filteredExperiments = new ArrayList<>();
 
         for (FirestoreDocument.Id id : UserManager.getSubscriptionsIdList()) {
-            for (Experiment<?> experiment : experimentArrayList) {
+            for (Experiment experiment : experimentArrayList) {
                 if (experiment.isValid() && experiment.getId().equals(id)) {
                     if(experiment.isPublished()) {
                         filteredExperiments.add(experiment);
@@ -168,12 +209,17 @@ public class ExperimentManager {
     }
 
 
+
+
     /**
      * @param id experiment id
      * @return experiment corresponding to the id
      */
-    public static Experiment<?> getExperiment(Object id) {
-        for (Experiment<?> experiment : experimentArrayList)
+    public static Experiment getExperiment(Object id) {
+        return getInstance().getExperimentImp(id);
+    }
+    private Experiment getExperimentImp(Object id) {
+        for (Experiment experiment : experimentArrayList)
             if (experiment.isValid() && experiment.getId().equals(id))
                 return experiment;
         Log.e(TAG, "getExperiment() Experiment not found");
@@ -189,7 +235,10 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback for failure
      */
-    public static <TrialType extends Trial> void createExperiment(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void createExperiment(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().createExperimentImp(experiment, onSuccess, onFailure);
+    }
+    protected void createExperimentImp(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "Create Experiment Failed. User must be signed in to create an experiment.");
             onFailure.callBack(new Exception("Create Experiment Failed. User must be signed in to create an experiment."));
@@ -221,7 +270,10 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback for failure
      */
-    public static <TrialType extends Trial> void publishExperiment(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void publishExperiment(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().publishExperimentImp(experiment, onSuccess, onFailure);
+    }
+    protected void publishExperimentImp(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "Publish Failed. User must be signed in to publish experiment.");
             onFailure.callBack(new Exception("Publish Experiment Failed. User must be signed in to publish experiment."));
@@ -254,7 +306,10 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback for when fails
      */
-    public static <TrialType extends Trial> void unpublishExperiment(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void unpublishExperiment(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().unpublishExperimentImp(experiment, onSuccess, onFailure);
+    }
+    protected void unpublishExperimentImp(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "User not logged in. Cannot un-publish experiment");
             onFailure.callBack(new Exception("User not logged in. Cannot un-publish experiment"));
@@ -287,7 +342,10 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback with exception for when fails
      */
-    public static <TrialType extends Trial> void endExperiment(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void endExperiment(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().endExperimentImp(experiment, onSuccess, onFailure);
+    }
+    protected void endExperimentImp(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         if (!UserManager.isSignedIn()) {
             Log.e(TAG, "User not logged in. Cannot end experiment");
             onFailure.callBack(new Exception("User not logged in. Cannot end experiment"));
@@ -319,7 +377,10 @@ public class ExperimentManager {
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment<?> experiment, ObjectCallback<Experiment<?>> onUpdate) {
+    public static void listen(Experiment experiment, ObjectCallback<Experiment> onUpdate) {
+        getInstance().listenImp(experiment, onUpdate);
+    }
+    protected void listenImp(Experiment experiment, ObjectCallback<Experiment> onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
@@ -330,8 +391,8 @@ public class ExperimentManager {
         // Listen for changes to experiment
         if (experimentListener != null) experimentListener.remove();
         experimentListener = experimentsRef.document(documentId).addSnapshotListener((snapshot, e) -> {
-            Class<? extends Experiment<?>> classType = experimentClassMap.get(snapshot.getString("type"));
-            Experiment<?> updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
+            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
+            Experiment updatedExperiment = readFirebaseObjectSnapshot(classType, snapshot, TAG);
             if (updatedExperiment != null) {
                 experiment.info = updatedExperiment.info;
                 experiment.setActive(updatedExperiment.isActive());
@@ -353,7 +414,10 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback for when update fails
      */
-    public static <TrialType extends Trial> void update(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void update(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().updateImp(experiment, onSuccess, onFailure);
+    }
+    protected void updateImp(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         push(experiment, onSuccess, onFailure);
     }
 
@@ -367,7 +431,7 @@ public class ExperimentManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    private static <TrialType extends Trial> void push(Experiment<TrialType> experiment, ObjectCallback<Experiment<TrialType>> onSuccess, ObjectCallback<Exception> onFailure) {
+    private static void push(Experiment experiment, ObjectCallback<Experiment> onSuccess, ObjectCallback<Exception> onFailure) {
         if (experiment.isValid()) {  // Update experiment
             experimentsRef.document(experiment.getId().getKey()).set(experiment)
                     .addOnSuccessListener((aVoid -> {
@@ -375,7 +439,7 @@ public class ExperimentManager {
                         onSuccess.callBack(experiment);
                     }))
                     .addOnFailureListener(e->{
-                        Log.e(TAG, "Failed to update Experiment<?> experiment: " + e.toString());
+                        Log.e(TAG, "Failed to update Experiment experiment: " + e.toString());
                         onFailure.callBack(e);
                     });
         } else {    // Add experiment
@@ -396,7 +460,7 @@ public class ExperimentManager {
     /**
      * Set listener for new experiments
      */
-    private static void initializeExperiments() {
+    protected void initializeExperiments() {
         experimentArrayList = new ArrayList<>();
         experimentsRef = db.collection(EXPERIMENTS);
         experimentsRef.addSnapshotListener((snapshot, e) -> {
@@ -412,10 +476,10 @@ public class ExperimentManager {
      * @param experimentsSnapshot
      *      The snapshot from firestore to parse
      */
-    private static void parseExperimentsSnapshot(QuerySnapshot experimentsSnapshot) {
-        ArrayList<Experiment<?>> array = new ArrayList<>();
+    private void parseExperimentsSnapshot(QuerySnapshot experimentsSnapshot) {
+        ArrayList<Experiment> array = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : experimentsSnapshot) {
-            Class<? extends Experiment<?>> classType = experimentClassMap.get(snapshot.getString("type"));
+            Class<? extends Experiment> classType = experimentClassMap.get(snapshot.getString("type"));
             if (classType != null) array.add(readFirebaseObjectSnapshot(classType, snapshot, TAG));
             else Log.e(TAG, "classType null in parseExperimentsSnapshot.");
         }

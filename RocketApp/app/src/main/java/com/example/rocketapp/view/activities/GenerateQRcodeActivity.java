@@ -23,7 +23,7 @@ import com.example.rocketapp.view.fragments.TrialFragment;
 
 public class GenerateQRcodeActivity extends AppCompatActivity {
     private static final String TAG = "GenerateQRCodeActivity";
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private ImageView qrImageView;
     private Button saveButton;
     private TextView codeTextPreview;
@@ -43,12 +43,15 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
 
         saveButton = findViewById(R.id.saveQRcodeBtn);
         saveButton.setVisibility(View.INVISIBLE);
-        saveButton.setOnClickListener(v -> Device.saveToGallery(qrImageView.getDrawable(), this));
+        saveButton.setOnClickListener(v -> {
+            ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            Device.saveToGallery(qrImageView.getDrawable(), this);
+        });
 
         findViewById(R.id.generateQRcodeBtn).setOnClickListener(v -> generateQRCode());
 
-        ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);

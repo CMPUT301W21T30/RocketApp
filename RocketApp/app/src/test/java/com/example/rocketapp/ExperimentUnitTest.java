@@ -4,6 +4,7 @@ import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.comments.Question;
+import com.example.rocketapp.model.trials.Trial;
 
 import org.junit.Test;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class ExperimentUnitTest {
 
     private Experiment createMockExperiment() {
         BinomialExperiment experiment = new BinomialExperiment();
-        ArrayList<BinomialTrial> trials = new ArrayList<>();
+        ArrayList<Trial> trials = new ArrayList<>();
         trials.add(new BinomialTrial(true));
         trials.add(new BinomialTrial(true));
         trials.add(new BinomialTrial(true));
@@ -31,25 +32,25 @@ public class ExperimentUnitTest {
 
     @Test
     public void checkExperimentIsValid() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertFalse(experiment.isValid());
     }
 
     @Test
     public void checkExperimentOwnerIsValid() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertFalse(experiment.ownerIsValid());
     }
 
     @Test
     public void checkExperimentGetTrials() {
-        Experiment<?> experiment = createMockExperiment();
-        assertEquals(4, experiment.getTrials().size());
+        Experiment experiment = createMockExperiment();
+        assertEquals(4, experiment.getTrials(true).size());
     }
 
     @Test
     public void checkExperimentGetQuestions() {
-        Experiment<?> experiment = createMockExperiment();
+        Experiment experiment = createMockExperiment();
         assertEquals(4, experiment.getQuestions().size());
     }
 

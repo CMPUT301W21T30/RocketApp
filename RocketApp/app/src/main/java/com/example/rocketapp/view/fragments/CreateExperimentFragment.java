@@ -90,7 +90,7 @@ public class CreateExperimentFragment extends DialogFragment {
      * Publishes a new experiment
      * @param newExperiment experiment to be published.
      */
-    public void publishExperiment(Experiment<?> newExperiment){
+    public void publishExperiment(Experiment newExperiment){
         ExperimentManager.createExperiment(newExperiment, experiment -> Log.d(TAG, "Experiment published"), exception -> Log.d(TAG, exception.getMessage()));
     }
 
@@ -101,7 +101,7 @@ public class CreateExperimentFragment extends DialogFragment {
      * @return
      *          experiment of said type based on user input
      */
-    public Experiment<?> createExperiment(String type){
+    public Experiment createExperiment(String type){
         switch(type) {
             case ("Count Experiment"):
                 return new CountExperiment(descriptionEditText.getText().toString(),

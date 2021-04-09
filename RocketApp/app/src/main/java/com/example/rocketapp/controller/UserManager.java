@@ -21,48 +21,67 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
  * Handles creating, retrieving, and modifying users as well as signing in to firestore.
  */
 public class UserManager {
-    private static User user;
-    private static ArrayList<User> userArrayList;
-    private static ArrayList<FirestoreDocument.Id> subscriptions;
+    private static final String TAG = "UserManager";
+    private static final String SUBSCRIPTIONS = "Subscriptions";
+    private static final String USERS = "Users";
+    protected User user;
+    protected ArrayList<User> userArrayList;
+    protected ArrayList<FirestoreDocument.Id> subscriptions;
     private static ListenerRegistration subscriptionsListener;
     private static ListenerRegistration usersListener;
-    private static final String SUBSCRIPTIONS = "Subscriptions";
-    private static final String TAG = "UserManager";
-    private static final String USERS = "Users";
-
     private static CollectionReference usersRef;
     private static final FirebaseFirestore db;
     private static Callback updateCallback;
-
+    private static UserManager instance;
 
     static {
         db = FirebaseFirestore.getInstance();
-        initializeUsers();
     }
 
+    private static UserManager getInstance() {
+        if (instance == null) instance = new UserManager();
+        return instance;
+    }
 
     /**
      * Private constructor, should not be instantiated
      */
-    private UserManager() {}
-
-
-    /**
-     * Callback returning a User
-     */
-    public interface UserCallback {
-        void callBack(User user);
+    protected UserManager() {
+        initializeUsers();
     }
 
+    public static void inject(UserManager injection) {
+        instance = injection;
+    }
 
     /**
      * @return the currently signed in user
      */
     public static User getUser() {
+        return getInstance().getUserImp();
+    }
+    private User getUserImp() {
         return user;
     }
 
 
+    /**
+     * Retrieve a user from an ID
+     * @param id
+     *      ID of user to retrieve user data for.
+     * @return
+     *      User object matching id
+     */
+    public static User getUser(Object id) {
+        return getInstance().getUserImp(id);
+    }
+    protected User getUserImp(Object id) {
+        for (User user : userArrayList)
+            if (user.getId().equals(id))
+                return user;
+        Log.e(TAG, "getUser() User not found.");
+        return new User("User not found.");
+    }
 
     /**
      * Gets the current list of all users
@@ -70,6 +89,9 @@ public class UserManager {
      *      Array of users
      */
     public static ArrayList<User> getUserArrayList() {
+        return getInstance().getUserArrayListImp();
+    }
+    protected ArrayList<User> getUserArrayListImp() {
         return userArrayList;
     }
 
@@ -78,6 +100,9 @@ public class UserManager {
      * @return true if a valid user is signed in
      */
     public static Boolean isSignedIn() {
+        return getInstance().isSignedInImp();
+    }
+    protected Boolean isSignedInImp() {
         return user != null && user.isValid();
     }
 
@@ -88,6 +113,9 @@ public class UserManager {
      *      Callback for when experiments are updated from firestore.
      */
     public static void setUpdateCallback(Callback callback) {
+        getInstance().setUpdateCallbackImp(callback);
+    }
+    protected void setUpdateCallbackImp(Callback callback) {
         updateCallback = callback;
         updateCallback.callBack();
     }
@@ -102,7 +130,10 @@ public class UserManager {
      * @param onFailure
      *      Callback for when username already exists fails
      */
-    public static void createUser(String userName, Activity activity, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void createUser(String userName, Activity activity, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().createUserImp(userName, activity, onSuccess, onFailure);
+    }
+    protected void createUserImp(String userName, Activity activity, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.whereEqualTo("name", userName).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() > 0) {
                 String message = String.format("Username %s not available.", userName);
@@ -127,7 +158,10 @@ public class UserManager {
      * @param onFailure
      *      Callback for when login fails (username does not exist)
      */
-    public static void login(Activity activity, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void login(Activity activity, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().loginImp(activity, onSuccess, onFailure);
+    }
+    protected void loginImp(Activity activity, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
         String userId = Device.getAndroidId(activity);
         usersRef.document(userId).get().addOnSuccessListener(snapshot -> {
             if (snapshot != null) {
@@ -159,7 +193,10 @@ public class UserManager {
      * @param onFailure
      *      Callback for when update fails
      */
-    public static void updateUser(UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void updateUser(ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().updateUserImp(onSuccess, onFailure);
+    }
+    protected void updateUserImp(ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.whereEqualTo("name", user.getName()).get().addOnSuccessListener(matchingUserNames -> {
             if (matchingUserNames.size() == 1 && !matchingUserNames.getDocuments().get(0).getId().equals(user.getId().getKey())) {
                 Log.e(TAG, "Update User Failed: Username not available");
@@ -175,25 +212,12 @@ public class UserManager {
 
 
     /**
-     * Retrieve a user from an ID
-     * @param id
-     *      ID of user to retrieve user data for.
-     * @return
-     *      User object matching id
-     */
-    public static User getUser(Object id) {
-        for (User user : userArrayList)
-            if (user.getId().equals(id))
-                return user;
-        Log.e(TAG, "getUser() User not found.");
-        return new User("User not found.");
-    }
-
-
-    /**
      * @return list of ids for subscribed experiments
      */
     public static ArrayList<FirestoreDocument.Id> getSubscriptionsIdList() {
+        return getInstance().getSubscriptionsIdListImp();
+    }
+    protected ArrayList<FirestoreDocument.Id> getSubscriptionsIdListImp() {
         return subscriptions;
     }
 
@@ -207,7 +231,10 @@ public class UserManager {
      * @param onFailure
      *      Callback for when subscribing fails
      */
-    public static void subscribe(Experiment<?> experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+    public static void subscribe(Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().subscribeImp(experiment, onSuccess, onFailure);
+    }
+    protected void subscribeImp(Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!isSignedIn()) {
             Log.d(TAG, "Failed to subscribe. User must be logged in to subscribe to an experiment.");
             if (onFailure != null) onFailure.callBack(new Exception("Failed to subscribe. User must be logged in to subscribe to an experiment."));
@@ -240,7 +267,7 @@ public class UserManager {
     /**
      * Set listener for new users
      */
-    private static void initializeUsers() {
+    protected void initializeUsers() {
         userArrayList = new ArrayList<>();
         subscriptions = new ArrayList<>();
         usersRef = db.collection(USERS);
@@ -257,7 +284,11 @@ public class UserManager {
      * @param user
      *      User to listen to
      */
-    private static void listen(User user) {
+    public static void listen(User user) {
+        getInstance().listenImp(user);
+    }
+
+    protected void listenImp(User user) {
         if (subscriptionsListener != null) subscriptionsListener.remove();
 
         subscriptionsListener = usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).addSnapshotListener((snapshots, e) -> {
@@ -280,7 +311,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    private static void push(User user, UserCallback onSuccess, ObjectCallback<Exception> onFailure) {
+    private static void push(User user, ObjectCallback<User> onSuccess, ObjectCallback<Exception> onFailure) {
         if (user.isValid()) {
             usersRef.document(user.getId().getKey()).set(user)
                     .addOnSuccessListener(u -> {
@@ -307,7 +338,7 @@ public class UserManager {
      * @param onFailure
      *      Callback for when pullSubscriptions fails
      */
-    private static void pullSubscriptions(Callback onSuccess, ObjectCallback<Exception> onFailure) {
+    private void pullSubscriptions(Callback onSuccess, ObjectCallback<Exception> onFailure) {
         usersRef.document(user.getId().getKey()).collection(SUBSCRIPTIONS).get().addOnCompleteListener((subs) -> {
             ArrayList<FirestoreDocument.Id> subscriptionsList = new ArrayList<>();
             for (QueryDocumentSnapshot sub : subs.getResult())
@@ -330,7 +361,7 @@ public class UserManager {
      * @param userSnapshots
      *      The snapshot from firestore to parse
      */
-    private static void parseUsersSnapshot(QuerySnapshot userSnapshots) {
+    private void parseUsersSnapshot(QuerySnapshot userSnapshots) {
         ArrayList<User> users = new ArrayList<>();
 
         for (QueryDocumentSnapshot snapshot : userSnapshots)

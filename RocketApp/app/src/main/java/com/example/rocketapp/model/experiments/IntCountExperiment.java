@@ -12,7 +12,7 @@ import static java.lang.Math.sqrt;
  * Class for experiments of type "IntCount".
  * Inherits from abstract class Experiment.
  */
-public class IntCountExperiment extends Experiment<IntCountTrial> {
+public class IntCountExperiment extends Experiment {
     public static final String TYPE = "IntCount";
 
     /**

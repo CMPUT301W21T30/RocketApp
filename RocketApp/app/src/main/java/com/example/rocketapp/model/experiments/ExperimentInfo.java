@@ -4,7 +4,6 @@ package com.example.rocketapp.model.experiments;
  * Information for experiment
  */
 public class ExperimentInfo {
-//    private DataManager.ID ownerId;
     private String description;         //Details regarding what the experiment is and how to perform
     private String region;              //Region where the experiment is performed.
     private int minTrials;              //The minimum number of trials required to derive a conclusion.

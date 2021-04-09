@@ -1,5 +1,6 @@
 package com.example.rocketapp.view.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,20 +14,23 @@ import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Question;
+import com.example.rocketapp.model.users.User;
 
 import java.util.ArrayList;
 
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder>  {
+    private static final String TAG = "QuestionListAdapter";
     private final ArrayList<Question> questions;
     private final ObjectCallback<Question> onClickRespond;
-    private final UserManager.UserCallback onClickUser;
+    private final ObjectCallback<User> onClickUser;
 
     /**
      * QuestionListAdapter is the custom adapter for the recyclerView that displays questions and answers
      * @param questions the initial questions list
      */
-    public QuestionListAdapter(ArrayList<Question> questions, ObjectCallback<Question> onClickRespond, UserManager.UserCallback onClickUser) {
-        this.questions = questions;
+    public QuestionListAdapter(ArrayList<Question> questions, ObjectCallback<Question> onClickRespond, ObjectCallback<User> onClickUser) {
+        this.questions = new ArrayList<>();
+        this.questions.addAll(questions);
         this.onClickRespond = onClickRespond;
         this.onClickUser = onClickUser;
     }

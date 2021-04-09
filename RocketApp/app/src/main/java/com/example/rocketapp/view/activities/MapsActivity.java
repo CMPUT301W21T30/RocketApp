@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private ArrayList<? extends Trial> trialList;
 
     /**
@@ -47,12 +47,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TrialManager.listen(experiment, this::onUpdate);
     }
 
+    
     /**
      * Obtain the SupportMapFragment and get notified when the map is ready to be used.
      * @param experiment - Experiment
      */
-    private void onUpdate(Experiment<?> experiment) {
-        trialList = experiment.getTrials();
+    private void onUpdate(Experiment experiment) {
+        trialList = experiment.getTrials(false);
 
         try {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

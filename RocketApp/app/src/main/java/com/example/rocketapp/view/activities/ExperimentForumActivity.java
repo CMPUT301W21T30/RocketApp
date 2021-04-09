@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.ForumManager;
@@ -21,7 +24,7 @@ import com.example.rocketapp.view.adapters.QuestionListAdapter;
 
 public class ExperimentForumActivity extends RocketAppActivity {
     private static final String TAG = "ForumActivity";
-    private Experiment<?> experiment;
+    private Experiment experiment;
     private QuestionListAdapter adapter;
     private EditText inputEditText;
     private CommentMode commentMode;
@@ -54,13 +57,17 @@ public class ExperimentForumActivity extends RocketAppActivity {
         questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         submitButton = findViewById(R.id.submitCommentButton);
-        submitButton.setOnClickListener(this::submitComment);
+        submitButton.setOnClickListener(v -> submitComment());
         ForumManager.listen(experiment, this::onUpdate);
         toggleKeyboard(false);
 
         // Add question button
         Button button = findViewById(R.id.addQuestionButton);
         button.setOnClickListener(v->{
+            if (inputEditText.getVisibility() == View.VISIBLE) {
+                submitComment();
+                return;
+            }
             commentMode = CommentMode.QUESTION;
             toggleKeyboard(true);
         });
@@ -68,6 +75,13 @@ public class ExperimentForumActivity extends RocketAppActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        onUpdate();
     }
 
     @Override
@@ -80,22 +94,32 @@ public class ExperimentForumActivity extends RocketAppActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     private void onOwnerClicked(User user) {
         Intent intent = new Intent(this, UserProfileActivity.class);
         intent.putExtra(Experiment.ID_KEY, user.getId());
         startActivity(intent);
     }
 
-    private void onUpdate(Experiment<?> experiment) {
+    private void onUpdate() {
+        Log.d(TAG, "onUpdate: " + experiment.getQuestions().toString());
         adapter.updateList(experiment.getQuestions());
     }
 
-    private void submitComment(View view){
+    public void submitComment(){
         if (commentMode == CommentMode.ANSWER) {
-            ForumManager.addAnswer(new Answer(inputEditText.getText().toString()), currentQuestion, ()-> {}, e->{}
-            );
+            Log.e(TAG, "Adding Answer");
+            ForumManager.addAnswer(new Answer(inputEditText.getText().toString()), currentQuestion, ()-> {
+                Log.e(TAG, "Adding Answer 2");
+                Toast.makeText(getApplicationContext(), "Answer added", Toast.LENGTH_SHORT).show();
+
+            }, e->{});
         } else {
-            ForumManager.addQuestion(new Question(inputEditText.getText().toString()), experiment, ()-> {}, e-> {});
+            Log.e(TAG, "Adding Question");
+            ForumManager.addQuestion(new Question(inputEditText.getText().toString()), experiment, ()-> {
+                Toast.makeText(getApplicationContext(), "Question added", Toast.LENGTH_SHORT).show();
+            }, e-> {});
         }
         toggleKeyboard(false);
     }

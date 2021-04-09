@@ -36,7 +36,8 @@ public class TrialListAdapter extends RecyclerView.Adapter<TrialListAdapter.View
      * @param onTrialClicked callback for when trial list item is clicked
      */
     public TrialListAdapter(Context context, ArrayList<Trial> trials, TrialCallback onTrialClicked) {
-        this.trials = trials;
+        this.trials = new ArrayList<>();
+        this.trials.addAll(trials);
         this.onTrialClicked = onTrialClicked;
         this.context = context;
     }
