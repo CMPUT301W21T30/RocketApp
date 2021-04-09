@@ -96,6 +96,10 @@ public class AnswersListAdapter extends RecyclerView.Adapter<AnswersListAdapter.
             ownerUsernameTextView.setOnClickListener(onClickUser);
         }
 
+        /**
+         *  implementing the view holder
+         * @param itemView the item that we are going to view on the list
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ownerUsernameTextView = itemView.findViewById(R.id.userTextView);

@@ -105,6 +105,10 @@ public class ExperimentListAdapter extends RecyclerView.Adapter<ExperimentListAd
             experimentListItemLayout.setOnClickListener(onClick);
         }
 
+        /**
+         *  implementing the view holder
+         * @param itemView the item that we are going to view on the list
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             experimentNameTextView = itemView.findViewById(R.id.experimentNameTextView);
