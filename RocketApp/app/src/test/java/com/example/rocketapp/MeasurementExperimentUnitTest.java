@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.experiments.MeasurementExperiment;
 import com.example.rocketapp.model.trials.MeasurementTrial;
+import com.example.rocketapp.model.trials.Trial;
 
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class MeasurementExperimentUnitTest {
     public Experiment createMockExperiment() {
         MeasurementExperiment experiment = new MeasurementExperiment();
-        ArrayList<MeasurementTrial> trials = new ArrayList<>();
+        ArrayList<Trial> trials = new ArrayList<>();
         trials.add(new MeasurementTrial(20.0f));
         trials.add(new MeasurementTrial(10.0f));
         trials.add(new MeasurementTrial(15.0f));

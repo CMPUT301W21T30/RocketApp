@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.example.rocketapp.model.experiments.CountExperiment;
 import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.trials.Trial;
 
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public class CountExperimentUnitTest {
     public Experiment createMockExperiment() {
 
         CountExperiment experiment = new CountExperiment();
-        ArrayList<CountTrial> trials = new ArrayList<>();
+        ArrayList<Trial> trials = new ArrayList<>();
         trials.add(new CountTrial(20));
         trials.add(new CountTrial(10));
         trials.add(new CountTrial(15));

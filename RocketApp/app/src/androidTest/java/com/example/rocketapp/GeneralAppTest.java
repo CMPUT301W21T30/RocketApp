@@ -32,11 +32,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.mockito.android.internal.creation.AndroidByteBuddyMockMaker;
-
-import java.util.ArrayList;
 
 
 class MyActivityTestRule extends ActivityTestRule<LoginActivity> {

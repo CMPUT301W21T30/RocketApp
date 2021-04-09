@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.example.rocketapp.model.experiments.BinomialExperiment;
 import com.example.rocketapp.model.trials.BinomialTrial;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.trials.Trial;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class BinomialExperimentUnitTest {
 
     public Experiment createMockExperiment() {
         BinomialExperiment experiment = new BinomialExperiment();
-        ArrayList<BinomialTrial> trials = new ArrayList<>();
+        ArrayList<Trial> trials = new ArrayList<>();
         trials.add(new BinomialTrial(true));
         trials.add(new BinomialTrial(true));
         trials.add(new BinomialTrial(true));

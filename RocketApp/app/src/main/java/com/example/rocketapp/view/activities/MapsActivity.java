@@ -53,7 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param experiment - Experiment
      */
     private void onUpdate(Experiment experiment) {
-        trialList = experiment.getTrials();
+        trialList = experiment.getTrials(false);
 
         try {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

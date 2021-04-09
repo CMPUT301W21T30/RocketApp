@@ -3,6 +3,7 @@ package com.example.rocketapp;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.experiments.IntCountExperiment;
 import com.example.rocketapp.model.trials.IntCountTrial;
+import com.example.rocketapp.model.trials.Trial;
 
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public class IntCountExperimentUnitTest {
 
     public Experiment createMockExperiment() {
         IntCountExperiment experiment = new IntCountExperiment();
-        ArrayList<IntCountTrial> trials = new ArrayList<>();
+        ArrayList<Trial> trials = new ArrayList<>();
         trials.add(new IntCountTrial(20));
         trials.add(new IntCountTrial(10));
         trials.add(new IntCountTrial(15));
