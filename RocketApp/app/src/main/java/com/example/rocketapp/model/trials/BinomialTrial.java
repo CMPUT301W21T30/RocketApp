@@ -8,7 +8,6 @@ import com.google.firebase.firestore.Exclude;
  */
 public class BinomialTrial extends Trial {
     public static final String TYPE = "Binomial";
-    private boolean value;
 
     /**
      * Default constructor for firestore serialization. Do not use.
@@ -19,7 +18,7 @@ public class BinomialTrial extends Trial {
      * @param success True or False depending on the trial Passing or Failing. The interpretation of a Pass/Fail should be described in the experiment description.
      */
     public BinomialTrial(boolean success) {
-        value = success;
+        value = success ? 1.0f : 0.0f;
     }
 
     /**
@@ -30,19 +29,6 @@ public class BinomialTrial extends Trial {
         return TYPE;
     }
 
-    /**
-     * @return the outcome of trial, True if pass, False if fail.    - Boolean
-     */
-    public boolean isValue() {
-        return value;
-    }
-
-    /**
-     * @param value Setter for the value of this trial.
-     */
-    public void setValue(boolean value) {
-        this.value = value;
-    }
 
     /**
      * @return string representation of trial value
@@ -50,6 +36,7 @@ public class BinomialTrial extends Trial {
     @Exclude
     @Override
     public String getValueString() {
-        return value ? "True" : "False";
+        return value == 1 ? "true" : "false";
     }
+
 }

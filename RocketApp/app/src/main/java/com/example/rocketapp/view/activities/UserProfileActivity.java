@@ -3,6 +3,7 @@ package com.example.rocketapp.view.activities;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -12,34 +13,31 @@ import androidx.appcompat.app.ActionBar;
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.helpers.Validate;
+import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.model.users.User;
-import com.example.rocketapp.view.activities.RocketAppActivity;
 
 /**
  * User has the ability to update their email or phone number through this page
  */
 public class UserProfileActivity extends RocketAppActivity {
-    public ImageButton saveProfileButton;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile);
+        setContentView(R.layout.activity_profile);
 
-        User user = UserManager.getUser(getIntent().getSerializableExtra("id"));
+        User user = UserManager.getUser(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        EditText userName = findViewById(R.id.userNameOnProfile);
+        EditText userName = findViewById(R.id.userNameEditText);
         userName.setText(user.getName());
 
-        EditText userEmail = findViewById(R.id.userEmail);      //field to enter email
+        EditText userEmail = findViewById(R.id.userEmailEditText);      //field to enter email
         userEmail.setText(user.getEmail());
 
-        EditText userPhoneNumber = findViewById(R.id.userPhoneNumber);      //field to enter phone number
+        EditText userPhoneNumber = findViewById(R.id.userPhoneNumberEditText);      //field to enter phone number
         userPhoneNumber.setText(user.getPhoneNumber());
 
-        saveProfileButton = findViewById(R.id.saveUserProfileData);
-
+        Button saveProfileButton = findViewById(R.id.updateProfileButton);
         if (!UserManager.getUser().equals(user)) {
             userEmail.setEnabled(false);
             userPhoneNumber.setEnabled(false);
@@ -73,9 +71,13 @@ public class UserProfileActivity extends RocketAppActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
     }
 
+    /**
+     * Selecting an option from burger menu
+     * @param item - MenuItem
+     * @return super.OnOptionsItemSelected(item)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

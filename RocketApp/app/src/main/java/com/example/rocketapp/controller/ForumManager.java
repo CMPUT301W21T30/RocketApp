@@ -3,11 +3,12 @@ package com.example.rocketapp.controller;
 import android.util.Log;
 
 import com.example.rocketapp.controller.callbacks.Callback;
-import com.example.rocketapp.controller.callbacks.ExceptionCallback;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Answer;
 import com.example.rocketapp.model.comments.Comment;
 import com.example.rocketapp.model.comments.Question;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.model.trials.Trial;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -18,28 +19,38 @@ import static com.example.rocketapp.controller.FirestoreDocument.readFirebaseObj
 
 
 /**
- * Handles adding, retrieving, and modifying questions and answers for experiment experiment forums.
+ * Handles adding, retrieving, and modifying questions and answers for experiment forums.
+ * Singleton with static methods for convenience.
  */
 public class ForumManager {
     private static final String TAG = "ForumManager";
-    private static ListenerRegistration forumListener;
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String EXPERIMENTS = "Experiments";
     private static final String COMMENTS = "Comments";
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static ListenerRegistration forumListener;
+    private static ForumManager instance;
+    protected Callback onUpdate;
 
     /**
-     * Private constructor, should not be instantiated
+     * Protected constructor, should not be instantiated
      */
-    private ForumManager() { }
+    protected ForumManager() { }
 
-    public interface QuestionCallback {
-        void callBack(Question question);
+    /**
+     * Use to mock
+     * @param injection instance for testing
+     */
+    public static void inject(ForumManager injection) {
+        instance = injection;
     }
 
-    public interface AnswerCallback {
-        void callBack(Answer answer);
+    /**
+     * @return returns the current singleton instance
+     */
+    private static ForumManager getInstance() {
+        if (instance == null) instance = new ForumManager();
+        return instance;
     }
-
 
     /**
      * Listens to firestore for changes to this experiment. You MUST use this to get the trials and questions for an experiment.
@@ -49,11 +60,16 @@ public class ForumManager {
      * @param onUpdate
      *      Callback for implementing desired behaviour when the experiment is updated in firestore.
      */
-    public static void listen(Experiment experiment, ExperimentManager.ExperimentCallback onUpdate) {
+    public static void listen(Experiment experiment, Callback onUpdate) {
+        getInstance().listenImp(experiment, onUpdate);
+    }
+    protected void listenImp(Experiment experiment, Callback onUpdate) {
         if (!experiment.isValid()) {
             Log.e(TAG, "Cannot listen to an experiment without an id.");
             return;
         }
+
+        this.onUpdate = onUpdate;
 
         if (forumListener != null) forumListener.remove();
         String documentId = experiment.getId().getKey();
@@ -63,11 +79,9 @@ public class ForumManager {
         forumListener = commentsRef.addSnapshotListener((snapshots, e) -> {
             parseCommentsSnapshot(experiment, snapshots);
             Log.d(TAG, "Experiment Questions Updated: " + experiment.getQuestions().size());
-            onUpdate.callBack(experiment);
+            onUpdate.callBack();
         });
-
     }
-
 
 
     /**
@@ -81,11 +95,13 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addQuestion(Question question, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void addQuestion(Question question, Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().addQuestionImp(question, experiment, onSuccess, onFailure);
+    }
+    protected void addQuestionImp(Question question, Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         ((FirestoreOwnableDocument) question).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) question).setParent(experiment.getId());
         push(question, experiment, onSuccess, onFailure);
-
     }
 
 
@@ -100,7 +116,10 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Question question, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void update(Question question, Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().updateImp(question, experiment, onSuccess, onFailure);
+    }
+    protected void updateImp(Question question, Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!question.getOwner().equals(UserManager.getUser())) {
             onFailure.callBack(new Exception("Cannot update question. Not owned by user."));
         }
@@ -119,7 +138,10 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void addAnswer(Answer answer, Question question, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void addAnswer(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().addAnswerImp(answer, question, onSuccess, onFailure);
+    }
+    protected void addAnswerImp(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         ((FirestoreOwnableDocument) answer).setOwner(UserManager.getUser());
         ((FirestoreNestableDocument) answer).setParent(question.getId());
         push(answer, ExperimentManager.getExperiment(question.getParentId()), onSuccess, onFailure);
@@ -137,7 +159,10 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when push fails
      */
-    public static void update(Answer answer, Question question, Callback onSuccess, ExceptionCallback onFailure) {
+    public static void update(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
+        getInstance().updateImp(answer, question, onSuccess, onFailure);
+    }
+    protected void updateImp(Answer answer, Question question, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (!answer.getOwner().equals(UserManager.getUser())) {
             onFailure.callBack(new Exception("Cannot update answer. Not owned by user."));
         } else {
@@ -157,7 +182,7 @@ public class ForumManager {
      * @param onFailure
      *      Callback for when comment push fails
      */
-    private static void push(Comment comment, Experiment experiment, Callback onSuccess, ExceptionCallback onFailure) {
+    private static void push(Comment comment, Experiment experiment, Callback onSuccess, ObjectCallback<Exception> onFailure) {
         if (comment == null || !comment.parentIsValid()) {
             Log.e(TAG, "Push failed. Tried to add null or un-parented comment.");
             onFailure.callBack(new Exception("Push failed. Tried to add null or un-parented comment."));
@@ -170,7 +195,7 @@ public class ForumManager {
             return;
         }
 
-        CollectionReference commentsRef = db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(COMMENTS);
+        CollectionReference commentsRef = getInstance().db.collection(EXPERIMENTS).document(experiment.getId().getKey()).collection(COMMENTS);
 
         if (comment.getId() != null) {
             commentsRef.document(comment.getId().getKey()).set(comment).addOnSuccessListener(questionSnapshot -> {

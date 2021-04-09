@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/experimentStatisticsMenuItem"
+        android:title="Experiment Statistics" />
+    <item
+        android:id="@+id/experimentForumMenuItem"
+        android:icon="@drawable/ic_baseline_comment_24"
+        android:title="Discussion Forum"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/editExperimentMenuItem"
+        android:icon="@drawable/ic_round_menu_24"
+        android:title="Edit Experiment"
+        app:showAsAction="never|withText" />
+
+    <item
+        android:id="@+id/registerBarcodeMenuItem"
+        android:icon="@drawable/ic_baseline_document_scanner_24"
+        android:title="Register Bar Code"
+        app:showAsAction="never|withText" />
+
+    <item
+        android:id="@+id/generateQRcodeMenuItem"
+        android:title="Generate QR Code"
+        app:showAsAction="never|withText"/>
+    <item
+        android:id="@+id/publishExperimentMenuItem"
+        android:title="Publish Experiment" />
+    <item
+        android:id="@+id/endExperimentMenuItem"
+        android:title="End Experiment" />
+
+
+</menu>

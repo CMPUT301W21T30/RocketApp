@@ -6,9 +6,8 @@ import com.google.firebase.firestore.Exclude;
  * Class for Trials of 'IntCount' type.
  * The trials are either True(Success) or False(Fail)
  */
-public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
+public class IntCountTrial extends Trial  {
     public static final String TYPE = "IntCount";
-    private int count;
 
     /**
      * Default constructor for firestore serialization. Do not use.
@@ -21,18 +20,7 @@ public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
      *          value is set as the value of this trial.
      */
     public IntCountTrial(int value) {
-        setPCount(value);
-    }
-
-    /**
-     * @param trial
-     *          trial parameter is a different object of CountTrial class which gets compared to this trial based on their value
-     * @return the difference in (this object's trial value - passed object's trial value)
-     */
-    @Override
-    public int compareTo(IntCountTrial trial) {
-        int compareCount = trial.getPCount();
-        return this.getPCount() - compareCount;
+        this.value = (float) value;
     }
 
     /**
@@ -42,26 +30,14 @@ public class IntCountTrial extends Trial implements Comparable<IntCountTrial> {
         return TYPE;
     }
 
-    /**
-     * @return the value of this trial
-     */
-    public int getPCount(){
-        return count;
-    }
 
     /**
-     * @return string representation of trial value
+     * @return string containing integer value for this trial
      */
     @Exclude
     @Override
-    public String getValueString(){return Integer.toString(count); }
-
-    /**
-     * Setter for pos
-     * @param value
-     *          Value to initialize pos with
-     */
-    public void setPCount(int value){
-        count = value;
+    public String getValueString() {
+        return String.valueOf(value.intValue());
     }
+
 }

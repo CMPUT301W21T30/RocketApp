@@ -1,14 +1,18 @@
 package com.example.rocketapp.model.experiments;
-import android.util.Log;
 
 import com.example.rocketapp.controller.ExperimentManager;
 import com.example.rocketapp.controller.FirestoreOwnableDocument;
 import com.example.rocketapp.controller.UserManager;
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.comments.Question;
+import com.example.rocketapp.model.trials.CountTrial;
 import com.example.rocketapp.model.trials.Trial;
-import com.example.rocketapp.model.users.User;
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
+import static java.lang.Math.sqrt;
 
 /**
  * Abstract class Experiment
@@ -20,9 +24,9 @@ import java.util.ArrayList;
  * Stores data on Firestore
  */
 public abstract class Experiment extends FirestoreOwnableDocument {
-
+    public static final String ID_KEY = "ID";
     public ExperimentInfo info;     //description, region, minTrials, geoLocation
-    protected ArrayList<? extends Trial> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
+    protected ArrayList<Trial> trialsArrayList = new ArrayList<>();       //Trials posted on this experiment
     private ArrayList<Question> questionsArrayList = new ArrayList<>();         //Comments posted on this experiment
     private boolean isPublished, isActive;
 
@@ -58,18 +62,36 @@ public abstract class Experiment extends FirestoreOwnableDocument {
         this(new ExperimentInfo(description, region, minTrials, geoLocationEnabled));
     }
 
+    /**
+     * getter for type of experiment
+     * @return type of experiment       - "Binomial" or "Count" or "IntCount" or "Measurement"
+     */
+    public abstract String getType();
+
+    /**
+     * @param isActive set experiment active and open to add trials, or inactive (ended)
+     */
     public void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
+    /**
+     * @param isActive set experiment to be published (visible to others) or unpublished (hidden)
+     */
     public void setPublished(boolean isActive) {
         this.isPublished = isActive;
     }
 
+    /**
+     * @return is this experiment open to new trials
+     */
     public boolean isActive() {
         return isActive;
     }
 
+    /**
+     * @return is this experiment visible
+     */
     public boolean isPublished() {
         return isPublished;
     }
@@ -79,7 +101,19 @@ public abstract class Experiment extends FirestoreOwnableDocument {
      * @return an array list featuring all trials submitted under this experiment
      */
     @Exclude
-    public abstract ArrayList<? extends Trial> getTrials() ;
+    public ArrayList<Trial> getTrials(boolean includeIgnored) {
+        if (includeIgnored) {
+            return trialsArrayList;
+        } else {
+            ArrayList<Trial> filteredTrials = new ArrayList<>();
+            for(int i = 0; i < trialsArrayList.size(); i++){
+                if(!trialsArrayList.get(i).getIgnored()){
+                    filteredTrials.add(trialsArrayList.get(i));
+                }
+            }
+            return filteredTrials;
+        }
+    }
 
     /**
      *
@@ -90,19 +124,6 @@ public abstract class Experiment extends FirestoreOwnableDocument {
         return questionsArrayList;
     }
 
-    /**
-     * Owner wants to update experiment information
-     * @param info
-     *          New info to be updated with
-     * @param onComplete
-     *          Callback to DataManager to update Firestore
-     */
-    public void update(ExperimentInfo info, ExperimentManager.ExperimentCallback onComplete) {
-        if (!UserManager.isSignedIn() || !this.getOwner().equals(UserManager.getUser())) return;
-        this.info = info;
-
-        ExperimentManager.update(this, onComplete, (e) -> {});
-    }
 
     /**
      * setter for array list featuring all trials posted in this experiment
@@ -110,7 +131,7 @@ public abstract class Experiment extends FirestoreOwnableDocument {
      *          array list of trials which must be of the same type as experiment
      */
     @Exclude
-    public void setTrials(ArrayList<? extends Trial> trials) {
+    public void setTrials(ArrayList<Trial> trials) {
         trialsArrayList = trials;
     }
 
@@ -145,45 +166,134 @@ public abstract class Experiment extends FirestoreOwnableDocument {
     }
 
     /**
-     * getter for type of experiment
-     * @return type of experiment       - "Binomial" or "Count" or "IntCount" or "Measurement"
-     */
-    public abstract String getType();
-
-    /**
-     * getter for Median statistic of this experiment
-     * @return median
+     * Excluded from getting stored inside firestore.
+     * Calculates the median from all trials present in this experiment
+     * @return the median of experiment
      */
     @Exclude
-    public abstract float getMedian();
+    public float getMedian(){
+        ArrayList<Trial> trials = getTrials(false);
+        Collections.sort(trials);
+        if (trials.size() == 0) return 0;
+        int length = trials.size();
+        float median;
+        if(length%2==0) {
+            median = (trials.get((length / 2) - 1).getValue() + trials.get(length / 2).getValue()) / 2;
+        }
+        else {
+            median = (trials.get((length / 2)).getValue());
+        }
+        return median;
+    }
 
     /**
      * getter for mean of this experiment
      * @return mean
      */
     @Exclude
-    public abstract float getMean();
+    public float getMean() {
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) return 0;
+
+        float sum = 0.0f;
+        for (Trial trial : trials) {
+            sum += trial.getValue();
+        }
+
+        return sum / trials.size();
+    }
+
+    /**
+     * getter for data filtered mean of this experiment
+     * @param date will get mean for all filtered trials before data
+     * @return mean of trials before date
+     */
+    @Exclude
+    public float getMean(Date date) {
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) {return 0;}
+        float sum = 0;
+        if(trials.size()==0){
+            return 0;
+        }
+        int trialCounter = 0;
+        for(int i = 0; i<trials.size() ; i++){
+            if(trials.get(i).getTimestamp().toDate().after(date)) {continue;}
+            sum = sum + trials.get(i).getValue();
+            trialCounter++;
+        }
+        return sum / trialCounter;
+    }
 
     /**
      * getter for standard deviation of this experiment under normal curve
      * @return standard deviation
      */
-    @Exclude
-    public abstract float getStdDev();
+    public float getStdDev() {
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) return 0;
+        float mean = getMean();
+        float squareSum = 0;
+        float meanDif;
+        for(int i = 0; i<trials.size(); i++){
+            meanDif = (trials.get(i).getValue() - mean);
+            squareSum = squareSum + (meanDif * meanDif);
+        }
+        final double stdDev = sqrt(squareSum / trials.size());
+        return (float) stdDev;
+    }
 
     /**
      * getter for 75th percentile
      * @return Q3
      */
     @Exclude
-    public abstract float getTopQuartile();
+    public float getTopQuartile() {
+        float quart;
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) {return 0;}
+        Collections.sort(trials);
+        switch(trials.size() % 4){
+            case (0):
+                quart = (trials.get(( trials.size() * 3) / 4 - 1).getValue() + trials.get((trials.size() * 3) / 4 ).getValue()) / 2;
+                return quart;
+            case (1):
+                quart = (trials.get(((trials.size() - 1) * 3) / 4 ).getValue() + trials.get(((trials.size() - 1) * 3) / 4 + 1).getValue()) / 2;
+                return quart;
+            case (2):
+                quart = trials.get(((trials.size() - 2)* 3) / 4 + 1).getValue();
+                return quart;
+            default:
+                quart = trials.get(((trials.size() - 3)* 3) / 4 + 2).getValue();
+                return quart;
+        }
+    }
 
     /**
      * getter for 25th percentile
      * @return Q1
      */
     @Exclude
-    public abstract float getBottomQuartile();
+    public float getBottomQuartile() {
+        float quart;
+        ArrayList<Trial> trials = getTrials(false);
+        if (trials.size() == 0) return 0;
+        Collections.sort(trials);
+        switch (trials.size() % 4){
+            case (0):
+                quart = ((trials.get( trials.size()  / 4 - 1).getValue() + trials.get(trials.size() / 4 ).getValue()) )/ 2;
+                return quart;
+            case (1):
+                quart = ((trials.get( (trials.size() - 1 )/ 4 - 1).getValue() + trials.get((trials.size() - 1 )/ 4 ).getValue()) )/ 2;
+                return quart;
+            case (2):
+                quart = (trials.get((trials.size() - 2) / 4 ).getValue());
+                return quart;
+            default:
+                quart =(trials.get((trials.size() - 3) / 4 ).getValue());
+                return quart;
+        }
+    }
 
 }
 

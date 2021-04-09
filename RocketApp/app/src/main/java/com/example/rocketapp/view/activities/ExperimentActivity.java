@@ -2,13 +2,13 @@ package com.example.rocketapp.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +19,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rocketapp.controller.callbacks.ObjectCallback;
 import com.example.rocketapp.model.trials.Geolocation;
-import com.example.rocketapp.view.TrialFragment;
-import com.google.android.gms.location.FusedLocationProviderClient;
+import com.example.rocketapp.view.fragments.TrialFragment;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
@@ -36,22 +37,25 @@ import com.example.rocketapp.model.experiments.Experiment;
 /**
  * Display view for Experiment
  */
-public class ExperimentActivity extends AppCompatActivity {
+public class ExperimentActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentActivity";
+    private final int locationPermissionRequestCode = 100;
     private Experiment experiment;
     private TextView meanTextView;
     private TextView medianTextView;
     private TextView stdDevTextView;
-    private TextView regionView;
+    private TextView regionTextView;
     private TextView minTrialsTextView;
     private TextView statusTextView;
+    private TextView descriptionTextView;
+    private TextView ownerTextView;
+    private TextView publishedTextView;
+    private TextView experimentTypeTextView;
+    private TextView trialCountTextView;
     private Button addTrialButton;
-    private Button endExperimentButton;
-    private Button unpublishExperimentButton;
-    private Button map;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private boolean granted = false;
-    private Button publishExperimentButton;
+
+    private MenuItem publishExperimentMenuItem;
+    private MenuItem endExperimentMenuItem;
 
     /**
      * Setup the view for Experiment
@@ -65,54 +69,40 @@ public class ExperimentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experiment);
 
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
         meanTextView = findViewById(R.id.meanView);
         medianTextView = findViewById(R.id.medianValue);
         stdDevTextView = findViewById(R.id.stdDevVal);
-        regionView  = findViewById(R.id.regionView);
-        regionView.setText(experiment.info.getRegion());
-
+        regionTextView = findViewById(R.id.regionView);
+        descriptionTextView = findViewById(R.id.descriptionTextView);
         minTrialsTextView = findViewById(R.id.minTrialsView);
-        minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
+        statusTextView = findViewById(R.id.statusTextView);
+        publishedTextView = findViewById(R.id.publishedTextView);
+        experimentTypeTextView = findViewById(R.id.experimentTypeTextView);
+        trialCountTextView = findViewById(R.id.trialCountTextView);
 
-        TextView meanText = findViewById(R.id.meanText);
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            meanText.setText("Success Ratio");
-        }
+        findViewById(R.id.loginBtn).setOnClickListener(v -> openExperimentIntent(ExperimentStatisticsActivity.class));
 
-        TextView ownerTextView = findViewById(R.id.ownerTextView);
+        if (!UserManager.getUser().isOwner(experiment))
+            publishedTextView.setVisibility(View.GONE);
+
+        if (experiment.getType().equals(BinomialExperiment.TYPE))
+            ((TextView) findViewById(R.id.meanText)).setText(R.string.mean_label_binomial_trial);
+
+
+        ownerTextView = findViewById(R.id.ownerTextView);
         ownerTextView.setOnClickListener(this::onOwnerClicked);
-        ownerTextView.setText(experiment.getOwner().getName());
-        TextView experimentType = findViewById(R.id.experimentTypeTextView);
-        experimentType.setText(experiment.getType());
 
-        TextView experimentDescription = findViewById(R.id.descriptionTextView);
-        experimentDescription.setText(experiment.info.getDescription());
-
-        publishExperimentButton = findViewById(R.id.publishExperimentButton);
-        endExperimentButton = findViewById(R.id.endExperimentButton);
-        map = findViewById(R.id.mapbtn);
         addTrialButton = findViewById(R.id.addTrialButton);
-        statusTextView = findViewById(R.id.endedTextView);
+        addTrialButton.setOnClickListener(v -> onAddTrialClicked());
 
-        if(UserManager.getUser().isOwner(experiment)){
-            endExperimentButton.setOnClickListener(this::onEndClicked);
-            publishExperimentButton.setOnClickListener(this::onPublishClicked);
+        Button mapButton = findViewById(R.id.mapbtn);
+        if (experiment.info.isGeoLocationEnabled()) {
+            mapButton.setOnClickListener(this::mapClicked);
         } else {
-            endExperimentButton.setVisibility(View.GONE);
-            publishExperimentButton.setVisibility(View.GONE);
+            mapButton.setVisibility(View.GONE);
         }
-
-        if(experiment.info.isGeoLocationEnabled()) {
-            map.setOnClickListener(this::mapClicked);
-        }
-        else{
-            map.setVisibility(View.GONE);
-        }
-        addTrialButton.setOnClickListener(this::onAddTrialClicked);
-
-        //findViewById(R.id.forumButton).setOnClickListener(this::onForumButtonClicked);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
@@ -123,17 +113,24 @@ public class ExperimentActivity extends AppCompatActivity {
         update(experiment);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        update(experiment);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (experiment.getOwner().equals(UserManager.getUser())){
-        getMenuInflater().inflate(R.menu.experiment_menu, menu);
+        if (UserManager.getUser().isOwner(experiment)) {
+            getMenuInflater().inflate(R.menu.menu_experiment, menu);
+            endExperimentMenuItem = menu.findItem(R.id.endExperimentMenuItem);
+            publishExperimentMenuItem = menu.findItem(R.id.publishExperimentMenuItem);
+            publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
+        } else {
+            getMenuInflater().inflate(R.menu.menu_experimenter, menu);
+        }
         return super.onCreateOptionsMenu(menu);
-        }
-        else{
-            getMenuInflater().inflate(R.menu.experimenter_menu, menu);
-            return super.onCreateOptionsMenu(menu);
-
-        }
     }
 
     @Override
@@ -142,111 +139,139 @@ public class ExperimentActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.menuButton:
-                Intent intent = new Intent(this, ExperimentEditActivity.class);
-                intent.putExtra("id", experiment.getId());
-                startActivity(intent);
+            case R.id.editExperimentMenuItem:
+                openExperimentIntent(ExperimentEditActivity.class);
                 return true;
-            case R.id.registerMenu:
-                Intent scannerIntent = new Intent(this, RegisterBarcodeActivity.class);
-                scannerIntent.putExtra("id", experiment.getId());
-                startActivity(scannerIntent);
+            case R.id.registerBarcodeMenuItem:
+                openExperimentIntent(RegisterBarcodeActivity.class);
                 return true;
-            case R.id.forumButton:
-                Intent forumintent = new Intent(this, ExperimentForumActivity.class);
-                forumintent.putExtra("id", experiment.getId());
-                startActivity(forumintent);
-            case R.id.generateQRcode:
-                Intent qrcodeIntent = new Intent(this, GenerateQRcodeActivity.class);
-                qrcodeIntent.putExtra("id", experiment.getId());
-                startActivity(qrcodeIntent);
-
+            case R.id.experimentForumMenuItem:
+                openExperimentIntent(ExperimentForumActivity.class);
+                return true;
+            case R.id.generateQRcodeMenuItem:
+                openExperimentIntent(GenerateQRcodeActivity.class);
+                return true;
+            case R.id.publishExperimentMenuItem:
+                onPublishExperimentClicked();
+                return true;
+            case R.id.endExperimentMenuItem:
+                onEndExperimentClicked();
+                return true;
+            case R.id.experimentStatisticsMenuItem:
+                openExperimentIntent(ExperimentStatisticsActivity.class);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
+
+    void openExperimentIntent(Class<?> experimentClass) {
+        Intent experimentIntent = new Intent(this, experimentClass);
+        experimentIntent.putExtra(Experiment.ID_KEY, experiment.getId());
+        startActivity(experimentIntent);
+    }
+
 
     void mapClicked(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("id", experiment.getId());
+        intent.putExtra(Experiment.ID_KEY, experiment.getId());
         startActivity(intent);
     }
 
-    void onPublishClicked(View view) {
 
-        Log.d("ExperimentActivity", "Publish Clicked Published: " + experiment.isPublished());
-
-        if (experiment.isPublished()){
-            Log.e(TAG, "Calling un-publishExperiment");
-            ExperimentManager.unpublishExperiment(experiment, this::update, e-> {});
-
+    void onPublishExperimentClicked() {
+        if (experiment.isPublished()) {
+            ExperimentManager.unpublishExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
+        } else {
+            ExperimentManager.publishExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
         }
-        else {
-            Log.e(TAG, "Calling publishExperiment");
-            ExperimentManager.publishExperiment(experiment, this::update, e-> {});
-        }
-
     }
 
-    void onEndClicked(View view) {
-        ExperimentManager.endExperiment(experiment, exp->{}, e->{});
+
+    void onEndExperimentClicked() {
+        ExperimentManager.endExperiment(experiment, this::update, e -> Log.e(TAG, e.getMessage()));
     }
 
-    void onAddTrialClicked(View view) {
+
+    void onAddTrialClicked() {
         if (!experiment.info.isGeoLocationEnabled()) {
-            new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
-                TrialManager.addTrial(newTrial, experiment, t -> {
-                    Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
-                }, e -> {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                });
-            }).show(getSupportFragmentManager(), "ADD_TRIAL");
-        }
-        else{
-            if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.getResult() == null) {
-                            Log.d(TAG, "Result was null");
-                            return;
-                        }
-                        Geolocation location = new Geolocation(task.getResult().getLongitude(), task.getResult().getLatitude());
-                        new TrialFragment(experiment.getType(), experiment.info.isGeoLocationEnabled(), newTrial -> {
-                            newTrial.setLocation(location);
-                            TrialManager.addTrial(newTrial, experiment, t -> {
+            new TrialFragment("Add " + experiment.getType() + " Trial", experiment, newTrial ->
+                TrialManager.addTrial(newTrial, experiment,
+                        t -> Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show(),
+                        e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show())
+                ).show(getSupportFragmentManager(), "ADD_TRIAL");
+        } else {
+            getLocation(location -> {
+                if (location == null) return;
+                new TrialFragment(experiment, newTrial -> {
+                    newTrial.setLocation(new Geolocation(location));
+                    TrialManager.addTrial(newTrial, experiment,
+                            t -> {
                                 Toast.makeText(getApplicationContext(), newTrial.getType() + " added", Toast.LENGTH_SHORT).show();
-                            }, e -> {
-                                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                            });
-                        }).show(getSupportFragmentManager(), "ADD_TRIAL");
-                    }
-                });
-            }
-            else {
-                Toast toast = Toast.makeText(this.getApplicationContext(), "Permission needed for this experiment", Toast.LENGTH_SHORT);
-                toast.show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-                if(granted){
-                    System.out.println("HERE");
-                }
-                else{
-                    System.out.println("NOT HERE");
-                }
+                                update(experiment);
+                            },
+                            e -> Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show());
+                }).show(getSupportFragmentManager(), "ADD_TRIAL");
+            });
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == locationPermissionRequestCode) {
+            if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+                onAddTrialClicked();
+            } else {
+                Toast.makeText(getApplicationContext(), "Must enable location permission in android settings.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
 
-    void onForumButtonClicked(View view) {
-        Intent intent = new Intent(this, ExperimentForumActivity.class);
-        intent.putExtra("id", experiment.getId());
-        startActivity(intent);
+    @SuppressLint("MissingPermission")
+    private void getLocation(ObjectCallback<Location> onSuccess) {
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION, locationPermissionRequestCode)) return;
+
+        // Get last location
+        LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(location -> {
+
+            if (location != null) {
+                onSuccess.callBack(location);
+
+            } else {
+                // Request location update
+                LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(
+                        LocationRequest.create()
+                            .setInterval(60000)
+                            .setFastestInterval(5000)
+                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setNumUpdates(1),
+                        new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                Location lastLocation = null;
+                                if (locationResult == null) {
+                                    return;
+                                }
+                                for (Location location : locationResult.getLocations()) {
+                                    if (location != null) {
+                                        lastLocation = location;
+                                    }
+                                }
+                                if (lastLocation != null) onSuccess.callBack(lastLocation);
+                            }
+                        },
+                        null);
+            }
+        });
     }
 
     void onOwnerClicked(View view) {
         Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("id", experiment.getOwnerId());
+        intent.putExtra(Experiment.ID_KEY, experiment.getOwnerId());
         startActivity(intent);
     }
 
@@ -256,22 +281,26 @@ public class ExperimentActivity extends AppCompatActivity {
      *          Experiment of current view
      */
     void update(Experiment experiment) {
-        // Could add all updates here
-        meanTextView.setText(String.valueOf(experiment.getMean()));
-        medianTextView.setText(String.valueOf(experiment.getMedian()));
-        stdDevTextView.setText(String.valueOf(experiment.getStdDev()));
+        descriptionTextView.setText(experiment.info.getDescription());
+        ownerTextView.setText(experiment.getOwner().getName());
+        meanTextView.setText(String.format("%.2f",experiment.getMean()));
+        medianTextView.setText(String.format("%.2f", experiment.getMedian()));
+        stdDevTextView.setText(String.format("%.2f", experiment.getStdDev()));
+        minTrialsTextView.setText(String.valueOf(experiment.info.getMinTrials()));
+        regionTextView.setText(experiment.info.getRegion());
+        experimentTypeTextView.setText(experiment.getType());
+        trialCountTextView.setText(String.valueOf(experiment.getTrials(false).size()));
 
-        statusTextView.setVisibility(experiment.isActive() ? View.INVISIBLE : View.VISIBLE);
+        statusTextView.setText(experiment.isActive() ? "Active" : "Ended");
+        statusTextView.setTextColor(experiment.isActive() ? Color.GREEN : Color.RED);
+
         addTrialButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.INVISIBLE);
 
         if (UserManager.getUser().isOwner(experiment)) {
-            Log.d("ExperimentActivity", "Update Published: " + experiment.isPublished() + " Active " + experiment.isActive());
-
-            publishExperimentButton.setText(experiment.isPublished() ? "Unpublish" : "Publish");
-            endExperimentButton.setVisibility(experiment.isActive() ? View.VISIBLE : View.GONE);
-        } else {
-            Log.d("ExperimentActivity", "Not Owner");
+            if (publishExperimentMenuItem != null) publishExperimentMenuItem.setTitle(experiment.isPublished() ? "Un-publish Experiment" : "Publish Experiment");
+            if (endExperimentMenuItem != null && !experiment.isActive()) endExperimentMenuItem.setVisible(false);
+            publishedTextView.setText(experiment.isPublished() ? "Published" : "Not Published");
+            publishedTextView.setTextColor(experiment.isPublished() ? Color.GREEN : Color.RED);
         }
     }
-
 }

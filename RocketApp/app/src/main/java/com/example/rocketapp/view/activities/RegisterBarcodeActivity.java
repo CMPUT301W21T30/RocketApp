@@ -1,127 +1,67 @@
 package com.example.rocketapp.view.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.rocketapp.R;
 import com.example.rocketapp.controller.ExperimentManager;
-import com.example.rocketapp.model.Code;
-import com.example.rocketapp.model.experiments.BinomialExperiment;
+import com.example.rocketapp.controller.ScannerManager;
 import com.example.rocketapp.model.experiments.Experiment;
-import com.example.rocketapp.model.trials.BinomialTrial;
-import com.example.rocketapp.model.trials.CountTrial;
-import com.example.rocketapp.model.trials.IntCountTrial;
-import com.example.rocketapp.model.trials.MeasurementTrial;
-import com.example.rocketapp.model.trials.Trial;
+import com.example.rocketapp.view.fragments.TrialFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 /**
  * ScannerActivity implements the scanner feature
  *
+ * https://youtu.be/wfucGSKngq4
+ *
  */
-public class RegisterBarcodeActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegisterBarcodeActivity extends RocketAppActivity {
     private static final String TAG = "ExperimentScannerAct";
-    private Button scanBtn;
-    private TextView code;
+    private final int cameraPermissionRequestCode = 100;
     private Experiment experiment;
-    private TextView experimentType;
-    private EditText trialsEditText;
-    private CheckBox registerpass;
-    private CheckBox registerfail;
-    private Button registerBtn;
-    private Code registerCode;
-    private BinomialTrial binomialTrial;
-    private CountTrial countTrial;
-    private IntCountTrial intCountTrial;
-    private MeasurementTrial measurementTrial;
+    private TextView codePreviewTextView, registeredStatusTextView;
+    private Button registerButton;
+    private String scannedCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_scanner);
-        experimentType = findViewById(R.id.experimentType);
-        trialsEditText = findViewById(R.id.trialEditText);
-        registerfail = findViewById(R.id.registerfail);
-        registerpass = findViewById(R.id.registerpass);
-        code = findViewById(R.id.scanned_code);
-        registerBtn = findViewById(R.id.registerButton);
-        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra("id"));
+        setContentView(R.layout.activity_barcode_registration);
 
+        experiment = ExperimentManager.getExperiment(getIntent().getSerializableExtra(Experiment.ID_KEY));
 
-        experimentType.setText(experiment.getType());
+        codePreviewTextView = findViewById(R.id.scanned_code);
+        registeredStatusTextView = findViewById(R.id.registeredStatusTextView);
 
-        scanBtn = findViewById(R.id.scanButton);
-        scanBtn.setOnClickListener(this);
+        registerButton = findViewById(R.id.registerButton);
+        registerButton.setVisibility(View.INVISIBLE);
+        registerButton.setOnClickListener(v ->
+            new TrialFragment(experiment,
+                    newTrial -> ScannerManager.registerBarcode(scannedCode, experiment, newTrial,
+                            barcode-> registeredStatusTextView.setText(getRegistrationStatusString(barcode)),
+                            exception-> Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show())
+            ).show(getSupportFragmentManager(), "ADD_TRIAL"));
+
+        findViewById(R.id.scanButton).setOnClickListener(v -> scanCode());
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        //System.out.println(code.getText());
-
-        if (experiment.getType().equals(BinomialExperiment.TYPE)) {
-            trialsEditText.setVisibility(View.GONE);
-        } else {
-            registerpass.setVisibility(View.GONE);
-            registerfail.setVisibility(View.GONE);
-        }
-
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (experiment.getType().equals(BinomialTrial.TYPE)) {
-                    if (registerpass.isChecked()) {
-                        registerCode.setCode(code.getText().toString());
-                        registerCode.setExperiment(experiment.info.getDescription());
-                        registerCode.setIfBinomial(true);
-
-                    }
-                    else if (registerfail.isChecked()) {
-                        registerCode.setCode(code.getText().toString());
-                        registerCode.setExperiment(experiment.info.getDescription());
-                        registerCode.setIfBinomial(false);
-
-                    }
-                    else {
-                        //CANNOT select both
-                    }
-
-                }
-                else {
-
-                }
-
-
-            }
-        });
-
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        scanCode();
-    }
-
-    private void scanCode() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCaptureActivity(CaptureAct.class);
-        integrator.setOrientationLocked(false);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Scanning");
-        integrator.initiateScan();
     }
 
 
@@ -140,19 +80,52 @@ public class RegisterBarcodeActivity extends AppCompatActivity implements View.O
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-        if (result != null) {
-            if (result.getContents() != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                code = findViewById(R.id.scanned_code);
-                code.setText(result.getContents());
-            } else {
-                Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
-            }
+        if (result != null && result.getContents() != null) {
+            codePreviewTextView = findViewById(R.id.scanned_code);
+            codePreviewTextView.setText(result.getContents());
+            scannedCode = result.getContents();
+            registerButton.setVisibility(View.VISIBLE);
+
+            ScannerManager.readBarcode(scannedCode,
+                    barcode -> registeredStatusTextView.setText(getRegistrationStatusString(barcode)),
+                    e -> {
+                        registeredStatusTextView.setText(R.string.barcode_not_registered);
+                        Log.d(TAG, "Barcode not registered");
+            });
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-
         }
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == cameraPermissionRequestCode) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(getApplicationContext(), "Must allow app access to Camera in device settings.", Toast.LENGTH_LONG).show();
+            } else {
+                scanCode();
+            }
+        }
+    }
+
+
+    private void scanCode() {
+        if (!hasPermission(Manifest.permission.CAMERA, cameraPermissionRequestCode)) return;
+
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator.setOrientationLocked(false);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Scanning");
+        integrator.initiateScan();
+    }
+
+
+    private String getRegistrationStatusString(ScannerManager.Barcode barcode) {
+        Experiment experiment = ExperimentManager.getExperiment(barcode.getExperimentId());
+        return String.format("Barcode registered as:\n%s Trial: %s\nExperiment: %s", barcode.getTrial().getType(), barcode.getTrial().getValueString(), experiment.info.getDescription());
+    }
 }

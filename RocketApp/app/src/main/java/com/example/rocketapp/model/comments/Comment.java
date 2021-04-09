@@ -11,7 +11,7 @@ public abstract class Comment extends FirestoreNestableDocument {
     /**
      * Default constructor for firestore serialization. Do not use.
      */
-    public Comment() {};
+    public Comment() {}
 
     /**
      * @param text User passes the text to be written inside comment box.

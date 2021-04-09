@@ -1,16 +1,23 @@
 package com.example.rocketapp;
 
-import android.view.View;
 import android.widget.EditText;
-
+import android.widget.TextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.rocketapp.controller.DataManager;
+import com.example.rocketapp.controller.ExperimentManager;
+import com.example.rocketapp.controller.MockManager;
+import com.example.rocketapp.controller.UserManager;
 import com.example.rocketapp.model.experiments.Experiment;
+import com.example.rocketapp.view.activities.ExperimentActivity;
 import com.example.rocketapp.view.activities.ExperimentEditActivity;
-import com.example.rocketapp.view.activities.ExperimentsListActivity;
-import com.example.rocketapp.view.activities.LogInActivity;
+import com.example.rocketapp.view.activities.ExperimentForumActivity;
+import com.example.rocketapp.view.activities.ExperimentSearchActivity;
+import com.example.rocketapp.view.activities.ExperimentStatisticsActivity;
+import com.example.rocketapp.view.activities.GenerateQRcodeActivity;
+import com.example.rocketapp.view.activities.LoginActivity;
+import com.example.rocketapp.view.activities.MainActivity;
+import com.example.rocketapp.view.activities.UserProfileActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -18,17 +25,39 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+
+class MyActivityTestRule extends ActivityTestRule<LoginActivity> {
+    public MyActivityTestRule(Class activityClass, boolean initialTouchMode, boolean launchActivity) {
+        super(activityClass, initialTouchMode, launchActivity);
+    }
+
+    @Override
+    protected void beforeActivityLaunched() {
+        MockManager.initializeMock();
+        super.beforeActivityLaunched();
+    }
+}
+
+/**
+ * Test user stories in the application
+ */
 public class GeneralAppTest {
     private Solo solo;
+    private final String failedCurrentActivity = "Wrong Activity";
+    private final String trial = "TRIAL";
+    private final String failure = "FAILURE";
+    private final String success = "SUCCESS";
+    private final String alberta = "Alberta";
+    private final String trueString = "true";
+    private final String subscribe = "SUBSCRIBE";
+    private final String welcome = "Welcome";
 
     @Rule
-    public ActivityTestRule <LogInActivity> rule = new ActivityTestRule <LogInActivity>(LogInActivity.class, true, true);
+    public MyActivityTestRule rule = new MyActivityTestRule(LoginActivity.class, true, true);
+
 
     @Before
     public void setup() {
@@ -36,210 +65,252 @@ public class GeneralAppTest {
     }
 
     @Test
-    public void checkLogin(){
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
+    public void signIn() {
+        solo.assertCurrentActivity(failedCurrentActivity, LoginActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.userNameEditText), "Mock User");
+        solo.clickOnText("Submit");
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
     }
 
     @Test
     public void checkAddExperiment(){
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "saif");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-        ArrayList<Experiment> array = DataManager.getOwnedExperimentsArrayList();
-        int initialSize = array.size();
+        String experimentName = "Toss a coin";
+        String confirm = "CONFIRM";
+        String minTrialInput = "10";
+        ExperimentManager.getExperimentArrayList().clear();
+
+        signIn();
+
         solo.clickOnButton("NEW");
-        //TODO: figure out how to check if dialog fragment was opened
+        solo.waitForText("Binomial", 1, 2000);
         solo.pressSpinnerItem(0, 0);
-        solo.enterText((EditText) solo.getView(R.id.description_input), "Toss a coin, record SUCCESS if it lands on head, FAIL if it lands on fail");
+        solo.enterText((EditText) solo.getView(R.id.description_input), experimentName);
         solo.enterText((EditText) solo.getView(R.id.region_input), "AB");
-        solo.enterText((EditText) solo.getView(R.id.min_trial), "10");
-        solo.clickOnCheckBox(0);
-        solo.clickOnButton("PUBLISH");
-        array = DataManager.getOwnedExperimentsArrayList();
-        int finalSize = array.size();
-        assertTrue(solo.waitForText("Toss a coin, record SUCCESS if it lands on head, FAIL if it lands on fail", 1, 1000));
-        //TODO: delete experiment from database then check size again
+        solo.enterText((EditText) solo.getView(R.id.min_trial), minTrialInput);
+        solo.hideSoftKeyboard();
+        solo.waitForText(minTrialInput, 1, 2000);
+        solo.waitForText(confirm, 1, 2000);
+        solo.clickOnText(confirm);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
     }
 
     @Test
-    public void checkSubscribed() throws InterruptedException {
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
-        solo.clickOnButton("LOGIN");
-        solo.clickOnButton("SUBSCRIBE");
-        solo.clickOnText("Toss a coin");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-        assertTrue(solo.waitForText("Toss a coin", 1, 1000));
+    public void checkAddTrials(){
+
+        
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText(trial, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addTrialButton));
+        solo.hideSoftKeyboard();
+        solo.waitForText(success);
+        solo.clickOnView(solo.getView(R.id.addSuccess));
+        solo.waitForText(trial, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addTrialButton));
+        solo.waitForText(failure, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addFailure));
+        solo.waitForText("Number", 1, 2000);
+
+        assertEquals(((TextView) solo.getView(R.id.trialCountTextView)).getText().toString(), "6");
     }
 
     @Test
-    public void checkAddTrial() throws InterruptedException {
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "archit");
-        solo.clickOnButton("LOGIN");
-        if (!solo.searchText("Toss a coin", 1)) {
-            solo.clickOnButton("SUBSCRIBE");
-            solo.clickOnText("Toss a coin");
-            solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-            assertTrue(solo.waitForText("Toss a coin", 1, 1000));
+    public void checkChangeExperimentState(){
+        String notPublished = "Not Published";
+        String published = "Published";
+        String ended = "Ended";
+        String unpublishMenuItem = "Un-publish Experiment";
+        String publishMenuItem = "Publish Experiment";
+        String endMenuItem = "End Experiment";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(unpublishMenuItem);
+        solo.waitForText(notPublished, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), notPublished);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(publishMenuItem);
+        solo.waitForText(published, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), published);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(endMenuItem);
+        solo.waitForText(ended, 1, 2000);
+        assertEquals(((TextView) solo.getView(R.id.statusTextView)).getText().toString(), ended);
+        assertEquals((solo.getView(R.id.addTrialButton).getVisibility()), 4);
+    }
+
+    @Test
+    public void checkOpenGraphs(){
+        String statisticsMenuItem = "Experiment Statistics";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(statisticsMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentStatisticsActivity.class);
+    }
+
+
+    @Test
+    public void checkGenerateQRCode(){
+        String qrMenuItem = "Generate QR Code";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(qrMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, GenerateQRcodeActivity.class);
+        solo.waitForText(success, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addSuccess));
+        solo.waitForText(trueString, 1, 2000);
+        assertTrue(((TextView) solo.getView(R.id.generatedCodeTextView)).getText().toString().contains("Binomial true"));
+    }
+
+    @Test
+    public void checkEditExperiment(){
+        String editMenuItem = "Edit Experiment";
+        String modification = "modified";
+        String updateText = "Update";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(editMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.editTextRegion), modification);
+        solo.waitForText(updateText, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.textViewUpdate));
+        solo.goBack();
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText(modification, 1, 2000);
+        assertTrue(((TextView) solo.getView(R.id.regionView)).getText().toString().contains(modification));
+    }
+
+    @Test
+    public void checkIgnoreTrial(){
+        String menuItem = "Edit Experiment";
+
+        String expectedCount = "3";
+        String expectedMean = "0.333";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(menuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
+        solo.waitForText(trueString, 1, 2000);
+        solo.clickOnText(trueString);
+        solo.goBack();
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText("Trial Count", 1, 2000);
+        assertEquals(expectedCount, ((TextView) solo.getView(R.id.trialCountTextView)).getText().toString());
+        assertTrue(((TextView) solo.getView(R.id.meanView)).getText().toString().contains(expectedMean));
+    }
+
+    @Test
+    public void checkEditProfile(){
+        String profileMenuItem = "Profile";
+        String mockEmail = "mock@gmail.com";
+        String mockNumber = "9998887777";
+        signIn();
+
+        solo.waitForText(welcome, 1, 2000);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(profileMenuItem);
+
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.userEmailEditText), mockEmail);
+        solo.enterText((EditText) solo.getView(R.id.userPhoneNumberEditText), mockNumber);
+        solo.clickOnView(solo.getView(R.id.updateProfileButton));
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
+        solo.waitForText(welcome, 1, 2000);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(profileMenuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
+
+        assertTrue(((TextView) solo.getView(R.id.userEmailEditText)).getText().toString().contains(mockEmail));
+        assertTrue(((TextView) solo.getView(R.id.userPhoneNumberEditText)).getText().toString().contains(mockNumber));
+    }
+
+    @Test
+    public void checkDiscussionForum(){
+        String menuItem = "Discussion Forum";
+        String submit = "SUBMIT";
+        String question = "Hello there";
+        String response = "Howdy";
+        String addResponse = "Add Response";
+        String addQuestion = "ADD QUESTION";
+        signIn();
+
+        solo.waitForText(alberta, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.sendKey(Solo.MENU);
+        solo.clickOnMenuItem(menuItem);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentForumActivity.class);
+        solo.waitForText(addQuestion, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addQuestionButton));
+        solo.enterText((EditText) solo.getView(R.id.commentInput), question);
+        solo.waitForText(question,1, 2000);
+        solo.waitForText(submit, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.addQuestionButton));
+        solo.waitForText(question, 1, 2000);
+        solo.waitForText(addResponse, 1, 2000);
+        solo.clickOnText(addResponse);
+        solo.enterText((EditText) solo.getView(R.id.commentInput), response);
+        solo.waitForText(response, 1, 2000);
+        solo.waitForText(submit, 1, 3000);
+        solo.clickOnView(solo.getView(R.id.addQuestionButton));
+
+        assertTrue(((TextView) solo.getView(R.id.dialogueTextView)).getText().toString().contains(question));
+        assertTrue(((TextView) solo.getView(R.id.answerDialogueTextView)).getText().toString().contains(response));
+    }
+
+
+    @Test
+    public void checkSearchAndSubscribeExperiment(){
+        String search = "eggs";
+        signIn();
+        for (Experiment e: ExperimentManager.getExperimentArrayList()) {
+            if (UserManager.getUser().isOwner(e)) {
+                ExperimentManager.getExperimentArrayList().remove(e);
+                break;
+            }
         }
-        solo.clickOnText("Toss a coin");
-        solo.clickOnButton("Add Trial");
-        solo.clickOnButton("Success");
-        //TODO check if trial was added
-    }
-
-
-    @Test
-    public void checkPublished() {
-        // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-
-        // Slide Experiment to published
-        int fromX, toX, fromY, toY;
-        int[] location = new int[2];
-
-        View row = solo.getText("Coin flip experiment");
-        row.getLocationInWindow(location);
-
-        // fail if the view with text cannot be located in the window
-        if (location.length == 0) {
-            fail("Could not find text: " + "Throw distance experiment");
-        }
-
-        fromX = location[0] + 100;
-        fromY = location[1];
-
-        toX = location[0];
-        toY = fromY;
-
-        solo.drag(fromX, toX, fromY, toY, 10);
-
-        // check published
-        assertTrue(solo.searchText("PUBLISHED"));;
+        solo.waitForText(welcome, 1, 2000);
+        solo.clickOnButton(subscribe);
+        solo.waitForText(search, 1, 2000);
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentSearchActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.search_for_experiments), search);
+        solo.waitForText(search, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
+        solo.waitForText(welcome, 1, 2000);
+        solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
     }
 
     @Test
-    public void checkUnPublished() {
-        // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-
-        // Slide Experiment to published
-        int fromX, toX, fromY, toY;
-        int[] location = new int[2];
-
-        View row = solo.getText("Coin flip experiment");
-        row.getLocationInWindow(location);
-
-        // fail if the view with text cannot be located in the window
-        if (location.length == 0) {
-            fail("Could not find text: " + "Throw distance experiment");
-        }
-
-        fromX = location[0];
-        fromY = location[1];
-
-        toX = location[0] + 100;
-        toY = fromY;
-
-        solo.drag(fromX, toX, fromY, toY, 10);
-
-        // check published
-        assertTrue(solo.searchText("UNPUBLISHED"));;
-
-        // Reset to publish activity by default
-        fromX = location[0] + 100;
-        fromY = location[1];
-
-        toX = location[0];
-        toY = fromY;
-
-        solo.drag(fromX, toX, fromY, toY, 10);
-        assertTrue(solo.searchText("PUBLISHED"));;
-    }
-
-
-    @Test
-    public void testOwnerActivity() {
-        // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-
-        // Check owned experiment
-        solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
-        assertTrue(solo.searchText("Measurement"));
-    }
-
-
-    @Test
-    public void testOwnerActivityTrial() {
-        // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-
-        // Check owned experiment
-        solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
-        assertTrue(solo.searchText("Measurement"));
-        // check if the trial exists
-        assertTrue(solo.searchText("1234.0"));
-    }
-
-    @Test
-    public void testOwnerActivityEndExperiment() {
-        // Login
-        solo.assertCurrentActivity("Wrong Activity", LogInActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.usernameEditText), "Mike Greber");
-        solo.clickOnButton("LOGIN");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentsListActivity.class);
-
-        // Pushed the experiment
-        // Slide Experiment to published
-        int fromX, toX, fromY, toY;
-        int[] location = new int[2];
-
-        View row = solo.getText("Throw distance experiment");
-        row.getLocationInWindow(location);
-
-        // fail if the view with text cannot be located in the window
-        if (location.length == 0) {
-            fail("Could not find text: " + "Throw distance experiment");
-        }
-
-        fromX = location[0] + 100;
-        fromY = location[1];
-
-        toX = location[0];
-        toY = fromY;
-
-        solo.drag(fromX, toX, fromY, toY, 10);
-
-        // check published
-        assertTrue(solo.searchText("PUBLISHED"));;
-
-
-        // Check owned experiment
-        solo.clickOnText("Throw distance experiment");
-        solo.assertCurrentActivity("Wrong Activity", ExperimentEditActivity.class);
-
-        // check if the trial exists
-        solo.clickOnView(solo.getView(R.id.EndExperimentBtn));
-        assertTrue(solo.searchText("ENDED"));
+    public void checkViewUserProfile(){
+        checkSearchAndSubscribeExperiment();
+        solo.waitForText("Owner", 1, 2000);
+        solo.clickOnView(solo.getView(R.id.ownerTextView));
+        solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
     }
 
     @After
