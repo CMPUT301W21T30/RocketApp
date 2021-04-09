@@ -97,8 +97,6 @@ public class GeneralAppTest {
 
     @Test
     public void checkAddTrials(){
-
-        
         signIn();
 
         solo.waitForText(alberta, 1, 2000);
@@ -132,15 +130,18 @@ public class GeneralAppTest {
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(unpublishMenuItem);
+        solo.waitForText(unpublishMenuItem, 1, 2000);
+        solo.clickOnText(unpublishMenuItem);
         solo.waitForText(notPublished, 1, 2000);
         assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), notPublished);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(publishMenuItem);
+        solo.waitForText(publishMenuItem, 1, 2000);
+        solo.clickOnText(publishMenuItem);
         solo.waitForText(published, 1, 2000);
         assertEquals(((TextView) solo.getView(R.id.publishedTextView)).getText().toString(), published);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(endMenuItem);
+        solo.waitForText(endMenuItem, 1, 2000);
+        solo.clickOnText(endMenuItem);
         solo.waitForText(ended, 1, 2000);
         assertEquals(((TextView) solo.getView(R.id.statusTextView)).getText().toString(), ended);
         assertEquals((solo.getView(R.id.addTrialButton).getVisibility()), 4);
@@ -155,7 +156,8 @@ public class GeneralAppTest {
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(statisticsMenuItem);
+        solo.waitForText(statisticsMenuItem, 1, 2000);
+        solo.clickOnText(statisticsMenuItem);
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentStatisticsActivity.class);
     }
 
@@ -169,7 +171,8 @@ public class GeneralAppTest {
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(qrMenuItem);
+        solo.waitForText(qrMenuItem,1, 2000);
+        solo.clickOnText(qrMenuItem);
         solo.assertCurrentActivity(failedCurrentActivity, GenerateQRcodeActivity.class);
         solo.waitForText(success, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addSuccess));
@@ -188,7 +191,8 @@ public class GeneralAppTest {
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(editMenuItem);
+        solo.waitForText(editMenuItem,1, 2000);
+        solo.clickOnText(editMenuItem);
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
         solo.enterText((EditText) solo.getView(R.id.editTextRegion), modification);
         solo.waitForText(updateText, 1, 2000);
@@ -202,24 +206,24 @@ public class GeneralAppTest {
     @Test
     public void checkIgnoreTrial(){
         String menuItem = "Edit Experiment";
+        String expectedMean = "0.33";
 
-        String expectedCount = "3";
-        String expectedMean = "0.333";
         signIn();
 
         solo.waitForText(alberta, 1, 2000);
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(menuItem);
+        solo.waitForText(menuItem,1, 2000);
+        solo.clickOnText(menuItem);
+
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentEditActivity.class);
         solo.waitForText(trueString, 1, 2000);
         solo.clickOnText(trueString);
         solo.goBack();
-        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.waitForText("Trial Count", 1, 2000);
-        assertEquals(expectedCount, ((TextView) solo.getView(R.id.trialCountTextView)).getText().toString());
-        assertTrue(((TextView) solo.getView(R.id.meanView)).getText().toString().contains(expectedMean));
+        solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
+        solo.waitForText(expectedMean, 1, 2000);
     }
 
     @Test
@@ -231,8 +235,8 @@ public class GeneralAppTest {
 
         solo.waitForText(welcome, 1, 2000);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(profileMenuItem);
-
+        solo.waitForText(profileMenuItem,1, 2000);
+        solo.clickOnText(profileMenuItem);
         solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
         solo.enterText((EditText) solo.getView(R.id.userEmailEditText), mockEmail);
         solo.enterText((EditText) solo.getView(R.id.userPhoneNumberEditText), mockNumber);
@@ -240,7 +244,8 @@ public class GeneralAppTest {
         solo.assertCurrentActivity(failedCurrentActivity, MainActivity.class);
         solo.waitForText(welcome, 1, 2000);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(profileMenuItem);
+        solo.waitForText(profileMenuItem,1, 2000);
+        solo.clickOnText(profileMenuItem);
         solo.assertCurrentActivity(failedCurrentActivity, UserProfileActivity.class);
 
         assertTrue(((TextView) solo.getView(R.id.userEmailEditText)).getText().toString().contains(mockEmail));
@@ -261,7 +266,8 @@ public class GeneralAppTest {
         solo.clickOnView(solo.getView(R.id.experimentListItemLayout));
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentActivity.class);
         solo.sendKey(Solo.MENU);
-        solo.clickOnMenuItem(menuItem);
+        solo.waitForText(menuItem,1, 2000);
+        solo.clickOnText(menuItem);
         solo.assertCurrentActivity(failedCurrentActivity, ExperimentForumActivity.class);
         solo.waitForText(addQuestion, 1, 2000);
         solo.clickOnView(solo.getView(R.id.addQuestionButton));
