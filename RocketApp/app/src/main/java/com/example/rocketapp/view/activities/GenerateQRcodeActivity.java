@@ -21,7 +21,7 @@ import com.example.rocketapp.helpers.Device;
 import com.example.rocketapp.model.experiments.Experiment;
 import com.example.rocketapp.view.fragments.TrialFragment;
 
-public class GenerateQRcodeActivity extends AppCompatActivity {
+public class GenerateQRcodeActivity extends RocketAppActivity {
     private static final String TAG = "GenerateQRCodeActivity";
     private Experiment experiment;
     private ImageView qrImageView;
@@ -44,9 +44,11 @@ public class GenerateQRcodeActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveQRcodeBtn);
         saveButton.setVisibility(View.INVISIBLE);
         saveButton.setOnClickListener(v -> {
-            ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            ActivityCompat.requestPermissions(GenerateQRcodeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, 100)) return;
+//            if (!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 50)) return;
+
             Device.saveToGallery(qrImageView.getDrawable(), this);
+            Toast.makeText(this, "Saved to gallery", Toast.LENGTH_SHORT).show();
         });
 
         findViewById(R.id.generateQRcodeBtn).setOnClickListener(v -> generateQRCode());
